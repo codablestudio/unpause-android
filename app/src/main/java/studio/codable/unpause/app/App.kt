@@ -1,6 +1,7 @@
 package studio.codable.unpause.app
 
 import android.app.Application
+import androidx.appcompat.app.AppCompatDelegate
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import studio.codable.tbtl.util.logging.release.ReleaseTree
 import studio.codable.unpause.BuildConfig
@@ -14,8 +15,8 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         instance = this
-
         initLogging()
     }
 
