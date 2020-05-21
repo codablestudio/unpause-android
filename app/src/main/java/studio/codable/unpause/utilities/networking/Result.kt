@@ -52,7 +52,7 @@ suspend fun <T, R> callFirestore(firestoreQuery: Task<T>, onSuccess: suspend (T)
     }
 }
 
-suspend fun <T, R> callFirestoreNested(firestoreQuery: Task<T>, onSuccess: suspend (T) -> R): R {
+suspend fun <T, R> callFirestoreRawResult(firestoreQuery: Task<T>, onSuccess: suspend (T) -> R): R {
     return withContext(Dispatchers.IO) {
         when (val res = firestoreQuery.await()) {
             is TaskResult.Success -> onSuccess(res.data)

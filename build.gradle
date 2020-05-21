@@ -22,6 +22,9 @@ buildscript {
         firebasePerformanceMonitoring_gradle_version = '1.3.1'
 
         firebaseFirestoreKtx_version = '21.4.3'
+        firebaseAuthKtx_version = '19.3.1'
+
+        dagger2_version = '2.27'
     }
     repositories {
         google()

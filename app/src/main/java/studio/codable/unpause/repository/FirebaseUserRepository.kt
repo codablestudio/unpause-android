@@ -6,11 +6,18 @@ import studio.codable.unpause.model.User
 import studio.codable.unpause.utilities.Constants
 import studio.codable.unpause.utilities.networking.Result
 import studio.codable.unpause.utilities.networking.callFirestore
-import studio.codable.unpause.utilities.networking.callFirestoreNested
+import studio.codable.unpause.utilities.networking.callFirestoreRawResult
+import javax.inject.Inject
 
-class FirebaseUserRepository(
+class FirebaseUserRepository @Inject constructor(
     firestore: FirebaseFirestore
 ) : IUserRepository {
+
+    companion object {
+        fun extractUser(documentSnapshot: DocumentSnapshot): User {
+            return documentSnapshot.toObject(User::class.java)!!
+        }
+    }
 
     private val usersCol = firestore.collection(Constants.FirestoreCollections.USERS)
 
@@ -20,7 +27,7 @@ class FirebaseUserRepository(
 
     override suspend fun createUser(user: User): Result<User> {
         return callFirestore(usersCol.add(user)) { reference ->
-            callFirestoreNested(reference.get()) { snapshot ->
+            callFirestoreRawResult(reference.get()) { snapshot ->
                 extractUser(snapshot)
             }
         }
@@ -32,9 +39,5 @@ class FirebaseUserRepository(
 
     override suspend fun isUserVerified(user: User): Result<Boolean> {
         TODO("Not yet implemented")
-    }
-
-    private fun extractUser(documentSnapshot: DocumentSnapshot): User {
-        return documentSnapshot.toObject(User::class.java)!!
     }
 }

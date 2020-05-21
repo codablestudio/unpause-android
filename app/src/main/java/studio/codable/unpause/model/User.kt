@@ -1,3 +1,9 @@
 package studio.codable.unpause.model
 
-data class User(val id: String, val firstName: String, val lastName: String)
+import com.google.firebase.firestore.DocumentId
+
+data class User(
+    @DocumentId val id: String = "",
+    val firstName: String = "",
+    val lastName: String = ""
+)

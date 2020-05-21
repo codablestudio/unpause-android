@@ -1,4 +1,4 @@
-package studio.codable.tbtl.util.logging.release
+package studio.codable.unpause.utilities.logging.release
 
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 

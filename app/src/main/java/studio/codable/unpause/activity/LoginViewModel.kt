@@ -3,25 +3,28 @@ package studio.codable.unpause.activity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 import studio.codable.unpause.base.BaseViewModel
 import studio.codable.unpause.model.User
-import studio.codable.unpause.repository.FirebaseUserRepository
+import studio.codable.unpause.repository.ILoginRepository
 import studio.codable.unpause.repository.IUserRepository
+import javax.inject.Inject
+import javax.inject.Named
 
-class LoginViewModel : BaseViewModel() {
+class LoginViewModel @Inject constructor(
+    @Named("firebaseUserRepository")
+    private val userRepository: IUserRepository,
+    @Named("firebaseLoginRepository")
+    private val loginRepository: ILoginRepository
+) : BaseViewModel() {
 
-    private val firebaseRepository: IUserRepository =
-        FirebaseUserRepository(FirebaseFirestore.getInstance())
-
-    private val _user = MutableLiveData<User>()
-    val user: LiveData<User> = _user
+    private val _user: MutableLiveData<User> by lazy { MutableLiveData<User>() }
+    val user: LiveData<User> by lazy { _user }
 
     fun createUser(email: String, firstName: String, lastName: String) {
         val user = User(email, firstName, lastName)
         viewModelScope.launch {
-            process(firebaseRepository.createUser(user)) { newUser ->
+            process(userRepository.createUser(user)) { newUser ->
                 _user.value = newUser
             }
         }
@@ -29,7 +32,15 @@ class LoginViewModel : BaseViewModel() {
 
     fun getUser(id: String) {
         viewModelScope.launch {
-            process(firebaseRepository.getUser(id)) {
+            process(userRepository.getUser(id)) {
+                _user.value = it
+            }
+        }
+    }
+
+    fun login(email: String, password: String) {
+        viewModelScope.launch {
+            process(loginRepository.login(email, password)) {
                 _user.value = it
             }
         }

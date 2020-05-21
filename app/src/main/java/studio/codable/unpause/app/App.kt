@@ -3,8 +3,11 @@ package studio.codable.unpause.app
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import studio.codable.tbtl.util.logging.release.ReleaseTree
 import studio.codable.unpause.BuildConfig
+import studio.codable.unpause.app.di.ApplicationComponent
+import studio.codable.unpause.app.di.ApplicationModule
+import studio.codable.unpause.app.di.DaggerApplicationComponent
+import studio.codable.unpause.utilities.logging.release.ReleaseTree
 import timber.log.Timber
 
 class App : Application() {
@@ -13,10 +16,13 @@ class App : Application() {
             private set
     }
 
+    lateinit var applicationComponent: ApplicationComponent
+
     override fun onCreate() {
         super.onCreate()
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         instance = this
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+        initDaggerComponent()
         initLogging()
     }
 
@@ -27,5 +33,11 @@ class App : Application() {
         } else {
             Timber.plant(ReleaseTree())
         }
+    }
+
+    private fun initDaggerComponent() {
+        applicationComponent = DaggerApplicationComponent.builder()
+            .applicationModule(ApplicationModule(instance))
+            .build()
     }
 }

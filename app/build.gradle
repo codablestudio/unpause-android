@@ -77,6 +77,11 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleKtx_version"
     implementation "androidx.activity:activity-ktx:$activityKtx_version"
 
+    // LiveData
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleKtx_version"
+    //noinspection LifecycleAnnotationProcessorWithJava8
+    kapt "androidx.lifecycle:lifecycle-compiler:$lifecycleKtx_version"
+
     // Firebase Crashlytics
     implementation "com.google.firebase:firebase-analytics:$firebaseAnalytics_version"
     implementation "com.google.firebase:firebase-crashlytics:$firebaseCrashlytics_version"
@@ -89,4 +94,11 @@ dependencies {
 
     // Firebase Firestore - NoSQL database
     implementation "com.google.firebase:firebase-firestore-ktx:$firebaseFirestoreKtx_version"
+
+    // Firebase Authentication
+    implementation "com.google.firebase:firebase-auth-ktx:$firebaseAuthKtx_version"
+
+    // Dagger2
+    implementation "com.google.dagger:dagger:$dagger2_version"
+    kapt "com.google.dagger:dagger-compiler:$dagger2_version"
 }
