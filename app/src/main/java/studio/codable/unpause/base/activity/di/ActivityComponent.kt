@@ -1,11 +1,11 @@
 package studio.codable.tbtl.base.di
 
 import dagger.Subcomponent
-import studio.codable.unpause.activity.LoginActivity
-import studio.codable.unpause.activity.StartActivity
 import studio.codable.unpause.app.di.scope.PerActivity
-import studio.codable.unpause.base.di.viewModel.ViewModelModule
+import studio.codable.unpause.base.viewModel.di.ViewModelModule
 import studio.codable.unpause.repository.di.RepositoryModule
+import studio.codable.unpause.screens.activity.login.LoginActivity
+import studio.codable.unpause.screens.activity.start.StartActivity
 
 @PerActivity
 @Subcomponent(modules = [ViewModelModule::class, RepositoryModule::class])

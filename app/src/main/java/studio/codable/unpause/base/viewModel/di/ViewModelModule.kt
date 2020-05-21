@@ -1,12 +1,13 @@
-package studio.codable.unpause.base.di.viewModel
+package studio.codable.unpause.base.viewModel.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
-import studio.codable.unpause.activity.LoginViewModel
-import studio.codable.unpause.activity.SharedViewModel
+import studio.codable.unpause.screens.SharedViewModel
+import studio.codable.unpause.screens.activity.login.LoginViewModel
+import studio.codable.unpause.screens.activity.start.StartViewModel
 
 @Module
 abstract class ViewModelModule {
@@ -23,4 +24,9 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(LoginViewModel::class)
     internal abstract fun loginViewModel(viewModel: LoginViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(StartViewModel::class)
+    internal abstract fun startViewModel(viewModel: StartViewModel): ViewModel
 }

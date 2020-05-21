@@ -18,9 +18,9 @@ class FirebaseLoginRepository @Inject constructor(
 
     private val usersCol = firestore.collection(Constants.FirestoreCollections.USERS)
 
-    override suspend fun login(email: String, password: String): Result<User> {
+    override suspend fun login(email: String, password: String): Result<String> {
         return callFirestore(firebaseAuth.signInWithEmailAndPassword(email, password)) {
-            getUser(it)
+            it.user?.email!!
         }
     }
 

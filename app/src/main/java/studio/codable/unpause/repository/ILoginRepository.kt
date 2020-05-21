@@ -6,7 +6,7 @@ import studio.codable.unpause.utilities.networking.Result
 
 interface ILoginRepository {
 
-    suspend fun login(email: String, password: String): Result<User>
+    suspend fun login(email: String, password: String): Result<String>
 
     suspend fun register(email: String, password: String): Result<User>
 

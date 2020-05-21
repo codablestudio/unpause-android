@@ -2,8 +2,9 @@ package studio.codable.unpause.utilities.manager
 
 import android.content.Context
 import android.content.SharedPreferences
+import javax.inject.Inject
 
-class SessionManager constructor(context: Context) {
+class SessionManager @Inject constructor(context: Context) {
 
     companion object {
         private const val USER_ID = "user_id"

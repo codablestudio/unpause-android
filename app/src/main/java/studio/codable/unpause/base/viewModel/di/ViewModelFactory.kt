@@ -1,4 +1,4 @@
-package studio.codable.unpause.base.di.viewModel
+package studio.codable.unpause.base.viewModel.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

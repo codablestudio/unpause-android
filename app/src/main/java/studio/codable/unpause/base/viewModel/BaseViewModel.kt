@@ -1,12 +1,13 @@
-package studio.codable.unpause.base
+package studio.codable.unpause.base.viewModel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import studio.codable.unpause.activity.LoginViewModel
-import studio.codable.unpause.activity.SharedViewModel
 import studio.codable.unpause.app.App
+import studio.codable.unpause.screens.SharedViewModel
+import studio.codable.unpause.screens.activity.login.LoginViewModel
+import studio.codable.unpause.screens.activity.start.StartViewModel
 import studio.codable.unpause.utilities.Event
 import studio.codable.unpause.utilities.networking.ErrorResponse
 import studio.codable.unpause.utilities.networking.Result
@@ -36,6 +37,7 @@ abstract class BaseViewModel : ViewModel() {
         when (this) {
             is LoginViewModel -> component.plusViewModel().inject(this)
             is SharedViewModel -> component.plusViewModel().inject(this)
+            is StartViewModel -> component.plusViewModel().inject(this)
         }
     }
 

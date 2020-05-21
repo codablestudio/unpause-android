@@ -24,8 +24,8 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    signingConfigs{
-        release{
+    signingConfigs {
+        release {
             storeFile file(keystoreProperties['storeFilePath'])
             storePassword keystoreProperties['storePassword']
             keyAlias keystoreProperties['keyAlias']

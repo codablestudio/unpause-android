@@ -1,4 +1,4 @@
-package studio.codable.unpause.base
+package studio.codable.unpause.base.fragment
 
 import android.app.Dialog
 import android.content.Context
