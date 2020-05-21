@@ -77,13 +77,16 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleKtx_version"
     implementation "androidx.activity:activity-ktx:$activityKtx_version"
 
-    // Crashlytics
+    // Firebase Crashlytics
     implementation "com.google.firebase:firebase-analytics:$firebaseAnalytics_version"
     implementation "com.google.firebase:firebase-crashlytics:$firebaseCrashlytics_version"
 
-    // Performance monitoring
+    // Firebase Performance monitoring
     implementation "com.google.firebase:firebase-perf:$firebasePerformanceMonitoring_version"
 
     // Custom logging
     implementation "com.jakewharton.timber:timber:$timber_version"
+
+    // Firebase Firestore - NoSQL database
+    implementation "com.google.firebase:firebase-firestore-ktx:$firebaseFirestoreKtx_version"
 }

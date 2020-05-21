@@ -5,4 +5,8 @@ object Constants {
     object RequestCode {
 
     }
+
+    object FirestoreCollections {
+        const val USERS = "users"
+    }
 }

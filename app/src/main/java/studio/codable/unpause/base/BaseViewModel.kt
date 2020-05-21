@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import studio.codable.unpause.utilities.Event
 import studio.codable.unpause.utilities.networking.ErrorResponse
-import studio.codable.unpause.utilities.networking.NetworkResult
+import studio.codable.unpause.utilities.networking.Result
 import timber.log.Timber
 
 abstract class BaseViewModel : ViewModel() {
@@ -21,19 +21,19 @@ abstract class BaseViewModel : ViewModel() {
     }
     val loading: LiveData<Event<Boolean>> = _loading
 
-    protected inline fun <T> process(result: NetworkResult<T>, onSuccess: (value: T) -> Unit) {
+    protected inline fun <T> process(result: Result<T>, onSuccess: (value: T) -> Unit) {
         when (result) {
-            is NetworkResult.Success -> {
+            is Result.Success -> {
                 _loading.value = Event(false) // _error LiveData sets this automatically
                 Timber.tag(this::class.java.simpleName)
                     .i("Network call successful: ${result.value}")
                 onSuccess(result.value)
             }
-            is NetworkResult.GenericError -> {
+            is Result.GenericError -> {
                 Timber.tag(this::class.java.simpleName).e("Network call failed: $result")
-                showGenericError(result.code, result.error)
+                showGenericError(result.errorResponse)
             }
-            is NetworkResult.NetworkError -> {
+            is Result.IOError -> {
                 Timber.tag(this::class.java.simpleName).e("Network call failed: network error")
                 showNetworkError()
             }
@@ -44,12 +44,12 @@ abstract class BaseViewModel : ViewModel() {
         _errors.value = Event(message)
     }
 
-    protected open fun showGenericError(code: Int?, error: ErrorResponse?) {
-        error?.message?.let {
-            _errors.value = Event(it)
+    protected open fun showGenericError(error: ErrorResponse?) {
+        error?.exception?.let {
+            _errors.value = Event(it.message)
 
         } ?: run {
-            code?.let {
+            error?.code?.let {
                 _errors.value = Event(it.toString())
             }
         }
