@@ -25,9 +25,7 @@ class StartActivity : BaseActivity() {
             startActivity(HomeActivity.getIntent(this, vm.userId))
         } else {
             startActivity(
-                LoginActivity.getIntent(
-                    this
-                )
+                LoginActivity.getIntent(this)
             )
         }
     }

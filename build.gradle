@@ -25,6 +25,8 @@ buildscript {
         firebaseAuthKtx_version = '19.3.1'
 
         dagger2_version = '2.27'
+
+        nav_version = '2.2.2'
     }
     repositories {
         google()
@@ -40,6 +42,8 @@ buildscript {
         classpath "com.google.gms:google-services:$googleServices_version"
         classpath "com.google.firebase:firebase-crashlytics-gradle:$firebaseCrashlytics_gradle_version"
         classpath "com.google.firebase:perf-plugin:$firebasePerformanceMonitoring_gradle_version"
+        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
+
     }
 }
 

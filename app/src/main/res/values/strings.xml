@@ -11,4 +11,12 @@
     <string name="new_here">New here?</string>
     <string name="register_now_underlined"><u>Register now</u></string>
     <string name="invalid_input">Invalid input</string>
+    <string name="home">Home</string>
+    <string name="activity">Activity</string>
+    <string name="setting">Setting</string>
+    <string name="signed_in_as">Signed in as:</string>
+    <string name="email_colon">Email:</string>
+    <string name="first_name_colon">First name:</string>
+    <string name="last_name_colon">Last name:</string>
+    <string name="company_colon">Company:</string>
 </resources>

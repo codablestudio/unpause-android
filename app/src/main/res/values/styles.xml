@@ -1,3 +1,24 @@
 <resources>
 
+    <style name="TextLight" parent="TextAppearance.MaterialComponents.Body2">
+        <item name="android:textColor">@color/textColorLight</item>
+    </style>
+
+    <style name="TextDark" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:textColor">@color/textColorDark</item>
+    </style>
+
+    <style name="TextDark.Bold">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Toolbar.Regular" parent="ThemeOverlay.MaterialComponents.ActionBar">
+        <item name="android:theme">@style/ThemeOverlay.MaterialComponents.ActionBar</item>
+        <item name="popupTheme">@style/ThemeOverlay.MaterialComponents.Light</item>
+    </style>
+
+    <style name="Button.Round" parent="Widget.MaterialComponents.Button">
+        <item name="android:background">@drawable/selector_btn_round</item>
+    </style>
+
 </resources>

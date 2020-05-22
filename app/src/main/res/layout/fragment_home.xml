@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_toolbar" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="50dp">
+
+        <TextView
+            android:id="@+id/t_signed_in_as"
+            style="@style/TextDark.Bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/signed_in_as"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/t_email"
+            style="@style/TextLight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/t_signed_in_as"
+            android:layout_marginTop="20dp"
+            android:text="@string/email_colon" />
+
+        <TextView
+            android:id="@+id/text_email"
+            style="@style/TextLight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/t_email"
+            android:layout_marginStart="20dp"
+            android:layout_toEndOf="@id/t_email"
+            tools:text="filip@codable.studio" />
+
+        <TextView
+            android:id="@+id/t_first_name"
+            style="@style/TextLight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/t_email"
+            android:layout_marginTop="20dp"
+            android:text="@string/first_name_colon" />
+
+        <TextView
+            style="@style/TextLight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/t_first_name"
+            android:layout_marginStart="20dp"
+            android:layout_toEndOf="@id/t_first_name"
+            tools:text="Filip" />
+
+        <TextView
+            android:id="@+id/t_last_name"
+            style="@style/TextLight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/t_first_name"
+            android:layout_marginTop="20dp"
+            android:text="@string/last_name_colon" />
+
+        <TextView
+            style="@style/TextLight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/t_last_name"
+            android:layout_marginStart="20dp"
+            android:layout_toEndOf="@id/t_last_name"
+            tools:text="Pranklin" />
+
+        <TextView
+            android:id="@+id/t_company"
+            style="@style/TextLight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/t_last_name"
+            android:layout_marginTop="20dp"
+            android:text="@string/company_colon" />
+
+        <TextView
+            style="@style/TextLight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/t_company"
+            android:layout_marginStart="20dp"
+            android:layout_toEndOf="@id/t_company"
+            tools:text="Codable Studio" />
+
+        <Button
+            android:id="@+id/btn_check_in_out"
+            style="@style/Button.Round"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/t_company"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="100dp"
+            tools:text="Check in" />
+
+    </RelativeLayout>
+
+</LinearLayout>

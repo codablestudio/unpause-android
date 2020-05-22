@@ -3,8 +3,13 @@ package studio.codable.unpause.screens.activity.home
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
+import androidx.navigation.NavController
+import kotlinx.android.synthetic.main.activity_home.*
 import studio.codable.unpause.R
 import studio.codable.unpause.base.activity.BaseActivity
+import studio.codable.unpause.utilities.extensions.setupWithNavController
 
 class HomeActivity : BaseActivity() {
 
@@ -18,10 +23,31 @@ class HomeActivity : BaseActivity() {
         }
     }
 
+    private var currentNavController: LiveData<NavController>? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
         showMessage(intent.getStringExtra(USER_ID))
+        setupBottomNavigationBar()
+    }
+
+    private fun setupBottomNavigationBar() {
+        val navGraphIds = listOf(
+            R.navigation.navigation_home
+//            R.navigation.navigation_activity,
+//            R.navigation.navigation_settings
+        )
+
+        val controller = bottom_nav_main.setupWithNavController(
+            navGraphIds, supportFragmentManager, R.id.nav_host_home_activity, intent
+        )
+        controller.observe(this, Observer { navController ->
+//            setupActionBarWithNavController(navController) //todo I am not using this currently or I'm doing something wrong
+
+        })
+
+        currentNavController = controller
     }
 }

@@ -10,6 +10,7 @@ import kotlinx.android.synthetic.main.activity_login.*
 import studio.codable.unpause.R
 import studio.codable.unpause.base.activity.BaseActivity
 import studio.codable.unpause.screens.activity.home.HomeActivity
+import studio.codable.unpause.screens.activity.register.RegisterActivity
 import javax.inject.Inject
 
 class LoginActivity : BaseActivity() {
@@ -50,6 +51,10 @@ class LoginActivity : BaseActivity() {
             } else {
                 showMessage(getString(R.string.invalid_input))
             }
+        }
+
+        btn_register.setOnClickListener {
+            startActivity(RegisterActivity.getIntent(this))
         }
     }
 
