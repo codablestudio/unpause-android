@@ -1,14 +1,13 @@
 package studio.codable.unpause.repository
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import studio.codable.unpause.model.User
 import studio.codable.unpause.utilities.Constants
 import studio.codable.unpause.utilities.networking.Result
-import studio.codable.unpause.utilities.networking.callFirestore
-import studio.codable.unpause.utilities.networking.callFirestoreRawResult
+import studio.codable.unpause.utilities.networking.callFirebase
+import studio.codable.unpause.utilities.networking.callFirebaseRawResult
 import javax.inject.Inject
 
 class FirebaseLoginRepository @Inject constructor(
@@ -19,13 +18,21 @@ class FirebaseLoginRepository @Inject constructor(
     private val usersCol = firestore.collection(Constants.FirestoreCollections.USERS)
 
     override suspend fun login(email: String, password: String): Result<String> {
-        return callFirestore(firebaseAuth.signInWithEmailAndPassword(email, password)) {
-            it.user?.email!!
+        return callFirebase(firebaseAuth.signInWithEmailAndPassword(email, password)) {
+            email
         }
     }
 
-    override suspend fun register(email: String, password: String): Result<User> {
-        TODO("Not yet implemented")
+    override suspend fun register(
+        email: String,
+        password: String,
+        firstName: String?,
+        lastName: String?
+    ): Result<String> {
+        return callFirebase(firebaseAuth.createUserWithEmailAndPassword(email, password)) {
+            createUserInDatabase(email, firstName.orEmpty(), lastName.orEmpty())
+            email
+        }
     }
 
     override suspend fun verifyEmail(email: String, password: String): Result<Unit> {
@@ -55,9 +62,8 @@ class FirebaseLoginRepository @Inject constructor(
         TODO("Not yet implemented")
     }
 
-    private suspend fun getUser(authResult: AuthResult): User {
-        return callFirestoreRawResult(usersCol.document(authResult.user?.email.orEmpty()).get()) {
-            FirebaseUserRepository.extractUser(it)
-        }
+    private suspend fun createUserInDatabase(email: String, firstName: String, lastName: String) {
+        val user = User(email, firstName, lastName, email)
+        return callFirebaseRawResult(usersCol.document(email).set(user)) {}
     }
 }

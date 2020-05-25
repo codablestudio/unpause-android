@@ -38,7 +38,7 @@ suspend fun <T> callApi(apiCall: suspend () -> T): Result<T> {
     }
 }
 
-suspend fun <T, R> callFirestore(firestoreQuery: Task<T>, onSuccess: suspend (T) -> R): Result<R> {
+suspend fun <T, R> callFirebase(firestoreQuery: Task<T>, onSuccess: suspend (T) -> R): Result<R> {
     return withContext(Dispatchers.IO) {
         try {
             when (val res = firestoreQuery.await()) {
@@ -52,7 +52,7 @@ suspend fun <T, R> callFirestore(firestoreQuery: Task<T>, onSuccess: suspend (T)
     }
 }
 
-suspend fun <T, R> callFirestoreRawResult(firestoreQuery: Task<T>, onSuccess: suspend (T) -> R): R {
+suspend fun <T, R> callFirebaseRawResult(firestoreQuery: Task<T>, onSuccess: suspend (T) -> R): R {
     return withContext(Dispatchers.IO) {
         when (val res = firestoreQuery.await()) {
             is TaskResult.Success -> onSuccess(res.data)

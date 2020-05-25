@@ -1,14 +1,18 @@
 package studio.codable.unpause.repository
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import studio.codable.unpause.model.User
 import studio.codable.unpause.utilities.networking.Result
 
 interface ILoginRepository {
 
     suspend fun login(email: String, password: String): Result<String>
 
-    suspend fun register(email: String, password: String): Result<User>
+    suspend fun register(
+        email: String,
+        password: String,
+        firstName: String?,
+        lastName: String?
+    ): Result<String>
 
     suspend fun verifyEmail(email: String, password: String): Result<Unit>
 

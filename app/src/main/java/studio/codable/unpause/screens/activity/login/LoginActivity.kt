@@ -35,11 +35,10 @@ class LoginActivity : BaseActivity() {
 
     private fun initObservers() {
         loginVm.errors.observe(this, Observer {
-            showMessage(it.getContentIfNotHandled())
+            showError(it.getContentIfNotHandled())
         })
 
         loginVm.userId.observe(this, Observer {
-            loginVm.saveUserId(it)
             startActivity(HomeActivity.getIntent(this, it))
         })
     }

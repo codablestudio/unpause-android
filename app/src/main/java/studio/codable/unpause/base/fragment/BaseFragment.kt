@@ -33,9 +33,11 @@ abstract class BaseFragment(private val hasDefaultToolbar: Boolean) : Fragment()
     }
 
     private fun inject() {
-//        when (this) {
-//            is HomeFragment -> component.plusFragment().inject(this)
+//     component.let {
+//            when (this) {
+//            is HomeFragment -> it.plusFragment().inject(this)
 //        }
+//     }
     }
 
     protected open fun initToolbar() {

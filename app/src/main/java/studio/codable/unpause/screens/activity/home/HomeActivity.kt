@@ -3,15 +3,23 @@ package studio.codable.unpause.screens.activity.home
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import kotlinx.android.synthetic.main.activity_home.*
 import studio.codable.unpause.R
 import studio.codable.unpause.base.activity.BaseActivity
+import studio.codable.unpause.screens.UserViewModel
 import studio.codable.unpause.utilities.extensions.setupWithNavController
+import javax.inject.Inject
 
 class HomeActivity : BaseActivity() {
+
+    @Inject
+    lateinit var vmFactory: ViewModelProvider.Factory
+    private val userVm: UserViewModel by viewModels { vmFactory }
 
     companion object {
         private const val USER_ID = "userId"
@@ -29,8 +37,9 @@ class HomeActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
-        showMessage(intent.getStringExtra(USER_ID))
         setupBottomNavigationBar()
+        userVm.getUser()
+
     }
 
     private fun setupBottomNavigationBar() {

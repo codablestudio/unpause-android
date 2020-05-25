@@ -5,8 +5,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import studio.codable.unpause.model.User
 import studio.codable.unpause.utilities.Constants
 import studio.codable.unpause.utilities.networking.Result
-import studio.codable.unpause.utilities.networking.callFirestore
-import studio.codable.unpause.utilities.networking.callFirestoreRawResult
+import studio.codable.unpause.utilities.networking.callFirebase
+import studio.codable.unpause.utilities.networking.callFirebaseRawResult
 import javax.inject.Inject
 
 class FirebaseUserRepository @Inject constructor(
@@ -22,12 +22,12 @@ class FirebaseUserRepository @Inject constructor(
     private val usersCol = firestore.collection(Constants.FirestoreCollections.USERS)
 
     override suspend fun getUser(userId: String): Result<User> {
-        return callFirestore(usersCol.document(userId).get()) { extractUser(it) }
+        return callFirebase(usersCol.document(userId).get()) { extractUser(it) }
     }
 
     override suspend fun createUser(user: User): Result<User> {
-        return callFirestore(usersCol.add(user)) { reference ->
-            callFirestoreRawResult(reference.get()) { snapshot ->
+        return callFirebase(usersCol.add(user)) { reference ->
+            callFirebaseRawResult(reference.get()) { snapshot ->
                 extractUser(snapshot)
             }
         }

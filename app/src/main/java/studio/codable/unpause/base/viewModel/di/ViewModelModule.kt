@@ -6,7 +6,9 @@ import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
 import studio.codable.unpause.screens.SharedViewModel
+import studio.codable.unpause.screens.UserViewModel
 import studio.codable.unpause.screens.activity.login.LoginViewModel
+import studio.codable.unpause.screens.activity.register.RegisterViewModel
 import studio.codable.unpause.screens.activity.start.StartViewModel
 
 @Module
@@ -29,4 +31,14 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(StartViewModel::class)
     internal abstract fun startViewModel(viewModel: StartViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(RegisterViewModel::class)
+    internal abstract fun registerViewModel(viewModel: RegisterViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(UserViewModel::class)
+    internal abstract fun userViewModel(viewModel: UserViewModel): ViewModel
 }

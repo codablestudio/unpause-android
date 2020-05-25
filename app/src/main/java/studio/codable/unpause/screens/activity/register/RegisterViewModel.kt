@@ -1,4 +1,4 @@
-package studio.codable.unpause.screens.activity.login
+package studio.codable.unpause.screens.activity.register
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -13,23 +13,23 @@ import javax.inject.Inject
 import javax.inject.Named
 import kotlin.coroutines.CoroutineContext
 
-class LoginViewModel @Inject constructor(
+class RegisterViewModel @Inject constructor(
     @Named("firebaseLoginRepository")
     private val loginRepository: ILoginRepository,
     private val sessionManager: SessionManager
 ) : BaseViewModel(), CoroutineScope {
 
+    private val _userId = MutableLiveData<String>()
+    val userId: LiveData<String> = _userId
+
     private val errorHandler = CoroutineExceptionHandler { _, throwable -> Timber.w(throwable) }
     private val vmJob = Job()
     override val coroutineContext: CoroutineContext = Dispatchers.Main + vmJob + errorHandler
 
-    private val _userId: MutableLiveData<String> by lazy { MutableLiveData<String>() }
-    val userId: LiveData<String> by lazy { _userId }
-
-    fun login(email: String, password: String) {
+    fun register(email: String, password: String, firstName: String?, lastName: String?) {
         _loading.value = Event(true)
         viewModelScope.launch {
-            process(loginRepository.login(email, password)) {
+            process(loginRepository.register(email, password, firstName, lastName)) {
                 saveUserId(it)
                 _userId.value = it
             }

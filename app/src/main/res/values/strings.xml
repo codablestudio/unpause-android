@@ -19,4 +19,9 @@
     <string name="first_name_colon">First name:</string>
     <string name="last_name_colon">Last name:</string>
     <string name="company_colon">Company:</string>
+    <string name="hint_enter_first_name">Enter first name (optional)</string>
+    <string name="hint_enter_last_name">Enter last name (optional)</string>
+    <string name="hint_enter_email">Enter email</string>
+    <string name="hint_enter_password">Enter password</string>
+    <string name="register">Register</string>
 </resources>

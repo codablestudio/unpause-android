@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import studio.codable.unpause.app.App
 import studio.codable.unpause.screens.SharedViewModel
 import studio.codable.unpause.screens.activity.login.LoginViewModel
+import studio.codable.unpause.screens.activity.register.RegisterViewModel
 import studio.codable.unpause.screens.activity.start.StartViewModel
 import studio.codable.unpause.utilities.Event
 import studio.codable.unpause.utilities.networking.ErrorResponse
@@ -34,10 +35,13 @@ abstract class BaseViewModel : ViewModel() {
     }
 
     private fun inject() {
-        when (this) {
-            is LoginViewModel -> component.plusViewModel().inject(this)
-            is SharedViewModel -> component.plusViewModel().inject(this)
-            is StartViewModel -> component.plusViewModel().inject(this)
+        component.let {
+            when (this) {
+                is LoginViewModel -> it.plusViewModel().inject(this)
+                is SharedViewModel -> it.plusViewModel().inject(this)
+                is StartViewModel -> it.plusViewModel().inject(this)
+                is RegisterViewModel -> it.plusViewModel().inject(this)
+            }
         }
     }
 

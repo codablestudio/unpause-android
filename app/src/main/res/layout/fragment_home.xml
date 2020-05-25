@@ -50,6 +50,7 @@
             android:text="@string/first_name_colon" />
 
         <TextView
+            android:id="@+id/text_first_name"
             style="@style/TextLight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -68,6 +69,7 @@
             android:text="@string/last_name_colon" />
 
         <TextView
+            android:id="@+id/text_last_name"
             style="@style/TextLight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -86,6 +88,7 @@
             android:text="@string/company_colon" />
 
         <TextView
+            android:id="@+id/text_company"
             style="@style/TextLight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
