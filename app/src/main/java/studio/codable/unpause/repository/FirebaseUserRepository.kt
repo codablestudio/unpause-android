@@ -27,7 +27,7 @@ class FirebaseUserRepository @Inject constructor(
     }
 
     override suspend fun createUser(user: User): Result<User> {
-        return callFirebase(usersCol.add(user)) { reference ->
+        return callFirebase(usersCol.add(FirestoreUser(user))) { reference ->
             callFirebaseRawResult(reference.get()) { snapshot ->
                 extractFirestoreUser(snapshot).toUser()
             }

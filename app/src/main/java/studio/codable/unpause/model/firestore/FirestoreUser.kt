@@ -6,12 +6,21 @@ import studio.codable.unpause.model.User
 
 data class FirestoreUser(
     @DocumentId
-    val documentId: String = "",
-    val email: String = "",
-    val firstName: String? = "",
-    val lastName: String? = "",
-    val shifts: List<FirestoreShift>? = null
+    var documentId: String = "",
+    var email: String = "",
+    var firstName: String? = "",
+    var lastName: String? = "",
+    var shifts: List<FirestoreShift>? = null
 ) {
+
+    constructor(user: User, shifts: List<Shift>? = null) : this() {
+        this.documentId = user.id
+        this.email = user.email
+        this.firstName = user.firstName
+        this.lastName = user.lastName
+        this.shifts = shifts?.map { FirestoreShift(it) }
+    }
+
     fun toUser(): User {
         return User(documentId, email, firstName, lastName)
     }
