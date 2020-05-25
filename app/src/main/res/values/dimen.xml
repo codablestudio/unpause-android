@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="btn_check_in">100dp</dimen>
+    <dimen name="btn_check_in">200dp</dimen>
     <dimen name="default_padding">30dp</dimen>
     <dimen name="default_item_spacing">30dp</dimen>
 </resources>

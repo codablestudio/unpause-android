@@ -7,7 +7,6 @@ import studio.codable.unpause.model.User
 import studio.codable.unpause.utilities.Constants
 import studio.codable.unpause.utilities.networking.Result
 import studio.codable.unpause.utilities.networking.callFirebase
-import studio.codable.unpause.utilities.networking.callFirebaseRawResult
 import javax.inject.Inject
 
 class FirebaseLoginRepository @Inject constructor(
@@ -62,8 +61,12 @@ class FirebaseLoginRepository @Inject constructor(
         TODO("Not yet implemented")
     }
 
-    private suspend fun createUserInDatabase(email: String, firstName: String, lastName: String) {
+    private suspend fun createUserInDatabase(
+        email: String,
+        firstName: String,
+        lastName: String
+    ): Result<Unit> {
         val user = User(email, firstName, lastName, email)
-        return callFirebaseRawResult(usersCol.document(email).set(user)) {}
+        return callFirebase(usersCol.document(email).set(user)) {}
     }
 }

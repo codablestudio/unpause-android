@@ -4,6 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import studio.codable.unpause.app.App
 import studio.codable.unpause.screens.SharedViewModel
 import studio.codable.unpause.screens.activity.login.LoginViewModel
@@ -13,8 +17,9 @@ import studio.codable.unpause.utilities.Event
 import studio.codable.unpause.utilities.networking.ErrorResponse
 import studio.codable.unpause.utilities.networking.Result
 import timber.log.Timber
+import kotlin.coroutines.CoroutineContext
 
-abstract class BaseViewModel : ViewModel() {
+abstract class BaseViewModel : ViewModel(), CoroutineScope {
 
     private val _errors: MutableLiveData<Event<String>> by lazy { MutableLiveData<Event<String>>() }
     val errors: LiveData<Event<String>> by lazy { _errors }
@@ -27,6 +32,10 @@ abstract class BaseViewModel : ViewModel() {
         }
     }
     val loading: LiveData<Event<Boolean>> by lazy { _loading }
+
+    private val errorHandler = CoroutineExceptionHandler { _, throwable -> Timber.w(throwable) }
+    private val vmJob = Job()
+    override val coroutineContext: CoroutineContext = Dispatchers.Main + vmJob + errorHandler
 
     private val component = App.instance.applicationComponent
 

@@ -38,8 +38,7 @@ class HomeActivity : BaseActivity() {
         setContentView(R.layout.activity_home)
 
         setupBottomNavigationBar()
-        userVm.getUser()
-
+        userVm
     }
 
     private fun setupBottomNavigationBar() {
