@@ -4,6 +4,8 @@ object Constants {
 
     object RequestCode {
 
+        const val GOOGLE_SING_IN = 0
+
     }
 
     object FirestoreCollections {

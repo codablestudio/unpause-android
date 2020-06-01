@@ -1,12 +1,14 @@
 package studio.codable.unpause.repository
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import studio.codable.unpause.model.User
 import studio.codable.unpause.utilities.Constants
 import studio.codable.unpause.utilities.networking.Result
-import studio.codable.unpause.utilities.networking.callFirebase
+import studio.codable.unpause.utilities.networking.callFirestore
 import javax.inject.Inject
 
 class FirebaseLoginRepository @Inject constructor(
@@ -17,7 +19,7 @@ class FirebaseLoginRepository @Inject constructor(
     private val usersCol = firestore.collection(Constants.FirestoreCollections.USERS)
 
     override suspend fun login(email: String, password: String): Result<String> {
-        return callFirebase(firebaseAuth.signInWithEmailAndPassword(email, password)) {
+        return callFirestore(firebaseAuth.signInWithEmailAndPassword(email, password)) {
             email
         }
     }
@@ -28,7 +30,7 @@ class FirebaseLoginRepository @Inject constructor(
         firstName: String?,
         lastName: String?
     ): Result<String> {
-        return callFirebase(firebaseAuth.createUserWithEmailAndPassword(email, password)) {
+        return callFirestore(firebaseAuth.createUserWithEmailAndPassword(email, password)) {
             createUserInDatabase(email, firstName.orEmpty(), lastName.orEmpty())
             email
         }
@@ -57,8 +59,13 @@ class FirebaseLoginRepository @Inject constructor(
     override suspend fun signInWithGoogle(
         account: GoogleSignInAccount,
         clientId: String
-    ): Result<Unit> {
-        TODO("Not yet implemented")
+    ): Result<AuthResult> {
+        val credential = GoogleAuthProvider.getCredential(account.idToken, clientId)
+        return callFirestore(firebaseAuth.signInWithCredential(credential)) {
+           it
+        }
+
+
     }
 
     private suspend fun createUserInDatabase(
@@ -67,6 +74,6 @@ class FirebaseLoginRepository @Inject constructor(
         lastName: String
     ): Result<Unit> {
         val user = User(email, firstName, lastName, email)
-        return callFirebase(usersCol.document(email).set(user)) {}
+        return callFirestore(usersCol.document(email).set(user)) {}
     }
 }
