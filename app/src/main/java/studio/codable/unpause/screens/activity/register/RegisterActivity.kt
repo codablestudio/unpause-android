@@ -39,6 +39,7 @@ class RegisterActivity : BaseActivity() {
 
         registerVm.userId.observe(this, Observer {
             startActivity(HomeActivity.getIntent(this, it))
+            finish()
         })
     }
 

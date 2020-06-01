@@ -7,7 +7,7 @@ interface IUserRepository {
 
     suspend fun getUser(userId: String): Result<User>
 
-    suspend fun createUser(user: User): Result<User>
+    suspend fun createUser(user: User): Result<Unit>
 
     suspend fun updateUser(user: User): Result<Unit>
 

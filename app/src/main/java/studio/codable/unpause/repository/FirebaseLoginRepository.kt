@@ -1,7 +1,9 @@
 package studio.codable.unpause.repository
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import studio.codable.unpause.model.User
 import studio.codable.unpause.utilities.Constants
@@ -57,8 +59,13 @@ class FirebaseLoginRepository @Inject constructor(
     override suspend fun signInWithGoogle(
         account: GoogleSignInAccount,
         clientId: String
-    ): Result<Unit> {
-        TODO("Not yet implemented")
+    ): Result<AuthResult> {
+        val credential = GoogleAuthProvider.getCredential(account.idToken, clientId)
+        return callFirebase(firebaseAuth.signInWithCredential(credential)) {
+           it
+        }
+
+
     }
 
     private suspend fun createUserInDatabase(

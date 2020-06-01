@@ -7,7 +7,6 @@ import studio.codable.unpause.model.firestore.FirestoreUser
 import studio.codable.unpause.utilities.Constants
 import studio.codable.unpause.utilities.networking.Result
 import studio.codable.unpause.utilities.networking.callFirebase
-import studio.codable.unpause.utilities.networking.callFirebaseRawResult
 import javax.inject.Inject
 
 class FirebaseUserRepository @Inject constructor(
@@ -26,11 +25,9 @@ class FirebaseUserRepository @Inject constructor(
         return callFirebase(usersCol.document(userId).get()) { extractFirestoreUser(it).toUser() }
     }
 
-    override suspend fun createUser(user: User): Result<User> {
-        return callFirebase(usersCol.add(FirestoreUser(user))) { reference ->
-            callFirebaseRawResult(reference.get()) { snapshot ->
-                extractFirestoreUser(snapshot).toUser()
-            }
+    override suspend fun createUser(user: User): Result<Unit> {
+        return callFirebase(usersCol.document(user.id).set(FirestoreUser(user))) {
+            Unit
         }
     }
 

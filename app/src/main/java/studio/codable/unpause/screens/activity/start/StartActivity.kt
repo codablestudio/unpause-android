@@ -23,10 +23,12 @@ class StartActivity : BaseActivity() {
     private fun checkForExistingUser() {
         if (vm.userId.isNotBlank()) {
             startActivity(HomeActivity.getIntent(this, vm.userId))
+            finish()
         } else {
             startActivity(
                 LoginActivity.getIntent(this)
             )
+            finish()
         }
     }
 }

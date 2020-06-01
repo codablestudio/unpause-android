@@ -1,6 +1,7 @@
 package studio.codable.unpause.repository
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.firebase.auth.AuthResult
 import studio.codable.unpause.utilities.networking.Result
 
 interface ILoginRepository {
@@ -24,5 +25,5 @@ interface ILoginRepository {
 
     suspend fun sendPasswordResetEmail(email: String): Result<Unit>
 
-    suspend fun signInWithGoogle(account: GoogleSignInAccount, clientId: String): Result<Unit>
+    suspend fun signInWithGoogle(account: GoogleSignInAccount, clientId: String): Result<AuthResult>
 }
