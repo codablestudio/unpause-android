@@ -8,7 +8,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import studio.codable.unpause.model.User
 import studio.codable.unpause.utilities.Constants
 import studio.codable.unpause.utilities.networking.Result
-import studio.codable.unpause.utilities.networking.callFirestore
+import studio.codable.unpause.utilities.networking.callFirebase
 import javax.inject.Inject
 
 class FirebaseLoginRepository @Inject constructor(
@@ -19,7 +19,7 @@ class FirebaseLoginRepository @Inject constructor(
     private val usersCol = firestore.collection(Constants.FirestoreCollections.USERS)
 
     override suspend fun login(email: String, password: String): Result<String> {
-        return callFirestore(firebaseAuth.signInWithEmailAndPassword(email, password)) {
+        return callFirebase(firebaseAuth.signInWithEmailAndPassword(email, password)) {
             email
         }
     }
@@ -30,7 +30,7 @@ class FirebaseLoginRepository @Inject constructor(
         firstName: String?,
         lastName: String?
     ): Result<String> {
-        return callFirestore(firebaseAuth.createUserWithEmailAndPassword(email, password)) {
+        return callFirebase(firebaseAuth.createUserWithEmailAndPassword(email, password)) {
             createUserInDatabase(email, firstName.orEmpty(), lastName.orEmpty())
             email
         }
@@ -61,7 +61,7 @@ class FirebaseLoginRepository @Inject constructor(
         clientId: String
     ): Result<AuthResult> {
         val credential = GoogleAuthProvider.getCredential(account.idToken, clientId)
-        return callFirestore(firebaseAuth.signInWithCredential(credential)) {
+        return callFirebase(firebaseAuth.signInWithCredential(credential)) {
            it
         }
 
@@ -74,6 +74,6 @@ class FirebaseLoginRepository @Inject constructor(
         lastName: String
     ): Result<Unit> {
         val user = User(email, firstName, lastName, email)
-        return callFirestore(usersCol.document(email).set(user)) {}
+        return callFirebase(usersCol.document(email).set(user)) {}
     }
 }

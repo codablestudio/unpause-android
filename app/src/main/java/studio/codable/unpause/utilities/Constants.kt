@@ -4,7 +4,7 @@ object Constants {
 
     object RequestCode {
 
-        const val GOOGLE_SING_IN = 0
+        const val GOOGLE_SIGN_IN = 0
 
     }
 

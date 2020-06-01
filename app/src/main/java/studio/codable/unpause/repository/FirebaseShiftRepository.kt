@@ -5,7 +5,7 @@ import studio.codable.unpause.model.Shift
 import studio.codable.unpause.model.firestore.FirestoreShift
 import studio.codable.unpause.utilities.Constants
 import studio.codable.unpause.utilities.networking.Result
-import studio.codable.unpause.utilities.networking.callFirestore
+import studio.codable.unpause.utilities.networking.callFirebase
 import studio.codable.unpause.utilities.networking.callFirebaseRawResult
 import timber.log.Timber
 import javax.inject.Inject
@@ -17,7 +17,7 @@ class FirebaseShiftRepository @Inject constructor(
     private val usersCol = firestore.collection(Constants.FirestoreCollections.USERS)
 
     override suspend fun getAll(userId: String): Result<List<Shift>> {
-        return callFirestore(usersCol.document(userId).get()) {
+        return callFirebase(usersCol.document(userId).get()) {
             FirebaseUserRepository.extractFirestoreUser(it).extractShifts()
         }
     }
@@ -28,7 +28,7 @@ class FirebaseShiftRepository @Inject constructor(
 
     @ExperimentalStdlibApi
     override suspend fun update(userId: String, shift: Shift): Result<Unit> {
-        return callFirestore(usersCol.document(userId).get()) {
+        return callFirebase(usersCol.document(userId).get()) {
             val shifts =
                 FirebaseUserRepository.extractFirestoreUser(it).extractShifts() as ArrayList
             Timber.d("Old shifts: $shifts")
@@ -50,7 +50,7 @@ class FirebaseShiftRepository @Inject constructor(
 
     @ExperimentalStdlibApi
     override suspend fun addNew(userId: String, newShift: Shift): Result<Unit> {
-        return callFirestore(usersCol.document(userId).get()) {
+        return callFirebase(usersCol.document(userId).get()) {
             val shifts =
                 FirebaseUserRepository.extractFirestoreUser(it).shifts ?: arrayListOf()
             Timber.d("Shifts: $shifts")

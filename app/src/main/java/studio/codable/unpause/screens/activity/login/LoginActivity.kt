@@ -7,9 +7,7 @@ import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.tasks.Task
 import kotlinx.android.synthetic.main.activity_login.*
 import studio.codable.unpause.R
 import studio.codable.unpause.base.activity.BaseActivity
@@ -41,7 +39,7 @@ class LoginActivity : BaseActivity() {
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == Constants.RequestCode.GOOGLE_SING_IN) {
+        if (requestCode == Constants.RequestCode.GOOGLE_SIGN_IN) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             loginVm.logInWithCredentials(task, getString(R.string.default_web_client_id))
         }
@@ -80,7 +78,7 @@ class LoginActivity : BaseActivity() {
 
         btn_sign_in_with_google.setOnClickListener {
             val intent = googleSignInClient.signInIntent
-            startActivityForResult(intent, Constants.RequestCode.GOOGLE_SING_IN)
+            startActivityForResult(intent, Constants.RequestCode.GOOGLE_SIGN_IN)
         }
     }
 
