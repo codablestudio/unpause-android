@@ -2,6 +2,7 @@ package studio.codable.unpause.screens.activity.login
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
@@ -30,17 +31,34 @@ class LoginViewModel @Inject constructor(
     private val _userId: MediatorLiveData<String> by lazy { MediatorLiveData<String>() }
     val userId: LiveData<String> by lazy { _userId }
 
+    private val _passwordSent : MutableLiveData<Event<Boolean>> by lazy { MutableLiveData<Event<Boolean>>() }
+    val passwordSent : LiveData<Event<Boolean>>
+        get() {
+           return _passwordSent
+        }
+
+    private val _userVerified : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val userVerified : LiveData<Boolean>
+        get() {
+            return _userVerified
+        }
+
     init {
         _userId.addSource(userId) {
             saveUserId(it)
         }
+        _userVerified.value = false
     }
 
     fun login(email: String, password: String) {
         _loading.value = Event(true)
         viewModelScope.launch {
             process(loginRepository.login(email, password)) {
-                _userId.value = it
+                if (loginRepository.isUserVerified()) {
+                    _userId.value = it
+                } else {
+                    _userVerified.value = true
+                }
             }
         }
     }
@@ -63,6 +81,14 @@ class LoginViewModel @Inject constructor(
                         is Result.Success -> _userId.value = account.result!!.email!!
                     }
                 }
+            }
+        }
+    }
+
+    fun sendPasswordResetEmail(email: String) {
+        viewModelScope.launch {
+            process(loginRepository.sendPasswordResetEmail(email)) {
+                _passwordSent.value = Event(true)
             }
         }
     }

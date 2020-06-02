@@ -26,4 +26,6 @@ interface ILoginRepository {
     suspend fun sendPasswordResetEmail(email: String): Result<Unit>
 
     suspend fun signInWithGoogle(account: GoogleSignInAccount, clientId: String): Result<AuthResult>
+
+    fun isUserVerified(): Boolean
 }

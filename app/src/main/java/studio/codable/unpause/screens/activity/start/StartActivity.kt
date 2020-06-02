@@ -21,7 +21,7 @@ class StartActivity : BaseActivity() {
     }
 
     private fun checkForExistingUser() {
-        if (vm.userId.isNotBlank()) {
+        if (vm.userId.isNotBlank() || (vm.userId.isNotBlank() && vm.isUserVerified()) ) {
             startActivity(HomeActivity.getIntent(this, vm.userId))
             finish()
         } else {

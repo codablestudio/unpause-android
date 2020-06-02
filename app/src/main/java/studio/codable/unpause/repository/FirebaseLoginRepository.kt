@@ -37,7 +37,9 @@ class FirebaseLoginRepository @Inject constructor(
     }
 
     override suspend fun verifyEmail(email: String, password: String): Result<Unit> {
-        TODO("Not yet implemented")
+        return callFirebase(firebaseAuth.signInWithEmailAndPassword(email, password)) {
+            Unit
+        }
     }
 
     override suspend fun signOut(): Result<Unit> {
@@ -53,7 +55,9 @@ class FirebaseLoginRepository @Inject constructor(
     }
 
     override suspend fun sendPasswordResetEmail(email: String): Result<Unit> {
-        TODO("Not yet implemented")
+        return callFirebase(firebaseAuth.sendPasswordResetEmail(email)) {
+            Unit
+        }
     }
 
     override suspend fun signInWithGoogle(
@@ -64,8 +68,14 @@ class FirebaseLoginRepository @Inject constructor(
         return callFirebase(firebaseAuth.signInWithCredential(credential)) {
            it
         }
+    }
 
-
+    override fun isUserVerified(): Boolean {
+        return if (firebaseAuth.currentUser != null) {
+            firebaseAuth.currentUser!!.isEmailVerified
+        } else {
+            false
+        }
     }
 
     private suspend fun createUserInDatabase(
