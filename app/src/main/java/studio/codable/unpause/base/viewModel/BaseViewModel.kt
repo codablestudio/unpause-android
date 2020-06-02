@@ -10,6 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import studio.codable.unpause.app.App
 import studio.codable.unpause.screens.SharedViewModel
+import studio.codable.unpause.screens.activity.emailVerification.EmailVerificationViewModel
 import studio.codable.unpause.screens.activity.login.LoginViewModel
 import studio.codable.unpause.screens.activity.register.RegisterViewModel
 import studio.codable.unpause.screens.activity.start.StartViewModel
@@ -50,6 +51,7 @@ abstract class BaseViewModel : ViewModel(), CoroutineScope {
                 is SharedViewModel -> it.plusViewModel().inject(this)
                 is StartViewModel -> it.plusViewModel().inject(this)
                 is RegisterViewModel -> it.plusViewModel().inject(this)
+                is EmailVerificationViewModel -> it.plusViewModel().inject(this)
             }
         }
     }

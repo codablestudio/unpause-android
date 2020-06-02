@@ -3,6 +3,7 @@ package studio.codable.unpause.base.activity
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import studio.codable.unpause.app.App
+import studio.codable.unpause.screens.activity.emailVerification.EmailVerificationActivity
 import studio.codable.unpause.screens.activity.home.HomeActivity
 import studio.codable.unpause.screens.activity.login.LoginActivity
 import studio.codable.unpause.screens.activity.register.RegisterActivity
@@ -23,6 +24,7 @@ abstract class BaseActivity : AppCompatActivity() {
                 is LoginActivity -> it.plusActivity().inject(this)
                 is RegisterActivity -> it.plusActivity().inject(this)
                 is HomeActivity -> it.plusActivity().inject(this)
+                is EmailVerificationActivity -> it.plusActivity().inject(this)
             }
         }
     }

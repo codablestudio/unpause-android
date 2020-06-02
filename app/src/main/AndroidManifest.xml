@@ -10,7 +10,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".screens.activity.home.HomeActivity"></activity>
+        <activity android:name=".screens.activity.emailVerification.EmailVerificationActivity"></activity>
+        <activity android:name=".screens.activity.home.HomeActivity" />
         <activity android:name=".screens.activity.register.RegisterActivity" />
         <activity
             android:name=".screens.activity.start.StartActivity"

@@ -7,6 +7,7 @@ import dagger.Module
 import dagger.multibindings.IntoMap
 import studio.codable.unpause.screens.SharedViewModel
 import studio.codable.unpause.screens.UserViewModel
+import studio.codable.unpause.screens.activity.emailVerification.EmailVerificationViewModel
 import studio.codable.unpause.screens.activity.login.LoginViewModel
 import studio.codable.unpause.screens.activity.register.RegisterViewModel
 import studio.codable.unpause.screens.activity.start.StartViewModel
@@ -41,4 +42,9 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(UserViewModel::class)
     internal abstract fun userViewModel(viewModel: UserViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(EmailVerificationViewModel::class)
+    internal abstract fun emailVerificationViewModel(viewModel: EmailVerificationViewModel): ViewModel
 }

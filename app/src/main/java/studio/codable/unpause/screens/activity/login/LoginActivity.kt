@@ -11,6 +11,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import kotlinx.android.synthetic.main.activity_login.*
 import studio.codable.unpause.R
 import studio.codable.unpause.base.activity.BaseActivity
+import studio.codable.unpause.screens.activity.emailVerification.EmailVerificationActivity
 import studio.codable.unpause.screens.activity.home.HomeActivity
 import studio.codable.unpause.screens.activity.register.RegisterActivity
 import studio.codable.unpause.utilities.Constants
@@ -61,9 +62,12 @@ class LoginActivity : BaseActivity() {
             }
         })
 
-        loginVm.userVerified.observe(this, Observer {
+        loginVm.userNotVerified.observe(this, Observer {
             if (it) {
-                startActivity()
+                startActivity(EmailVerificationActivity.getIntent(this,
+                    text_email.text.toString(),
+                    text_password.text.toString()))
+                finish()
             }
         })
     }
