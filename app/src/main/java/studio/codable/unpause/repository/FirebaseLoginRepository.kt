@@ -36,10 +36,11 @@ class FirebaseLoginRepository @Inject constructor(
         }
     }
 
-    override suspend fun verifyEmail(email: String, password: String): Result<Unit> {
+    override suspend fun verifyEmail(email: String, password: String): Result<Boolean> {
         return callFirebase(firebaseAuth.signInWithEmailAndPassword(email, password)) {
-            Unit
+            it.user!!.isEmailVerified
         }
+
     }
 
     override suspend fun signOut(): Result<Unit> {

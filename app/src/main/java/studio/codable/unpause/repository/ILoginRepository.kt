@@ -15,7 +15,7 @@ interface ILoginRepository {
         lastName: String?
     ): Result<String>
 
-    suspend fun verifyEmail(email: String, password: String): Result<Unit>
+    suspend fun verifyEmail(email: String, password: String): Result<Boolean>
 
     suspend fun signOut(): Result<Unit>
 
