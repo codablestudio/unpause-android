@@ -43,8 +43,8 @@ class HomeActivity : BaseActivity() {
 
     private fun setupBottomNavigationBar() {
         val navGraphIds = listOf(
-            R.navigation.navigation_home
-//            R.navigation.navigation_activity,
+            R.navigation.navigation_home,
+            R.navigation.navigation_activity
 //            R.navigation.navigation_settings
         )
 

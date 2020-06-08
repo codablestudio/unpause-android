@@ -6,4 +6,7 @@
 
     <color name="textColorLight">#747474</color>
     <color name="textColorDark">#191212</color>
+
+    <color name="delete_red">#FF0000</color>
+    <color name="edit_yellow">#FFEB3B</color>
 </resources>

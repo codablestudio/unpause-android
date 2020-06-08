@@ -32,4 +32,16 @@
     <string name="email_confirmation_continue">We have sent you
     an email confirmation. Please verify your email and we will continue.
     </string>
+    <string name="from">From:</string>
+    <string name="to">To:</string>
+    <string name="job_description">Job description</string>
+    <string name="working_hours">Working hours</string>
+    <string name="n_hours_m_minutes">%d hours %d minutes</string>
+    <string name="shift_edited">Shift edited</string>
+    <string name="shift_removed">Shift removed</string>
+    <string name="shift_added">Shift added</string>
+    <string name="search">Search</string>
+    <string name="undo">Undo</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
 </resources>
