@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.activity_email_verification.*
 import studio.codable.unpause.R
 import studio.codable.unpause.base.activity.BaseActivity
 import studio.codable.unpause.screens.activity.home.HomeActivity
+import studio.codable.unpause.utilities.animation.AnimListener
 import javax.inject.Inject
 
 class EmailVerificationActivity : BaseActivity() {
@@ -52,23 +53,11 @@ class EmailVerificationActivity : BaseActivity() {
     }
     private fun initObservers() {
         verificationVm.userVerified.observe(this, Observer {
-            if (it) {
-                emailConfirmedAnimation.addAnimatorListener( (object: Animator.AnimatorListener{
-                    override fun onAnimationRepeat(animation: Animator?) {
-                        //do nothing
-                    }
-
+            if (it.hasBeenHandled) {
+                emailConfirmedAnimation.addAnimatorListener((object: AnimListener() {
                     override fun onAnimationEnd(animation: Animator?) {
                         startActivity(HomeActivity.getIntent(this@EmailVerificationActivity, email))
                         finish()
-                    }
-
-                    override fun onAnimationCancel(animation: Animator?) {
-                        //do nothing
-                    }
-
-                    override fun onAnimationStart(animation: Animator?) {
-                        //do nothing
                     }
                 }))
                 emailConfirmedAnimation.playAnimation()

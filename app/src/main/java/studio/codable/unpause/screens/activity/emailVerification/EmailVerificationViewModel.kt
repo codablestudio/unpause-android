@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import studio.codable.unpause.base.viewModel.BaseViewModel
 import studio.codable.unpause.repository.ILoginRepository
+import studio.codable.unpause.utilities.Event
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -17,25 +18,22 @@ class EmailVerificationViewModel @Inject constructor(
     private val loginRepository: ILoginRepository
 ) : BaseViewModel() {
 
-    private val _userVerified : MediatorLiveData<Boolean> by lazy { MediatorLiveData<Boolean>() }
-    val userVerified : LiveData<Boolean>
-        get() {
-            return _userVerified
-        }
+    private val _userVerified : MediatorLiveData<Event<Boolean>> by lazy { MediatorLiveData<Event<Boolean>>() }
+    val userVerified: LiveData<Event<Boolean>> = _userVerified
 
     private val result : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     private var verificationEmailSent : Boolean = false
     private val handler = Handler()
-    private lateinit var _email : String
-    private lateinit var _password : String
+    private lateinit var email : String
+    private lateinit var password : String
     private val runnable = Runnable {
         viewModelScope.launch {
-            process(loginRepository.verifyEmail(_email, _password)) {
-                if (!it && verificationEmailSent.not()) {
+            process(loginRepository.verifyEmail(email, password)) {
+                if (!it && !verificationEmailSent) {
                     viewModelScope.launch {
                         process(loginRepository.sendVerificationEmail()) {
-                            verificationEmailSent = true
                         }
+                        verificationEmailSent = true
                     }
                 }
                 result.value = it
@@ -45,19 +43,19 @@ class EmailVerificationViewModel @Inject constructor(
 
     init {
 
-        _userVerified.value = false
+        _userVerified.value = Event(false)
         _userVerified.addSource(result, Observer {
             if (!it) {
                 handler.postDelayed(runnable, 2000)
             } else {
-                _userVerified.value = true
+                _userVerified.value = Event(true)
             }
         })
     }
 
     fun waitForEmailVerification(email: String, password: String) {
-        _email = email
-        _password = password
+        this.email = email
+        this.password = password
         handler.post(runnable)
     }
 }
