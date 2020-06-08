@@ -34,8 +34,8 @@ class LoginViewModel @Inject constructor(
     private val _passwordSent : MutableLiveData<Event<Boolean>> by lazy { MutableLiveData<Event<Boolean>>() }
     val passwordSent : LiveData<Event<Boolean>> = _passwordSent
 
-    private val _userNotVerified : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
-    val userNotVerified : LiveData<Boolean> = _userNotVerified
+    private val _userVerified : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val userVerified : LiveData<Boolean> = _userVerified
 
     init {
         _userId.addSource(userId) {
@@ -50,7 +50,7 @@ class LoginViewModel @Inject constructor(
                 if (loginRepository.isUserVerified()) {
                     _userId.value = it
                 } else {
-                    _userNotVerified.value = true
+                    _userVerified.value = false
                 }
             }
         }

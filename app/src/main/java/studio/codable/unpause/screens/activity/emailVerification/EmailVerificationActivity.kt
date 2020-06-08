@@ -46,8 +46,8 @@ class EmailVerificationActivity : BaseActivity() {
         initUI()
     }
     private fun initUI() {
-        emailSentAnimation.playAnimation()
-        emailTextView.text = email
+        anim_email_sent.playAnimation()
+        text_email.text = email
 
         verificationVm.waitForEmailVerification(email, password)
     }

@@ -26,7 +26,7 @@
     <string name="register">Register</string>
     <string name="check_out">Check out</string>
     <string name="check_in">Check in</string>
-    <string name="password_reset_mail_sent">Password reset mail has been sent.</string>
+    <string name="password_reset_mail_has_been_sent">Password reset mail has been sent.</string>
     <string name="email_missing">Please enter your email in the box above.</string>
     <string name="email_sent_to">An email has been sent to:</string>
     <string name="email_confirmation_continue">We have sent you

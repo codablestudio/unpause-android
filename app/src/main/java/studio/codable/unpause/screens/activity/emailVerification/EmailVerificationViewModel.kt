@@ -21,7 +21,7 @@ class EmailVerificationViewModel @Inject constructor(
     private val _userVerified : MediatorLiveData<Event<Boolean>> by lazy { MediatorLiveData<Event<Boolean>>() }
     val userVerified: LiveData<Event<Boolean>> = _userVerified
 
-    private val result : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    private val verificationResult : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     private var verificationEmailSent : Boolean = false
     private val handler = Handler()
     private lateinit var email : String
@@ -35,16 +35,16 @@ class EmailVerificationViewModel @Inject constructor(
                         }
                         verificationEmailSent = true
                     }
+                } else {
+                    verificationResult.value = it
                 }
-                result.value = it
             }
         }
     }
 
     init {
-
         _userVerified.value = Event(false)
-        _userVerified.addSource(result, Observer {
+        _userVerified.addSource(verificationResult, Observer {
             if (!it) {
                 handler.postDelayed(runnable, 2000)
             } else {

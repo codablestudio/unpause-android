@@ -9,7 +9,7 @@ android:orientation="vertical"
 android:gravity="top|center"
 tools:context=".screens.activity.emailVerification.EmailVerificationActivity">
 <com.airbnb.lottie.LottieAnimationView
-    android:id="@+id/emailSentAnimation"
+    android:id="@+id/anim_email_sent"
     android:layout_width="250dp"
     android:layout_height="250dp"
     app:lottie_fileName="email_sent_animation.json"
@@ -23,7 +23,7 @@ tools:context=".screens.activity.emailVerification.EmailVerificationActivity">
     android:text="@string/email_sent_to"/>
 
 <TextView
-    android:id="@+id/emailTextView"
+    android:id="@+id/text_email"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:gravity="center"
