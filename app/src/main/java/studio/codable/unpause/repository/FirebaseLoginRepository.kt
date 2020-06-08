@@ -36,8 +36,11 @@ class FirebaseLoginRepository @Inject constructor(
         }
     }
 
-    override suspend fun verifyEmail(email: String, password: String): Result<Unit> {
-        TODO("Not yet implemented")
+    override suspend fun verifyEmail(email: String, password: String): Result<Boolean> {
+        return callFirebase(firebaseAuth.signInWithEmailAndPassword(email, password)) {
+            it.user!!.isEmailVerified
+        }
+
     }
 
     override suspend fun signOut(): Result<Unit> {
@@ -53,7 +56,9 @@ class FirebaseLoginRepository @Inject constructor(
     }
 
     override suspend fun sendPasswordResetEmail(email: String): Result<Unit> {
-        TODO("Not yet implemented")
+        return callFirebase(firebaseAuth.sendPasswordResetEmail(email)) {
+            Unit
+        }
     }
 
     override suspend fun signInWithGoogle(
@@ -64,8 +69,14 @@ class FirebaseLoginRepository @Inject constructor(
         return callFirebase(firebaseAuth.signInWithCredential(credential)) {
            it
         }
+    }
 
-
+    override fun isUserVerified(): Boolean {
+        return if (firebaseAuth.currentUser != null) {
+            firebaseAuth.currentUser!!.isEmailVerified
+        } else {
+            false
+        }
     }
 
     private suspend fun createUserInDatabase(
@@ -73,7 +84,14 @@ class FirebaseLoginRepository @Inject constructor(
         firstName: String,
         lastName: String
     ): Result<Unit> {
-        val user = User(email, firstName, lastName, email)
+        val user = User(email, email, firstName, lastName)
         return callFirebase(usersCol.document(email).set(user)) {}
+    }
+
+    override suspend fun sendVerificationEmail() : Result<Unit> {
+       return callFirebase(firebaseAuth.currentUser!!.sendEmailVerification()) {
+            Unit
+        }
+
     }
 }

@@ -29,6 +29,8 @@ buildscript {
         nav_version = '2.2.2'
 
         googleServicesAuth_version = '17.0.0'
+
+        lottie_version = '3.0.7'
     }
     repositories {
         google()

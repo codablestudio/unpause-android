@@ -4,6 +4,7 @@ import dagger.Subcomponent
 import studio.codable.unpause.app.di.scope.PerActivity
 import studio.codable.unpause.base.viewModel.di.ViewModelModule
 import studio.codable.unpause.repository.di.RepositoryModule
+import studio.codable.unpause.screens.activity.emailVerification.EmailVerificationActivity
 import studio.codable.unpause.screens.activity.home.HomeActivity
 import studio.codable.unpause.screens.activity.login.LoginActivity
 import studio.codable.unpause.screens.activity.register.RegisterActivity
@@ -17,4 +18,5 @@ interface ActivityComponent {
     fun inject(loginActivity: LoginActivity)
     fun inject(registerActivity: RegisterActivity)
     fun inject(homeActivity: HomeActivity)
+    fun inject(emailVerificationActivity: EmailVerificationActivity)
 }

@@ -54,6 +54,21 @@ class LoginActivity : BaseActivity() {
             startActivity(HomeActivity.getIntent(this, it))
             finish()
         })
+
+        loginVm.passwordSent.observe(this, Observer {
+            it.getContentIfNotHandled()?.let {
+                showMessage(getString(R.string.password_reset_mail_has_been_sent))
+            }
+        })
+//        uncomment to enable verification
+//        loginVm.userVerified.observe(this, Observer {
+//            if (!it) {
+//                startActivity(EmailVerificationActivity.getIntent(this,
+//                    text_email.text.toString(),
+//                    text_password.text.toString()))
+//                finish()
+//            }
+//        })
     }
 
     private fun initUI() {
@@ -79,6 +94,14 @@ class LoginActivity : BaseActivity() {
         btn_sign_in_with_google.setOnClickListener {
             val intent = googleSignInClient.signInIntent
             startActivityForResult(intent, Constants.RequestCode.GOOGLE_SIGN_IN)
+        }
+
+        btn_forgot_password.setOnClickListener {
+            if (text_email.text.isNotBlank()) {
+                loginVm.sendPasswordResetEmail(text_email.text.toString())
+            } else {
+                showMessage(getString(R.string.email_missing))
+            }
         }
     }
 
