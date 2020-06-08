@@ -84,7 +84,14 @@ class FirebaseLoginRepository @Inject constructor(
         firstName: String,
         lastName: String
     ): Result<Unit> {
-        val user = User(email, firstName, lastName, email)
+        val user = User(email, email, firstName, lastName)
         return callFirebase(usersCol.document(email).set(user)) {}
+    }
+
+    override suspend fun sendVerificationEmail() : Result<Unit> {
+       return callFirebase(firebaseAuth.currentUser!!.sendEmailVerification()) {
+            Unit
+        }
+
     }
 }

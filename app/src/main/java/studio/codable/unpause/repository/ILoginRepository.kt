@@ -28,4 +28,6 @@ interface ILoginRepository {
     suspend fun signInWithGoogle(account: GoogleSignInAccount, clientId: String): Result<AuthResult>
 
     fun isUserVerified(): Boolean
+
+    suspend fun sendVerificationEmail() : Result<Unit>
 }

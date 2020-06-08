@@ -61,15 +61,15 @@ class LoginActivity : BaseActivity() {
                 showMessage(getString(R.string.password_reset_mail_sent))
             }
         })
-
-        loginVm.userNotVerified.observe(this, Observer {
-            if (it) {
-                startActivity(EmailVerificationActivity.getIntent(this,
-                    text_email.text.toString(),
-                    text_password.text.toString()))
-                finish()
-            }
-        })
+//        uncomment to enable verification
+//        loginVm.userNotVerified.observe(this, Observer {
+//            if (it) {
+//                startActivity(EmailVerificationActivity.getIntent(this,
+//                    text_email.text.toString(),
+//                    text_password.text.toString()))
+//                finish()
+//            }
+//        })
     }
 
     private fun initUI() {
