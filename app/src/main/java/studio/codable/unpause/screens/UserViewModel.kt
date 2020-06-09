@@ -1,6 +1,7 @@
 package studio.codable.unpause.screens
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
@@ -23,16 +24,19 @@ class UserViewModel @Inject constructor(
     private val sessionManager: SessionManager
 ) : BaseViewModel() {
 
-    init {
-        getUser()
-        getShifts()
-    }
-
-    private val _user = MutableLiveData<User>()
+    private val _user = MediatorLiveData<User>()
     val user: LiveData<User> = _user
 
     private val _shifts = MutableLiveData<List<Shift>>()
     val shifts: LiveData<List<Shift>> = _shifts
+
+    init {
+        _user.addSource(_shifts, androidx.lifecycle.Observer {
+            _user.value?.shifts = it as ArrayList<Shift>
+        })
+        getUser()
+        getShifts()
+    }
 
     var isCheckedIn: Boolean
         get() = sessionManager.isCheckedIn
@@ -80,6 +84,28 @@ class UserViewModel @Inject constructor(
                 process(shiftRepository.update(sessionManager.userId, updated)) {
                     getShifts()
                 }
+            }
+        }
+    }
+
+    fun updateUserInDatabase(user: User) {
+        viewModelScope.launch {
+            process(userRepository.updateUser(user)) {}
+        }
+    }
+
+    fun deleteShift(shift: Shift) {
+        viewModelScope.launch {
+            process(shiftRepository.delete(_user.value!!.id, shift)) {
+                updateUserInDatabase(_user.value!!)
+            }
+        }
+    }
+
+    fun editShift(shift: Shift) {
+        viewModelScope.launch {
+            process(shiftRepository.update(_user.value!!.id, shift)) {
+                updateUserInDatabase(_user.value!!)
             }
         }
     }

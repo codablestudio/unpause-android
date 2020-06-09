@@ -44,4 +44,16 @@
     <string name="undo">Undo</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
+    <string name="working_hours_must_be_positive">Working hours must be positive</string>
+    <string name="total_working_hours_message">You have been working for %s hours and %s minutes, would you like to
+        continue?
+    </string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="what_did_you_work_on">What did you work on?</string>
+    <string name="adding_shift">Adding shift</string>
+    <string name="you_arived_at">You arived at:</string>
+    <string name="continue_text">Continue</string>
+    <string name="you_are_leaving_at">You are leaving at:</string>
+
 </resources>

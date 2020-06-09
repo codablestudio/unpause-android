@@ -14,6 +14,7 @@ import kotlinx.android.synthetic.main.item_user_activity.view.*
 import studio.codable.unpause.R
 import studio.codable.unpause.model.Shift
 import studio.codable.unpause.utilities.adapter.SwipeActions
+import studio.codable.unpause.utilities.manager.TimeManager
 import java.util.*
 
 
@@ -39,140 +40,139 @@ class UserActivityRecyclerViewAdapter constructor(
         return shifts.size
     }
 
-    //TODO: make it work
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-//        val timeManager =
-//            TimeManager(shifts[position].arrivalTime!!, shifts[position].exitTime!!)
-//
-//        holder.itemView.text_arrived_at_time.text = timeManager.arrivalToArray()[0]
-//        holder.itemView.text_arrived_at_date.text = timeManager.arrivalToArray()[1]
-//
-//        holder.itemView.text_left_at_time.text = timeManager.exitToArray()[0]
-//        holder.itemView.text_left_at_date.text = timeManager.exitToArray()[1]
-//
-//        holder.itemView.text_working_hours.text = context.getString(
-//            R.string.n_hours_m_minutes,
-//            timeManager.getWorkingHours()[0],
-//            timeManager.getWorkingHours()[1]
-//        )
-//
-//        holder.itemView.text_job_description.text = shifts[position].description
+        val timeManager =
+            TimeManager(shifts[position].arrivalTime!!, shifts[position].exitTime!!)
+
+        holder.itemView.text_arrived_at_time.text = timeManager.arrivalToArray()[0]
+        holder.itemView.text_arrived_at_date.text = timeManager.arrivalToArray()[1]
+
+        holder.itemView.text_left_at_time.text = timeManager.exitToArray()[0]
+        holder.itemView.text_left_at_date.text = timeManager.exitToArray()[1]
+
+        holder.itemView.text_working_hours.text = context.getString(
+            R.string.n_hours_m_minutes,
+            timeManager.getWorkingHours()[0],
+            timeManager.getWorkingHours()[1]
+        )
+
+        holder.itemView.text_job_description.text = shifts[position].description
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int, payloads: MutableList<Any>) {
-//        if (payloads.isEmpty()) {
-//            onBindViewHolder(holder, position)
-//        } else {
-//
-//            val timeManager =
-//                TimeManager(shifts[position].arrivalTime!!, shifts[position].exitTime!!)
-//
-//            payloads.forEach { list ->
-//
-//                (list as List<Any?>).forEach {
-//
-//                    if (it is ShiftsDiffCallback.ArrivalTimeChanged) {
-//                        crossFadeTextView(
-//                            holder.itemView.text_arrived_at_time,
-//                            timeManager.arrivalToArray()[0]
-//                        )
-//
-//                        crossFadeTextView(
-//                            holder.itemView.text_working_hours, context.getString(
-//                                R.string.n_hours_m_minutes,
-//                                timeManager.getWorkingHours()[0],
-//                                timeManager.getWorkingHours()[1]
-//                            )
-//                        )
-//                    }
-//
-//                    if (it is ShiftsDiffCallback.ArrivalDateChanged) {
-//                        crossFadeTextView(
-//                            holder.itemView.text_arrived_at_date,
-//                            timeManager.arrivalToArray()[1]
-//                        )
-//
-//                        crossFadeTextView(
-//                            holder.itemView.text_working_hours, context.getString(
-//                                R.string.n_hours_m_minutes,
-//                                timeManager.getWorkingHours()[0],
-//                                timeManager.getWorkingHours()[1]
-//                            )
-//                        )
-//                    }
-//
-//                    if (it is ShiftsDiffCallback.ExitTimeChanged) {
-//                        crossFadeTextView(
-//                            holder.itemView.text_left_at_time,
-//                            timeManager.exitToArray()[0]
-//                        )
-//
-//                        crossFadeTextView(
-//                            holder.itemView.text_working_hours, context.getString(
-//                                R.string.n_hours_m_minutes,
-//                                timeManager.getWorkingHours()[0],
-//                                timeManager.getWorkingHours()[1]
-//                            )
-//                        )
-//                    }
-//
-//                    if (it is ShiftsDiffCallback.ExitDateChanged) {
-//                        crossFadeTextView(
-//                            holder.itemView.text_left_at_date,
-//                            timeManager.exitToArray()[1]
-//                        )
-//
-//                        crossFadeTextView(
-//                            holder.itemView.text_working_hours, context.getString(
-//                                R.string.n_hours_m_minutes,
-//                                timeManager.getWorkingHours()[0],
-//                                timeManager.getWorkingHours()[1]
-//                            )
-//                        )
-//                    }
-//
-//                    if (it is ShiftsDiffCallback.DescriptionChanged) {
-//                        crossFadeTextView(
-//                            holder.itemView.text_job_description,
-//                            shifts[position].description
-//                        )
-//                    }
-//                }
-//            }
-//        }
+        if (payloads.isEmpty()) {
+            onBindViewHolder(holder, position)
+        } else {
+
+            val timeManager =
+                TimeManager(shifts[position].arrivalTime!!, shifts[position].exitTime!!)
+
+            payloads.forEach { list ->
+
+                (list as List<Any?>).forEach {
+
+                    if (it is ShiftsDiffCallback.ArrivalTimeChanged) {
+                        crossFadeTextView(
+                            holder.itemView.text_arrived_at_time,
+                            timeManager.arrivalToArray()[0]
+                        )
+
+                        crossFadeTextView(
+                            holder.itemView.text_working_hours, context.getString(
+                                R.string.n_hours_m_minutes,
+                                timeManager.getWorkingHours()[0],
+                                timeManager.getWorkingHours()[1]
+                            )
+                        )
+                    }
+
+                    if (it is ShiftsDiffCallback.ArrivalDateChanged) {
+                        crossFadeTextView(
+                            holder.itemView.text_arrived_at_date,
+                            timeManager.arrivalToArray()[1]
+                        )
+
+                        crossFadeTextView(
+                            holder.itemView.text_working_hours, context.getString(
+                                R.string.n_hours_m_minutes,
+                                timeManager.getWorkingHours()[0],
+                                timeManager.getWorkingHours()[1]
+                            )
+                        )
+                    }
+
+                    if (it is ShiftsDiffCallback.ExitTimeChanged) {
+                        crossFadeTextView(
+                            holder.itemView.text_left_at_time,
+                            timeManager.exitToArray()[0]
+                        )
+
+                        crossFadeTextView(
+                            holder.itemView.text_working_hours, context.getString(
+                                R.string.n_hours_m_minutes,
+                                timeManager.getWorkingHours()[0],
+                                timeManager.getWorkingHours()[1]
+                            )
+                        )
+                    }
+
+                    if (it is ShiftsDiffCallback.ExitDateChanged) {
+                        crossFadeTextView(
+                            holder.itemView.text_left_at_date,
+                            timeManager.exitToArray()[1]
+                        )
+
+                        crossFadeTextView(
+                            holder.itemView.text_working_hours, context.getString(
+                                R.string.n_hours_m_minutes,
+                                timeManager.getWorkingHours()[0],
+                                timeManager.getWorkingHours()[1]
+                            )
+                        )
+                    }
+
+                    if (it is ShiftsDiffCallback.DescriptionChanged) {
+                        crossFadeTextView(
+                            holder.itemView.text_job_description,
+                            shifts[position].description
+                        )
+                    }
+                }
+            }
+        }
     }
 
     override fun deleteItem(rootView: View, position: Int) {
-//        recentlyDeleted.add(shifts[position])
-//        recentlyDeletedPosition.add(position)
-//        shifts.removeAt(position)
-//        notifyItemRemoved(position)
-//        showUndoSnackbar(rootView)
+        recentlyDeleted.add(shifts[position])
+        recentlyDeletedPosition.add(position)
+        shifts.removeAt(position)
+        notifyItemRemoved(position)
+        showUndoSnackbar(rootView)
     }
 
-//    private fun showUndoSnackbar(rv: View) {
-//        val snackbar =
-//            Snackbar.make(rv, context.getString(R.string.shift_removed), Snackbar.LENGTH_LONG)
-//                .apply {
-//                    anchorView = rv.findViewById(R.id.bottomNavigation)
-//                    setAction(context.getString(R.string.undo)) { undoDelete() }
-//
-//                    addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>() {
-//                        override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
-//                            if (event == DISMISS_EVENT_TIMEOUT || event == DISMISS_EVENT_SWIPE || event == DISMISS_EVENT_CONSECUTIVE) {
-//                                while (recentlyDeleted.size > 0) {
-//                                    listener.onDelete(
-//                                        recentlyDeleted.remove(),
-//                                        recentlyDeletedPosition.remove()
-//                                    )
-//                                }
-//                            }
-//                        }
-//                    })
-//                }
-//        snackbar.show()
-//    }
+    private fun showUndoSnackbar(rv: View) {
+        val snackbar =
+            Snackbar.make(rv, context.getString(R.string.shift_removed), Snackbar.LENGTH_LONG)
+                .apply {
+                    anchorView = rv.findViewById(R.id.nav_host_home_activity)
+                    setAction(context.getString(R.string.undo)) { undoDelete() }
+
+                    addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>() {
+                        override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                            if (event == DISMISS_EVENT_TIMEOUT || event == DISMISS_EVENT_SWIPE || event == DISMISS_EVENT_CONSECUTIVE) {
+                                while (recentlyDeleted.size > 0) {
+                                    listener.onDelete(
+                                        recentlyDeleted.remove(),
+                                        recentlyDeletedPosition.remove()
+                                    )
+                                }
+                            }
+                        }
+                    })
+                }
+        snackbar.show()
+    }
 
     private fun undoDelete() {
         val recDelPos = recentlyDeletedPosition.remove()
@@ -187,12 +187,12 @@ class UserActivityRecyclerViewAdapter constructor(
     fun updateContent(newShifts: List<Shift>) {
 
         val sorted = newShifts.sortedByDescending { it.arrivalTime } // to be displayed
-        val diffResult = DiffUtil.calculateDiff(ShiftsDiffCallback(this.shifts, sorted), true)
+//        val diffResult = DiffUtil.calculateDiff(ShiftsDiffCallback(this.shifts, sorted), true)
 
         shifts.clear()
         shifts.addAll(sorted)
-
-        diffResult.dispatchUpdatesTo(this)
+        notifyDataSetChanged()
+//        diffResult.dispatchUpdatesTo(this)
     }
 
     private fun crossFadeTextView(textView: TextView, newText: String?, duration: Long = 1000) {
