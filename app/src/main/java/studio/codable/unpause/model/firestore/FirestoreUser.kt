@@ -1,6 +1,7 @@
 package studio.codable.unpause.model.firestore
 
 import com.google.firebase.firestore.DocumentId
+import com.google.firebase.firestore.DocumentReference
 import studio.codable.unpause.model.Shift
 import studio.codable.unpause.model.User
 import java.util.HashMap
@@ -11,7 +12,8 @@ data class FirestoreUser(
     var email: String = "",
     var firstName: String? = "",
     var lastName: String? = "",
-    var shifts: List<FirestoreShift>? = null
+    var shifts: List<FirestoreShift>? = null,
+    var companyReference: DocumentReference? = null
 ) {
     companion object {
         const val FIRST_NAME = "firstName"

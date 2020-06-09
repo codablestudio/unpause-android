@@ -1,9 +1,11 @@
 package studio.codable.unpause.screens.fragment.userActivity
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.FileProvider
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -11,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.leinardi.android.speeddial.SpeedDialView
 import kotlinx.android.synthetic.main.fragment_user_activity.*
+import studio.codable.unpause.BuildConfig
 
 import studio.codable.unpause.R
 import studio.codable.unpause.base.activity.BaseActivity
@@ -24,11 +27,11 @@ import studio.codable.unpause.utilities.adapter.userActivityRecyclerViewAdapter.
 import studio.codable.unpause.utilities.manager.TimeManager
 import studio.codable.unpause.utilities.manager.DialogManager
 import studio.codable.unpause.utils.adapters.userActivityRecyclerViewAdapter.SwipeActionCallback
+import java.io.File
 import java.util.*
 
 class UserActivityFragment : BaseFragment(false) {
 
-    //TODO: make it work
     private val userVm: UserViewModel by activityViewModels()
 
     private var listener: UserActivityRecyclerViewAdapter.UserActivityListener? = null
@@ -140,50 +143,50 @@ class UserActivityFragment : BaseFragment(false) {
 //            startEmailActivity(file)
 //        }
 //    }
-//
+
 //    private fun startEmailActivity(file: File?) {
 //        val emailIntent = prepareEmail(file)
 //        startActivity(Intent.createChooser(emailIntent, getString(R.string.send_email)))
 //    }
-//
+
 //    private fun prepareEmail(file: File?): Intent {
-//        val uri =
-//            FileProvider.getUriForFile(context!!, BuildConfig.APPLICATION_ID, file!!)
-//
-//        val emailIntent = Intent(Intent.ACTION_SEND)
-//        emailIntent.type = "text/html"
-//        val to = arrayOf(user?.boss?.email.toString())
-//        emailIntent.putExtra(Intent.EXTRA_EMAIL, to)
-//        emailIntent.putExtra(Intent.EXTRA_STREAM, uri)
-//        emailIntent.putExtra(
-//            Intent.EXTRA_SUBJECT,
-//            getString(R.string.email_subject, user?.firstName, user?.lastName)
-//        )
-//        emailIntent.putExtra(
-//            Intent.EXTRA_TEXT,
-//            getString(
-//                R.string.email_body,
-//                user?.boss?.firstName,
-//                timeManager.arrivalToArray()[1],
-//                timeManager.exitToArray()[1],
-//                user?.firstName,
-//                user?.lastName
-//            )
-//        )
-//        return emailIntent
-//    }
-//
-//    private fun openCSV(file: File?) {
-//        val csvIntent = Intent(Intent.ACTION_VIEW)
-//
-//        val uri =
-//            FileProvider.getUriForFile(context!!, BuildConfig.APPLICATION_ID, file!!)
-//
-//        csvIntent.setDataAndType(uri, "text/csv")
-//        csvIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-//        csvIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-//        activity!!.startActivity(csvIntent)
-//    }
+////        val uri =
+////            FileProvider.getUriForFile(requireContext(), BuildConfig.APPLICATION_ID, file!!)
+////
+////        val emailIntent = Intent(Intent.ACTION_SEND)
+////        emailIntent.type = "text/html"
+////        val to = arrayOf(user?.boss?.email.toString())
+////        emailIntent.putExtra(Intent.EXTRA_EMAIL, to)
+////        emailIntent.putExtra(Intent.EXTRA_STREAM, uri)
+////        emailIntent.putExtra(
+////            Intent.EXTRA_SUBJECT,
+////            getString(R.string.email_subject, user?.firstName, user?.lastName)
+////        )
+////        emailIntent.putExtra(
+////            Intent.EXTRA_TEXT,
+////            getString(
+////                R.string.email_body,
+////                user?.boss?.firstName,
+////                timeManager.arrivalToArray()[1],
+////                timeManager.exitToArray()[1],
+////                user?.firstName,
+////                user?.lastName
+////            )
+////        )
+////        return emailIntent
+////    }
+
+    private fun openCSV(file: File?) {
+        val csvIntent = Intent(Intent.ACTION_VIEW)
+
+        val uri =
+            FileProvider.getUriForFile(requireContext(), BuildConfig.APPLICATION_ID, file!!)
+
+        csvIntent.setDataAndType(uri, "text/csv")
+        csvIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+        csvIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        requireActivity().startActivity(csvIntent)
+    }
 
 //    private fun initSpeedDialView() {
 //        speedDialView = speed_dial_view

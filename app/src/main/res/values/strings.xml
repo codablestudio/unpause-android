@@ -55,5 +55,6 @@
     <string name="you_arived_at">You arived at:</string>
     <string name="continue_text">Continue</string>
     <string name="you_are_leaving_at">You are leaving at:</string>
+    <string name="send_email">Send email…</string>
 
 </resources>
