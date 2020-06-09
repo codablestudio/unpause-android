@@ -1,7 +1,6 @@
 package studio.codable.unpause.screens.fragment.userActivity
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,12 +16,11 @@ import studio.codable.unpause.R
 import studio.codable.unpause.base.activity.BaseActivity
 import studio.codable.unpause.base.fragment.BaseFragment
 import studio.codable.unpause.model.Shift
-import studio.codable.unpause.model.User
 import studio.codable.unpause.screens.UserViewModel
 import studio.codable.unpause.screens.fragment.datePicker.DatePickerFragment
 import studio.codable.unpause.screens.fragment.descriptionDialog.DescriptionDialogFragment
 import studio.codable.unpause.screens.fragment.workingTimeWarning.WorkingTimeWarningFragment
-import studio.codable.unpause.utils.adapters.userActivityRecyclerViewAdapter.UserActivityRecyclerViewAdapter
+import studio.codable.unpause.utilities.adapter.userActivityRecyclerViewAdapter.UserActivityRecyclerViewAdapter
 import studio.codable.unpause.utilities.manager.TimeManager
 import studio.codable.unpause.utilities.manager.DialogManager
 import studio.codable.unpause.utils.adapters.userActivityRecyclerViewAdapter.SwipeActionCallback

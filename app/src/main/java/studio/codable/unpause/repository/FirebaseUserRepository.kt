@@ -32,7 +32,9 @@ class FirebaseUserRepository @Inject constructor(
     }
 
     override suspend fun updateUser(user: User): Result<Unit> {
-        TODO("Not yet implemented")
+        return callFirebase(usersCol.document(user.id).update(FirestoreUser(user, user.shifts).asHashMap())) {
+            Unit
+        }
     }
 
     override suspend fun isUserVerified(user: User): Result<Boolean> {

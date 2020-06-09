@@ -1,4 +1,4 @@
-package studio.codable.unpause.utils.adapters.userActivityRecyclerViewAdapter
+package studio.codable.unpause.utilities.adapter.userActivityRecyclerViewAdapter
 
 import android.animation.ObjectAnimator
 import android.content.Context
@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
@@ -15,6 +14,7 @@ import studio.codable.unpause.R
 import studio.codable.unpause.model.Shift
 import studio.codable.unpause.utilities.adapter.SwipeActions
 import studio.codable.unpause.utilities.manager.TimeManager
+import studio.codable.unpause.utils.adapters.userActivityRecyclerViewAdapter.ShiftsDiffCallback
 import java.util.*
 
 
@@ -187,12 +187,10 @@ class UserActivityRecyclerViewAdapter constructor(
     fun updateContent(newShifts: List<Shift>) {
 
         val sorted = newShifts.sortedByDescending { it.arrivalTime } // to be displayed
-//        val diffResult = DiffUtil.calculateDiff(ShiftsDiffCallback(this.shifts, sorted), true)
 
         shifts.clear()
         shifts.addAll(sorted)
         notifyDataSetChanged()
-//        diffResult.dispatchUpdatesTo(this)
     }
 
     private fun crossFadeTextView(textView: TextView, newText: String?, duration: Long = 1000) {

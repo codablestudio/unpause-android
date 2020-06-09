@@ -31,10 +31,10 @@ class UserViewModel @Inject constructor(
     val shifts: LiveData<List<Shift>> = _shifts
 
     init {
+        getUser()
         _user.addSource(_shifts, androidx.lifecycle.Observer {
             _user.value?.shifts = it as ArrayList<Shift>
         })
-        getUser()
         getShifts()
     }
 
@@ -88,16 +88,19 @@ class UserViewModel @Inject constructor(
         }
     }
 
-    fun updateUserInDatabase(user: User) {
+    private fun updateUserInDatabase(user: User) {
         viewModelScope.launch {
-            process(userRepository.updateUser(user)) {}
+                process(userRepository.updateUser(user)) {
+                getUser()
+                getShifts()
+            }
         }
     }
 
     fun deleteShift(shift: Shift) {
         viewModelScope.launch {
             process(shiftRepository.delete(_user.value!!.id, shift)) {
-                updateUserInDatabase(_user.value!!)
+                getShifts()
             }
         }
     }
@@ -105,7 +108,7 @@ class UserViewModel @Inject constructor(
     fun editShift(shift: Shift) {
         viewModelScope.launch {
             process(shiftRepository.update(_user.value!!.id, shift)) {
-                updateUserInDatabase(_user.value!!)
+                getShifts()
             }
         }
     }

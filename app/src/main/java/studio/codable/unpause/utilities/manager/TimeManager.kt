@@ -4,6 +4,7 @@ import studio.codable.unpause.utilities.helperFunctions.createDate
 import studio.codable.unpause.utilities.helperFunctions.minute
 import studio.codable.unpause.utilities.helperFunctions.toPattern
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 class TimeManager(var arrivalTime: Date, var exitTime: Date) {
@@ -16,7 +17,7 @@ class TimeManager(var arrivalTime: Date, var exitTime: Date) {
      * the following format: [hours: Int, minutes: Int]
      */
     fun getWorkingHours(): IntArray {
-        val diff = exitTime.seconds - arrivalTime.seconds
+        val diff = TimeUnit.SECONDS.convert(exitTime.time - arrivalTime.time, TimeUnit.MILLISECONDS)
         val hours = diff / (60 * 60)
         var minutes = exitTime.minute() - arrivalTime.minute()
         if (minutes < 0) minutes += 60
@@ -28,7 +29,7 @@ class TimeManager(var arrivalTime: Date, var exitTime: Date) {
      * arrival time in hours
      */
     fun getWorkingHoursDecimal(): Double {
-        val diff = exitTime.seconds - arrivalTime.seconds
+        val diff = TimeUnit.SECONDS.convert(exitTime.time - arrivalTime.time, TimeUnit.MILLISECONDS)
         val hours = diff / (60 * 60)
         val minutes = diff / 60 % 60
         return hours + minutes / 60.0

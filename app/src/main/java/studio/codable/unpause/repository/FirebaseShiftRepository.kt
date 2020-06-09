@@ -66,6 +66,18 @@ class FirebaseShiftRepository @Inject constructor(
     }
 
     override suspend fun delete(userId: String, shift: Shift): Result<Unit> {
-        TODO("Not yet implemented")
+        return callFirebase(usersCol.document(userId).get()) {
+            val shifts =
+                FirebaseUserRepository.extractFirestoreUser(it).extractShifts() as ArrayList
+
+            shifts.remove(shift)
+
+            callFirebaseRawResult(
+                usersCol.document(userId)
+                    .update(mapOf<String, List<FirestoreShift>>("shifts" to shifts.map { regular ->
+                        FirestoreShift(regular)
+                    }))
+            ) { }
+        }
     }
 }
