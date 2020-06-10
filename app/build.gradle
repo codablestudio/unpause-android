@@ -116,4 +116,7 @@ dependencies {
 
     //Speed Dial
     implementation "com.leinardi.android:speed-dial:$speedDial_version"
+
+    //CSV
+    implementation "com.opencsv:opencsv:$openCsv_version"
 }

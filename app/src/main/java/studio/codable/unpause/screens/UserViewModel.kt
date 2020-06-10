@@ -6,12 +6,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import studio.codable.unpause.base.viewModel.BaseViewModel
+import studio.codable.unpause.model.Company
 import studio.codable.unpause.model.Shift
 import studio.codable.unpause.model.User
+import studio.codable.unpause.repository.ICompanyRepository
 import studio.codable.unpause.repository.IShiftRepository
 import studio.codable.unpause.repository.IUserRepository
 import studio.codable.unpause.utilities.extensions.active
 import studio.codable.unpause.utilities.manager.SessionManager
+import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
@@ -21,6 +24,8 @@ class UserViewModel @Inject constructor(
     private val userRepository: IUserRepository,
     @Named("firebaseShiftRepository")
     private val shiftRepository: IShiftRepository,
+    @Named("firebaseCompanyRepository")
+    private val companyRepository: ICompanyRepository,
     private val sessionManager: SessionManager
 ) : BaseViewModel() {
 
@@ -30,12 +35,20 @@ class UserViewModel @Inject constructor(
     private val _shifts = MutableLiveData<List<Shift>>()
     val shifts: LiveData<List<Shift>> = _shifts
 
+    private val _company = MutableLiveData<Company>()
+    val company: LiveData<Company> = _company
+
     init {
         getUser()
         _user.addSource(_shifts, androidx.lifecycle.Observer {
             _user.value?.shifts = it as ArrayList<Shift>
+            Timber.i(_user.value.toString())
         })
         getShifts()
+        _user.addSource(_company, androidx.lifecycle.Observer {
+            _user.value?.company = it
+            Timber.i(_user.value.toString())
+        })
     }
 
     var isCheckedIn: Boolean
@@ -57,6 +70,7 @@ class UserViewModel @Inject constructor(
         viewModelScope.launch {
             process(userRepository.getUser(sessionManager.userId)) {
                 _user.value = it
+                it.companyPath?.let { id -> getCompany(id) }
             }
         }
     }
@@ -65,6 +79,14 @@ class UserViewModel @Inject constructor(
         viewModelScope.launch {
             process(shiftRepository.getAll(sessionManager.userId)) {
                 _shifts.value = it
+            }
+        }
+    }
+
+    private fun getCompany(companyPath : String) {
+        viewModelScope.launch {
+            process(companyRepository.getCompany(companyPath)) {
+                _company.value = it
             }
         }
     }
@@ -111,5 +133,9 @@ class UserViewModel @Inject constructor(
                 getShifts()
             }
         }
+    }
+
+    fun addCustomShift(shift: Shift) {
+        addShift(shift)
     }
 }

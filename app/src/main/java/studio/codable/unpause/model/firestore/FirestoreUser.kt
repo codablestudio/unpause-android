@@ -30,7 +30,7 @@ data class FirestoreUser(
     }
 
     fun toUser(): User {
-        return User(documentId, email, firstName, lastName)
+        return User(documentId, email, firstName, lastName,companyPath = companyReference?.path)
     }
 
     fun extractShifts(): List<Shift> {

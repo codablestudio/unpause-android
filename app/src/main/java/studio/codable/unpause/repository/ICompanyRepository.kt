@@ -5,5 +5,6 @@ import studio.codable.unpause.utilities.networking.Result
 
 interface ICompanyRepository {
 
-    suspend fun getUser(companyId: String): Result<Company>
+    suspend fun getCompany(companyPath: String): Result<Company>
+
 }

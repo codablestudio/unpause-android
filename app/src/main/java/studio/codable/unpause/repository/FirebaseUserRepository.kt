@@ -22,7 +22,9 @@ class FirebaseUserRepository @Inject constructor(
     private val usersCol = firestore.collection(Constants.FirestoreCollections.USERS)
 
     override suspend fun getUser(userId: String): Result<User> {
-        return callFirebase(usersCol.document(userId).get()) { extractFirestoreUser(it).toUser() }
+        return callFirebase(usersCol.document(userId).get()) {
+            extractFirestoreUser(it).toUser()
+        }
     }
 
     override suspend fun createUser(user: User): Result<Unit> {

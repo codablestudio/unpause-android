@@ -47,11 +47,12 @@ class LoginViewModel @Inject constructor(
         _loading.value = Event(true)
         viewModelScope.launch {
             process(loginRepository.login(email, password)) {
-                if (loginRepository.isUserVerified()) {
+//                  uncomment to enable verification
+//                if (loginRepository.isUserVerified()) {
                     _userId.value = it
-                } else {
-                    _userVerified.value = false
-                }
+//                } else {
+//                    _userVerified.value = false
+//                }
             }
         }
     }

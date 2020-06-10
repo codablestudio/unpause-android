@@ -6,6 +6,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import studio.codable.unpause.model.User
+import studio.codable.unpause.model.firestore.FirestoreUser
 import studio.codable.unpause.utilities.Constants
 import studio.codable.unpause.utilities.networking.Result
 import studio.codable.unpause.utilities.networking.callFirebase
@@ -85,7 +86,7 @@ class FirebaseLoginRepository @Inject constructor(
         lastName: String
     ): Result<Unit> {
         val user = User(email, email, firstName, lastName)
-        return callFirebase(usersCol.document(email).set(user)) {}
+        return callFirebase(usersCol.document(email).set(FirestoreUser(user))) {}
     }
 
     override suspend fun sendVerificationEmail() : Result<Unit> {

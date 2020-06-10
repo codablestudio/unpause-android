@@ -27,6 +27,7 @@ import studio.codable.unpause.utilities.adapter.userActivityRecyclerViewAdapter.
 import studio.codable.unpause.utilities.manager.TimeManager
 import studio.codable.unpause.utilities.manager.DialogManager
 import studio.codable.unpause.utils.adapters.userActivityRecyclerViewAdapter.SwipeActionCallback
+import studio.codable.unpause.utils.openCSV.OpenCSVWriter
 import java.io.File
 import java.util.*
 
@@ -61,7 +62,7 @@ class UserActivityFragment : BaseFragment(false) {
 
             intTimeManager()
 
-//            initSpeedDialView()
+            initSpeedDialView()
 
             from_date_text_view.text = timeManager.arrivalToArray()[1]
             to_date_text_view.text = timeManager.exitToArray()[1]
@@ -126,55 +127,48 @@ class UserActivityFragment : BaseFragment(false) {
         itemTouchHelper.attachToRecyclerView(mRecyclerView)
     }
 
-//    private fun sendCSV() {
-//
-//        if (user?.boss == null) {
+    private fun sendCSV() {
+
+//        if (userVm.user.value?.company == null) {
 //            val intent = Intent(context, BossInfoActivity::class.java)
 //            startActivityForResult(intent, 1234)
 //        } else {
-//            val file = OpenCSVWriter.writeShiftsToCSV(
-//                context,
-//                user!!.getUserActivity(
-//                    timeManager.arrivalTime,
-//                    timeManager.exitTime
-//                ),
-//                getString(R.string.csv_file_name, user?.firstName, user?.lastName)
-//            )
-//            startEmailActivity(file)
+            val file = OpenCSVWriter.writeShiftsToCSV(
+                context,
+                userVm.user.value!!.getUserActivity(
+                    timeManager.arrivalTime,
+                    timeManager.exitTime
+                ),
+                getString(R.string.csv_file_name, userVm.user.value?.firstName, userVm.user.value?.lastName)
+            )
+            startEmailActivity(file)
 //        }
-//    }
+    }
 
-//    private fun startEmailActivity(file: File?) {
-//        val emailIntent = prepareEmail(file)
-//        startActivity(Intent.createChooser(emailIntent, getString(R.string.send_email)))
-//    }
+    private fun startEmailActivity(file: File?) {
+        val emailIntent = prepareEmail(file)
+        startActivity(Intent.createChooser(emailIntent, getString(R.string.send_email)))
+    }
 
-//    private fun prepareEmail(file: File?): Intent {
-////        val uri =
-////            FileProvider.getUriForFile(requireContext(), BuildConfig.APPLICATION_ID, file!!)
-////
-////        val emailIntent = Intent(Intent.ACTION_SEND)
-////        emailIntent.type = "text/html"
-////        val to = arrayOf(user?.boss?.email.toString())
-////        emailIntent.putExtra(Intent.EXTRA_EMAIL, to)
-////        emailIntent.putExtra(Intent.EXTRA_STREAM, uri)
-////        emailIntent.putExtra(
-////            Intent.EXTRA_SUBJECT,
-////            getString(R.string.email_subject, user?.firstName, user?.lastName)
-////        )
-////        emailIntent.putExtra(
-////            Intent.EXTRA_TEXT,
-////            getString(
-////                R.string.email_body,
-////                user?.boss?.firstName,
-////                timeManager.arrivalToArray()[1],
-////                timeManager.exitToArray()[1],
-////                user?.firstName,
-////                user?.lastName
-////            )
-////        )
-////        return emailIntent
-////    }
+    private fun prepareEmail(file: File?): Intent {
+        val uri =
+            FileProvider.getUriForFile(requireContext(), BuildConfig.APPLICATION_ID, file!!)
+
+        val emailIntent = Intent(Intent.ACTION_SEND)
+        emailIntent.type = "text/html"
+        val to = arrayOf(userVm.user.value?.company?.email.toString())
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, to)
+        emailIntent.putExtra(Intent.EXTRA_STREAM, uri)
+        emailIntent.putExtra(
+            Intent.EXTRA_SUBJECT,
+            getString(R.string.email_subject)
+        )
+        emailIntent.putExtra(
+            Intent.EXTRA_TEXT,
+            getString(R.string.email_body)
+        )
+        return emailIntent
+    }
 
     private fun openCSV(file: File?) {
         val csvIntent = Intent(Intent.ACTION_VIEW)
@@ -188,88 +182,78 @@ class UserActivityFragment : BaseFragment(false) {
         requireActivity().startActivity(csvIntent)
     }
 
-//    private fun initSpeedDialView() {
-//        speedDialView = speed_dial_view
-//
-//        speedDialView?.inflate(R.menu.menu_speed_dial)
-//
-//        speedDialView?.setOnActionSelectedListener { speedDialActionItem ->
-//            when (speedDialActionItem.id) {
-//
-//                R.id.open_csv_button -> {
-//                    val file = OpenCSVWriter.writeShiftsToCSV(
-//                        context,
-//                        user!!.getUserActivity(
-//                            timeManager.arrivalTime,
-//                            timeManager.exitTime
-//                        ),
-//                        getString(R.string.csv_file_name, user?.firstName, user?.lastName)
-//                    )
-//                    openCSV(file)
-//                    false
-//                }
-//
-//                R.id.send_as_email_button -> {
-//                    sendCSV()
-//                    false
-//                }
-//
-//                R.id.add_custom_shift_button -> {
-//                    if (user?.shifts?.last()?.exitTime == null) {
-//                        showError(getString(R.string.custom_shift_adding_outside_of_working_time_warning))
-//                        true
-//                    } else {
-//                        mDialogManager?.openWorkingTimeDialog(
-//                            timeManager.arrivalTime,
-//                            timeManager.exitTime,
-//                            true,
-//                            mDialogManager!!,
-//                            object : WorkingTimeWarningFragment.DialogListener {
-//                                override fun onContinue(
-//                                    arrivalTime: Timestamp,
-//                                    exitTime: Timestamp
-//                                ) {
-//                                    mDialogManager?.openDescriptionDialog(
-//                                        null,
-//                                        (object :
-//                                            DescriptionDialogFragment.DialogListener {
-//
-//                                            override fun onSave(description: String) {
-//                                                val newShift =
-//                                                    Shift(
-//                                                        arrivalTime,
-//                                                        exitTime,
-//                                                        description
-//                                                    )
-//                                                user?.addShift(newShift)
-//                                                showLoading()
-//                                                mViewModel?.updateUserInDatabase(user!!)
-//                                                    ?.observe(
-//                                                        this@UserActivityFragment,
-//                                                        Observer {
-//                                                            hideLoading()
-//                                                            listener?.onCustomShiftAdded(
-//                                                                user
-//                                                            )
-//
-//                                                            updateRecyclerView()
-//                                                            showMessage(getString(R.string.shift_added))
-//                                                        })
-//                                            }
-//
-//                                            override fun onCancel() {//no action
-//                                            }
-//                                        })
-//                                    )
-//                                }
-//                            })
-//                        false
-//                    }
-//                }
-//                else -> false
-//            }
-//        }
-//    }
+    private fun initSpeedDialView() {
+        speedDialView = speed_dial_view
+
+        speedDialView?.inflate(R.menu.menu_speed_dial)
+
+        speedDialView?.setOnActionSelectedListener { speedDialActionItem ->
+            when (speedDialActionItem.id) {
+
+                R.id.open_csv_button -> {
+                    val file = OpenCSVWriter.writeShiftsToCSV(
+                        context,
+                        userVm.user.value!!.getUserActivity(
+                            timeManager.arrivalTime,
+                            timeManager.exitTime
+                        ),
+                        getString(R.string.csv_file_name, userVm.user.value?.firstName, userVm.user.value?.lastName)
+                    )
+                    openCSV(file)
+                    false
+                }
+
+                R.id.send_as_email_button -> {
+
+                    sendCSV()
+                    false
+                }
+
+                R.id.add_custom_shift_button -> {
+                    if (userVm.user.value?.shifts?.last()?.exitTime == null) {
+                        showError(getString(R.string.custom_shift_adding_outside_of_working_time_warning))
+                        true
+                    } else {
+                        mDialogManager?.openWorkingTimeDialog(
+                            timeManager.arrivalTime,
+                            timeManager.exitTime,
+                            true,
+                            mDialogManager!!,
+                            object : WorkingTimeWarningFragment.DialogListener {
+                                override fun onContinue(
+                                    arrivalTime: Date,
+                                    exitTime: Date
+                                ) {
+                                    mDialogManager?.openDescriptionDialog(
+                                        null,
+                                        (object :
+                                            DescriptionDialogFragment.DialogListener {
+
+                                            override fun onSave(description: String) {
+                                                val newShift =
+                                                    Shift(
+                                                        arrivalTime,
+                                                        exitTime,
+                                                        description
+                                                    )
+                                                userVm.addCustomShift(newShift)
+                                                updateRecyclerView()
+                                                showMessage(getString(R.string.shift_added))
+                                            }
+
+                                            override fun onCancel() {//no action
+                                            }
+                                        })
+                                    )
+                                }
+                            })
+                        false
+                    }
+                }
+                else -> false
+            }
+        }
+    }
 
     private fun intTimeManager() {
         val cal1 = Calendar.getInstance()

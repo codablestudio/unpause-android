@@ -56,5 +56,20 @@
     <string name="continue_text">Continue</string>
     <string name="you_are_leaving_at">You are leaving at:</string>
     <string name="send_email">Send email…</string>
+    <string name="csv_file_name">%s_%s</string>
+    <string name="csv_file_name_2nd_part">%s_isplata_</string>
+    <string name="arrivedAt">Arrival time</string>
+    <string name="leftAt">Leaving time</string>
+    <string name="description">Description</string>
+    <string name="hours">Hours</string>
+    <string name="total_hours">Total hours:</string>
+    <string name="email_subject">Working hours</string>
+    <string name="email_body">Hello,\nhere are my working hours\n\nCheers :)</string>
+    <string name="open_csv">Open CSV</string>
+    <string name="send_as_email">Send as email</string>
+    <string name="add_custom_shift">Add custom shift</string>
+    <string name="custom_shift_adding_outside_of_working_time_warning">Custom shift can only be added after working
+        hours
+    </string>
 
 </resources>
