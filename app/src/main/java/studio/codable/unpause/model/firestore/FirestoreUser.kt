@@ -21,16 +21,16 @@ data class FirestoreUser(
         const val SHIFTS = "shifts"
     }
 
-    constructor(user: User, shifts: List<Shift>? = null) : this() {
+    constructor(user: User) : this() {
         this.documentId = user.id
         this.email = user.email
         this.firstName = user.firstName
         this.lastName = user.lastName
-        this.shifts = shifts?.map { FirestoreShift(it) }
+        this.shifts = user.shifts?.map { FirestoreShift(it) }
     }
 
     fun toUser(): User {
-        return User(documentId, email, firstName, lastName,companyPath = companyReference?.path)
+        return User(documentId, email, firstName, lastName,companyId = companyReference?.id)
     }
 
     fun extractShifts(): List<Shift> {

@@ -10,22 +10,19 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.leinardi.android.speeddial.SpeedDialView
 import kotlinx.android.synthetic.main.fragment_user_activity.*
 import studio.codable.unpause.BuildConfig
-
 import studio.codable.unpause.R
 import studio.codable.unpause.base.activity.BaseActivity
 import studio.codable.unpause.base.fragment.BaseFragment
 import studio.codable.unpause.model.Shift
+import studio.codable.unpause.model.User
 import studio.codable.unpause.screens.UserViewModel
-import studio.codable.unpause.screens.fragment.datePicker.DatePickerFragment
-import studio.codable.unpause.screens.fragment.descriptionDialog.DescriptionDialogFragment
 import studio.codable.unpause.screens.fragment.workingTimeWarning.WorkingTimeWarningFragment
 import studio.codable.unpause.utilities.adapter.userActivityRecyclerViewAdapter.UserActivityRecyclerViewAdapter
-import studio.codable.unpause.utilities.manager.TimeManager
 import studio.codable.unpause.utilities.manager.DialogManager
+import studio.codable.unpause.utilities.manager.TimeManager
 import studio.codable.unpause.utils.adapters.userActivityRecyclerViewAdapter.SwipeActionCallback
 import studio.codable.unpause.utils.openCSV.OpenCSVWriter
 import java.io.File
@@ -35,11 +32,10 @@ class UserActivityFragment : BaseFragment(false) {
 
     private val userVm: UserViewModel by activityViewModels()
 
-    private var listener: UserActivityRecyclerViewAdapter.UserActivityListener? = null
-    private var mRecyclerView: RecyclerView? = null
-    private var mDialogManager: DialogManager? = null
+    private lateinit var mDialogManager: DialogManager
     private lateinit var timeManager: TimeManager
-    private var speedDialView: SpeedDialView? = null
+    private lateinit var speedDialView: SpeedDialView
+    private lateinit var user : User
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,6 +48,7 @@ class UserActivityFragment : BaseFragment(false) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        user = userVm.user.value!!
         initUI()
 
     }
@@ -70,25 +67,18 @@ class UserActivityFragment : BaseFragment(false) {
             mDialogManager = DialogManager(activity as BaseActivity)
 
             edit_from_date.setOnClickListener {
-                mDialogManager?.openDatePickerDialog((object :
-                    DatePickerFragment.DatePickerListener {
-                    override fun onDateSet(year: Int, month: Int, day: Int) {
-                        timeManager.changeArrivalDate(year, month, day)
-                        updateFromDate(timeManager.arrivalToArray()[1])
-                        updateRecyclerView()
-                    }
-                }))
+                mDialogManager?.openDatePickerDialog { year, month, dayOfMonth ->
+                    timeManager.changeArrivalDate(year, month, dayOfMonth)
+                    updateFromDate(timeManager.arrivalToArray()[1])
+                    updateRecyclerView() }
             }
 
             edit_to_date.setOnClickListener {
-                mDialogManager?.openDatePickerDialog((object :
-                    DatePickerFragment.DatePickerListener {
-                    override fun onDateSet(year: Int, month: Int, day: Int) {
-                        timeManager.changeExitDate(year, month, day)
-                        updateToDate(timeManager.exitToArray()[1])
-                        updateRecyclerView()
-                    }
-                }))
+                mDialogManager?.openDatePickerDialog { year, month, dayOfMonth ->
+                    timeManager.changeExitDate(year, month, dayOfMonth)
+                    updateToDate(timeManager.exitToArray()[1])
+                    updateRecyclerView()
+                }
             }
 
         }
@@ -97,23 +87,18 @@ class UserActivityFragment : BaseFragment(false) {
     }
 
     private fun initRecyclerView(activity: FragmentActivity) {
-        mRecyclerView = user_activity_recycler_view
-        mRecyclerView?.isNestedScrollingEnabled = false
-        mRecyclerView?.layoutManager = LinearLayoutManager(context)
         val recyclerViewAdapter = UserActivityRecyclerViewAdapter(
             requireContext(),
-            object : UserActivityRecyclerViewAdapter.UserActivityListener {
-
-                override fun onDelete(shift: Shift, position: Int) {
-                    userVm.deleteShift(shift)
-                }
-
-                override fun onEdit(shift: Shift, position: Int) {
-                    editShift(shift)
-                }
-            }
+            { shift, _ -> userVm.deleteShift(shift) },
+            { shift, _ -> editShift(shift) }
         )
-        mRecyclerView?.adapter = recyclerViewAdapter
+
+
+        user_activity_recycler_view?.apply {
+            isNestedScrollingEnabled = false
+            layoutManager = LinearLayoutManager(context)
+            adapter = recyclerViewAdapter
+        }
 
         updateRecyclerView()
 
@@ -124,7 +109,7 @@ class UserActivityFragment : BaseFragment(false) {
                     activity.window.decorView.findViewById(R.id.layout_home_activity)
                 )
             )
-        itemTouchHelper.attachToRecyclerView(mRecyclerView)
+        itemTouchHelper.attachToRecyclerView(user_activity_recycler_view)
     }
 
     private fun sendCSV() {
@@ -135,11 +120,11 @@ class UserActivityFragment : BaseFragment(false) {
 //        } else {
             val file = OpenCSVWriter.writeShiftsToCSV(
                 context,
-                userVm.user.value!!.getUserActivity(
+                user.getUserActivity(
                     timeManager.arrivalTime,
                     timeManager.exitTime
                 ),
-                getString(R.string.csv_file_name, userVm.user.value?.firstName, userVm.user.value?.lastName)
+                getString(R.string.csv_file_name, user.firstName, user.lastName)
             )
             startEmailActivity(file)
 //        }
@@ -153,21 +138,21 @@ class UserActivityFragment : BaseFragment(false) {
     private fun prepareEmail(file: File?): Intent {
         val uri =
             FileProvider.getUriForFile(requireContext(), BuildConfig.APPLICATION_ID, file!!)
+        val to = arrayOf(user.company?.email.toString())
 
-        val emailIntent = Intent(Intent.ACTION_SEND)
-        emailIntent.type = "text/html"
-        val to = arrayOf(userVm.user.value?.company?.email.toString())
-        emailIntent.putExtra(Intent.EXTRA_EMAIL, to)
-        emailIntent.putExtra(Intent.EXTRA_STREAM, uri)
-        emailIntent.putExtra(
-            Intent.EXTRA_SUBJECT,
-            getString(R.string.email_subject)
-        )
-        emailIntent.putExtra(
-            Intent.EXTRA_TEXT,
-            getString(R.string.email_body)
-        )
-        return emailIntent
+        return Intent(Intent.ACTION_SEND).apply {
+            type = "text/html"
+            putExtra(Intent.EXTRA_EMAIL, to)
+            putExtra(Intent.EXTRA_STREAM, uri)
+            putExtra(
+                Intent.EXTRA_SUBJECT,
+                getString(R.string.email_subject)
+            )
+            putExtra(
+                Intent.EXTRA_TEXT,
+                getString(R.string.email_body)
+            ) }
+
     }
 
     private fun openCSV(file: File?) {
@@ -193,11 +178,11 @@ class UserActivityFragment : BaseFragment(false) {
                 R.id.open_csv_button -> {
                     val file = OpenCSVWriter.writeShiftsToCSV(
                         context,
-                        userVm.user.value!!.getUserActivity(
+                        user.getUserActivity(
                             timeManager.arrivalTime,
                             timeManager.exitTime
                         ),
-                        getString(R.string.csv_file_name, userVm.user.value?.firstName, userVm.user.value?.lastName)
+                        getString(R.string.csv_file_name, user.firstName, user.lastName)
                     )
                     openCSV(file)
                     false
@@ -210,7 +195,7 @@ class UserActivityFragment : BaseFragment(false) {
                 }
 
                 R.id.add_custom_shift_button -> {
-                    if (userVm.user.value?.shifts?.last()?.exitTime == null) {
+                    if (user.shifts?.last()?.exitTime == null) {
                         showError(getString(R.string.custom_shift_adding_outside_of_working_time_warning))
                         true
                     } else {
@@ -225,26 +210,20 @@ class UserActivityFragment : BaseFragment(false) {
                                     exitTime: Date
                                 ) {
                                     mDialogManager?.openDescriptionDialog(
-                                        null,
-                                        (object :
-                                            DescriptionDialogFragment.DialogListener {
-
-                                            override fun onSave(description: String) {
-                                                val newShift =
-                                                    Shift(
-                                                        arrivalTime,
-                                                        exitTime,
-                                                        description
-                                                    )
-                                                userVm.addCustomShift(newShift)
-                                                updateRecyclerView()
-                                                showMessage(getString(R.string.shift_added))
-                                            }
-
-                                            override fun onCancel() {//no action
-                                            }
+                                        null, { description ->
+                                            val newShift =
+                                                Shift(
+                                                    arrivalTime,
+                                                    exitTime,
+                                                    description
+                                                )
+                                            userVm.addCustomShift(newShift)
+                                            updateRecyclerView()
+                                            showMessage(getString(R.string.shift_added))
+                                        },
+                                        {
+                                            //no action
                                         })
-                                    )
                                 }
                             })
                         false
@@ -257,16 +236,20 @@ class UserActivityFragment : BaseFragment(false) {
 
     private fun intTimeManager() {
         val cal1 = Calendar.getInstance()
-        cal1.add(Calendar.MONTH, -1)
-        cal1.set(Calendar.HOUR_OF_DAY, 0)
-        cal1.set(Calendar.MINUTE, 0)
-        cal1.set(Calendar.SECOND, 0)
+        cal1.apply {
+            add(Calendar.MONTH, -1)
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+        }
 
         val cal2 = Calendar.getInstance()
-        cal2.time = Date()
-        cal2.set(Calendar.HOUR_OF_DAY, 23)
-        cal2.set(Calendar.MINUTE, 59)
-        cal2.set(Calendar.SECOND, 59)
+        cal2.apply {
+            time = Date()
+            set(Calendar.HOUR_OF_DAY, 23)
+            set(Calendar.MINUTE, 59)
+            set(Calendar.SECOND, 59)
+        }
 
         timeManager = TimeManager(cal1.time, cal2.time)
     }
@@ -288,31 +271,26 @@ class UserActivityFragment : BaseFragment(false) {
             object : WorkingTimeWarningFragment.DialogListener {
                 override fun onContinue(arrivalTime: Date, exitTime: Date) {
                     mDialogManager?.openDescriptionDialog(
-                        shift.description,
-                        (object : DescriptionDialogFragment.DialogListener {
+                        shift.description, { description: String ->
 
-                            override fun onSave(description: String) {
+                            val newShift = Shift(arrivalTime, exitTime, description)
+                            userVm.editShift(newShift)
+                            updateRecyclerView()
+                            showMessage(getString(R.string.shift_edited))
 
-                                val newShift = Shift(arrivalTime, exitTime, description)
-                                userVm.editShift(newShift)
-                                updateRecyclerView()
-                                showMessage(getString(R.string.shift_edited))
-
-                            }
-
-                            override fun onCancel() {//no action
-                            }
+                        },
+                        {
+                            //no action
                         })
-                    )
 
                 }
             })
     }
 
     private fun updateRecyclerView() {
-        (mRecyclerView?.adapter as UserActivityRecyclerViewAdapter)
+        (user_activity_recycler_view?.adapter as UserActivityRecyclerViewAdapter)
             .updateContent(
-                userVm.user.value!!.getUserActivity(
+                user.getUserActivity(
                     timeManager.arrivalTime,
                     timeManager.exitTime
                 )

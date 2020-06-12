@@ -1,26 +1,29 @@
 package studio.codable.unpause.utilities.adapter.userActivityRecyclerViewAdapter
 
-import android.animation.ObjectAnimator
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.item_user_activity.view.*
 import studio.codable.unpause.R
 import studio.codable.unpause.model.Shift
+import studio.codable.unpause.utilities.ShiftWithPositionLambda
 import studio.codable.unpause.utilities.adapter.SwipeActions
+import studio.codable.unpause.utilities.extensions.crossFadeText
 import studio.codable.unpause.utilities.manager.TimeManager
 import studio.codable.unpause.utils.adapters.userActivityRecyclerViewAdapter.ShiftsDiffCallback
 import java.util.*
 
+typealias UserActivityListener = ShiftWithPositionLambda
+
 
 class UserActivityRecyclerViewAdapter constructor(
     private var context: Context,
-    private val listener: UserActivityListener
+    private val listenerOnDelete: UserActivityListener,
+    private val listenerOnEdit : UserActivityListener
 ) : RecyclerView.Adapter<UserActivityRecyclerViewAdapter.ViewHolder>(), SwipeActions {
 
     private val shifts = arrayListOf<Shift>()
@@ -73,70 +76,50 @@ class UserActivityRecyclerViewAdapter constructor(
                 (list as List<Any?>).forEach {
 
                     if (it is ShiftsDiffCallback.ArrivalTimeChanged) {
-                        crossFadeTextView(
-                            holder.itemView.text_arrived_at_time,
-                            timeManager.arrivalToArray()[0]
-                        )
-
-                        crossFadeTextView(
-                            holder.itemView.text_working_hours, context.getString(
-                                R.string.n_hours_m_minutes,
-                                timeManager.getWorkingHours()[0],
-                                timeManager.getWorkingHours()[1]
-                            )
-                        )
+                        holder.itemView.text_arrived_at_time.crossFadeText(
+                            timeManager.arrivalToArray()[0])
+                        holder.itemView.text_working_hours.crossFadeText(context.getString(
+                            R.string.n_hours_m_minutes,
+                            timeManager.getWorkingHours()[0],
+                            timeManager.getWorkingHours()[1]
+                        ))
                     }
 
                     if (it is ShiftsDiffCallback.ArrivalDateChanged) {
-                        crossFadeTextView(
-                            holder.itemView.text_arrived_at_date,
-                            timeManager.arrivalToArray()[1]
-                        )
 
-                        crossFadeTextView(
-                            holder.itemView.text_working_hours, context.getString(
-                                R.string.n_hours_m_minutes,
-                                timeManager.getWorkingHours()[0],
-                                timeManager.getWorkingHours()[1]
-                            )
-                        )
+                        holder.itemView.text_arrived_at_date.crossFadeText(
+                            timeManager.arrivalToArray()[1])
+                        holder.itemView.text_working_hours.crossFadeText(context.getString(
+                            R.string.n_hours_m_minutes,
+                            timeManager.getWorkingHours()[0],
+                            timeManager.getWorkingHours()[1]
+                        ))
                     }
 
                     if (it is ShiftsDiffCallback.ExitTimeChanged) {
-                        crossFadeTextView(
-                            holder.itemView.text_left_at_time,
-                            timeManager.exitToArray()[0]
-                        )
 
-                        crossFadeTextView(
-                            holder.itemView.text_working_hours, context.getString(
-                                R.string.n_hours_m_minutes,
-                                timeManager.getWorkingHours()[0],
-                                timeManager.getWorkingHours()[1]
-                            )
-                        )
+                        holder.itemView.text_left_at_time.crossFadeText(
+                            timeManager.exitToArray()[0])
+                        holder.itemView.text_working_hours.crossFadeText(context.getString(
+                            R.string.n_hours_m_minutes,
+                            timeManager.getWorkingHours()[0],
+                            timeManager.getWorkingHours()[1]
+                        ))
                     }
 
                     if (it is ShiftsDiffCallback.ExitDateChanged) {
-                        crossFadeTextView(
-                            holder.itemView.text_left_at_date,
-                            timeManager.exitToArray()[1]
-                        )
-
-                        crossFadeTextView(
-                            holder.itemView.text_working_hours, context.getString(
-                                R.string.n_hours_m_minutes,
-                                timeManager.getWorkingHours()[0],
-                                timeManager.getWorkingHours()[1]
-                            )
-                        )
+                        holder.itemView.text_left_at_date.crossFadeText(
+                            timeManager.exitToArray()[1])
+                        holder.itemView.text_working_hours.crossFadeText(context.getString(
+                            R.string.n_hours_m_minutes,
+                            timeManager.getWorkingHours()[0],
+                            timeManager.getWorkingHours()[1]
+                        ))
                     }
 
                     if (it is ShiftsDiffCallback.DescriptionChanged) {
-                        crossFadeTextView(
-                            holder.itemView.text_job_description,
-                            shifts[position].description
-                        )
+                        holder.itemView.text_job_description.crossFadeText(
+                            shifts[position].description)
                     }
                 }
             }
@@ -162,7 +145,7 @@ class UserActivityRecyclerViewAdapter constructor(
                         override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
                             if (event == DISMISS_EVENT_TIMEOUT || event == DISMISS_EVENT_SWIPE || event == DISMISS_EVENT_CONSECUTIVE) {
                                 while (recentlyDeleted.size > 0) {
-                                    listener.onDelete(
+                                    listenerOnDelete.invoke(
                                         recentlyDeleted.remove(),
                                         recentlyDeletedPosition.remove()
                                     )
@@ -181,7 +164,7 @@ class UserActivityRecyclerViewAdapter constructor(
     }
 
     override fun editItem(position: Int) {
-        listener.onEdit(shifts[position], position)
+        listenerOnEdit.invoke(shifts[position], position)
     }
 
     fun updateContent(newShifts: List<Shift>) {
@@ -191,29 +174,6 @@ class UserActivityRecyclerViewAdapter constructor(
         shifts.clear()
         shifts.addAll(sorted)
         notifyDataSetChanged()
-    }
-
-    private fun crossFadeTextView(textView: TextView, newText: String?, duration: Long = 1000) {
-
-        ObjectAnimator.ofFloat(textView, "alpha", textView.alpha, 0f)
-            .apply {
-                this.duration = duration
-                start()
-            }
-
-        textView.text = newText
-
-        ObjectAnimator.ofFloat(textView, "alpha", 0f, 1f)
-            .apply {
-                this.duration = duration
-                start()
-            }
-
-    }
-
-    interface UserActivityListener {
-        fun onDelete(shift: Shift, position: Int)
-        fun onEdit(shift: Shift, position: Int)
     }
 
     class ViewHolder(itemView: View) :

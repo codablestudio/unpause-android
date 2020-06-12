@@ -13,6 +13,6 @@ data class FirestoreCompany(
     var locations: List<GeoPoint>? = null
 ) {
     fun toCompany(): Company {
-        return Company(documentId, email, name, passcode, locations)
+        return Company(documentId, email, name, locations)
     }
 }

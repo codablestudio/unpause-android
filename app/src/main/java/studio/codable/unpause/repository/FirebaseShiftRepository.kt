@@ -74,8 +74,8 @@ class FirebaseShiftRepository @Inject constructor(
 
             callFirebaseRawResult(
                 usersCol.document(userId)
-                    .update(mapOf<String, List<FirestoreShift>>("shifts" to shifts.map { regular ->
-                        FirestoreShift(regular)
+                    .update(mapOf<String, List<FirestoreShift>>("shifts" to shifts.map { shift ->
+                        FirestoreShift(shift)
                     }))
             ) { }
         }

@@ -40,15 +40,16 @@ class UserViewModel @Inject constructor(
 
     init {
         getUser()
-        _user.addSource(_shifts, androidx.lifecycle.Observer {
+        _user.addSource(_shifts) {
             _user.value?.shifts = it as ArrayList<Shift>
-            Timber.i(_user.value.toString())
-        })
-        getShifts()
-        _user.addSource(_company, androidx.lifecycle.Observer {
+            Timber.i("Shifts received: ${_shifts.value}")
+        }
+        _user.addSource(_company) {
             _user.value?.company = it
-            Timber.i(_user.value.toString())
-        })
+            Timber.i("Company received: ${_company.value}")
+        }
+        getShifts()
+
     }
 
     var isCheckedIn: Boolean
@@ -70,7 +71,7 @@ class UserViewModel @Inject constructor(
         viewModelScope.launch {
             process(userRepository.getUser(sessionManager.userId)) {
                 _user.value = it
-                it.companyPath?.let { id -> getCompany(id) }
+                it.companyId?.let { id -> getCompany(id) }
             }
         }
     }
@@ -83,9 +84,9 @@ class UserViewModel @Inject constructor(
         }
     }
 
-    private fun getCompany(companyPath : String) {
+    private fun getCompany(companyId : String) {
         viewModelScope.launch {
-            process(companyRepository.getCompany(companyPath)) {
+            process(companyRepository.getCompany(companyId)) {
                 _company.value = it
             }
         }

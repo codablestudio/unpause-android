@@ -1,15 +1,12 @@
 package studio.codable.unpause.repository
 
-import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import studio.codable.unpause.model.Company
 import studio.codable.unpause.model.firestore.FirestoreCompany
 import studio.codable.unpause.utilities.Constants
 import studio.codable.unpause.utilities.networking.Result
-import studio.codable.unpause.utilities.networking.await
 import studio.codable.unpause.utilities.networking.callFirebase
-import timber.log.Timber
 import javax.inject.Inject
 
 class FirebaseCompanyRepository @Inject constructor(
@@ -23,10 +20,9 @@ class FirebaseCompanyRepository @Inject constructor(
     }
 
     private val companiesCol = firestore.collection(Constants.FirestoreCollections.COMPANIES)
-    private val firestore = firestore
 
-    override suspend fun getCompany(companyPath: String): Result<Company> {
-        return callFirebase(firestore.document(companyPath).get()) {
+    override suspend fun getCompany(companyId: String): Result<Company> {
+        return callFirebase(companiesCol.document(companyId).get()) {
             extractFirestoreCompany(it).toCompany()
         }
     }

@@ -34,7 +34,7 @@ class FirebaseUserRepository @Inject constructor(
     }
 
     override suspend fun updateUser(user: User): Result<Unit> {
-        return callFirebase(usersCol.document(user.id).update(FirestoreUser(user, user.shifts).asHashMap())) {
+        return callFirebase(usersCol.document(user.id).update(FirestoreUser(user).asHashMap())) {
             Unit
         }
     }

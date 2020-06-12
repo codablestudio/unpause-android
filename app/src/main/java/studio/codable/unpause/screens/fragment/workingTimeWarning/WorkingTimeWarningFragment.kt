@@ -10,6 +10,7 @@ import androidx.fragment.app.DialogFragment
 import kotlinx.android.synthetic.main.working_time_warning_dialog.*
 import studio.codable.unpause.R
 import studio.codable.unpause.screens.fragment.datePicker.DatePickerFragment
+import studio.codable.unpause.utilities.extensions.setVisibility
 import studio.codable.unpause.utilities.manager.DialogManager
 import studio.codable.unpause.utilities.manager.TimeManager
 import studio.codable.unpause.view.timePicker.TimePickerFragment
@@ -40,11 +41,7 @@ class WorkingTimeWarningFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (editArrivalDate) {
-            edit_arrived_at_date_icon.visibility = View.VISIBLE
-        } else {
-            edit_arrived_at_date_icon.visibility = View.INVISIBLE
-        }
+        edit_arrived_at_date_icon.setVisibility(editArrivalDate)
 
         timeManager = TimeManager(arrivalTime, exitTime)
 
@@ -59,52 +56,41 @@ class WorkingTimeWarningFragment(
 
         changeArrivedAtDateButton.setOnClickListener {
             if (editArrivalDate) {
-                dialogManager.openDatePickerDialog((object : DatePickerFragment.DatePickerListener {
-                    override fun onDateSet(year: Int, month: Int, day: Int) {
-                        timeManager.changeArrivalDate(year, month, day)
-                        updateFragmentArrivedAtDate(timeManager.arrivalToArray()[1])
-                        updateMessage()
-                    }
-                }))
+                dialogManager.openDatePickerDialog { year, month, dayOfMonth ->
+                    timeManager.changeArrivalDate(year, month, dayOfMonth)
+                    updateFragmentArrivedAtDate(timeManager.arrivalToArray()[1])
+                    updateMessage()
+                }
             }
         }
 
         changeArrivedAtTimeButton.setOnClickListener {
             dialogManager.openTimePickerDialog(
                 null,
-                null,
-                (object : TimePickerFragment.TimePickerListener {
-                    override fun onTimeSet(hourOfDay: Int, minute: Int) {
-                        timeManager.changeArrivalTime(hourOfDay, minute)
-                        updateFragmentArrivedAtTime(timeManager.arrivalToArray()[0])
-                        updateMessage()
-                    }
-                })
-            )
+                null
+            ) { hourOfDay, minute ->
+                timeManager.changeArrivalTime(hourOfDay, minute)
+                updateFragmentArrivedAtTime(timeManager.arrivalToArray()[0])
+                updateMessage()
+            }
         }
 
         changeExitDateButton.setOnClickListener {
-            dialogManager.openDatePickerDialog((object : DatePickerFragment.DatePickerListener {
-                override fun onDateSet(year: Int, month: Int, day: Int) {
-                    timeManager.changeExitDate(year, month, day)
-                    updateFragmentExitDate(timeManager.exitToArray()[1])
-                    updateMessage()
-                }
-            }))
+            dialogManager.openDatePickerDialog { year, month, dayOfMonth ->
+                timeManager.changeExitDate(year, month, dayOfMonth)
+                updateFragmentExitDate(timeManager.exitToArray()[1])
+                updateMessage() }
         }
 
         changeExitTimeButton.setOnClickListener {
             dialogManager.openTimePickerDialog(
                 null,
-                null,
-                (object : TimePickerFragment.TimePickerListener {
-                    override fun onTimeSet(hourOfDay: Int, minute: Int) {
-                        timeManager.changeExitTime(hourOfDay, minute)
-                        updateFragmentExitTime(timeManager.exitToArray()[0])
-                        updateMessage()
-                    }
-                })
-            )
+                null
+            ) { hourOfDay, minute ->
+                timeManager.changeExitTime(hourOfDay, minute)
+                updateFragmentExitTime(timeManager.exitToArray()[0])
+                updateMessage()
+            }
         }
 
         continueButton.setOnClickListener {

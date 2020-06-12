@@ -7,10 +7,16 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import kotlinx.android.synthetic.main.save_dialog.*
 import studio.codable.unpause.R
+import studio.codable.unpause.utilities.StringToUnitLambda
+import studio.codable.unpause.utilities.NoArgumentsUnitLambda
 
-class DescriptionDialogFragment(private val desctiption: String?) : DialogFragment() {
+typealias DialogListenerOnSave = StringToUnitLambda
+typealias DialogListenerOnCancel = NoArgumentsUnitLambda
 
-    private lateinit var dialogListener: DialogListener
+class DescriptionDialogFragment(private val description: String?) : DialogFragment() {
+
+    private lateinit var dialogListenerOnSave: DialogListenerOnSave
+    private lateinit var dialogListenerOnCancel: DialogListenerOnCancel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.save_dialog, container)
@@ -18,27 +24,25 @@ class DescriptionDialogFragment(private val desctiption: String?) : DialogFragme
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (desctiption != null){
-            descriptionEditText.setText(desctiption)
-        }
+
+        descriptionEditText.setText(description.orEmpty())
 
         saveDescriptionButton.setOnClickListener {
-            dialogListener.onSave(descriptionEditText.text.toString())
+            dialogListenerOnSave.invoke(descriptionEditText.text.toString())
             dismiss()
         }
 
         cancelSaveDialogButton.setOnClickListener {
-            dialogListener.onCancel()
+            dialogListenerOnCancel.invoke()
             dismiss()
         }
     }
 
-    fun addListener(dialogListener: DialogListener) {
-        this.dialogListener = dialogListener
+    fun setListener(dialogListenerOnSave: DialogListenerOnSave) {
+        this.dialogListenerOnSave = dialogListenerOnSave
     }
 
-    interface DialogListener {
-        fun onSave(description: String)
-        fun onCancel()
+    fun setListener(dialogListenerOnCancel: DialogListenerOnCancel) {
+        this.dialogListenerOnCancel = dialogListenerOnCancel
     }
 }

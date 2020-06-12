@@ -59,7 +59,6 @@ class HomeFragment : BaseFragment(true) {
             text_first_name.text = it.firstName.orEmpty()
             text_last_name.text = it.lastName.orEmpty()
             text_company.text = it.company?.name.orEmpty()
-            Timber.i(it.company.toString())
         })
 
         userVm.shifts.observe(viewLifecycleOwner, Observer {

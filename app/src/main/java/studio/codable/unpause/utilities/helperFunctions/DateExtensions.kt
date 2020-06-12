@@ -27,15 +27,16 @@ fun createDate(
     millisecond: Int = 0
 ): Date {
     val cal = Calendar.getInstance()
-    cal.clear()
-    cal.set(Calendar.YEAR, year)
-    cal.set(Calendar.MONTH, month)
-    cal.set(Calendar.DAY_OF_MONTH, day)
-    cal.set(Calendar.HOUR_OF_DAY, hour)
-    cal.set(Calendar.MINUTE, minute)
-    cal.set(Calendar.SECOND, second)
-    cal.set(Calendar.MILLISECOND, millisecond)
-
+    cal.apply {
+        clear()
+        set(Calendar.YEAR, year)
+        set(Calendar.MONTH, month)
+        set(Calendar.DAY_OF_MONTH, day)
+        set(Calendar.HOUR_OF_DAY, hour)
+        set(Calendar.MINUTE, minute)
+        set(Calendar.SECOND, second)
+        set(Calendar.MILLISECOND, millisecond)
+    }
     return cal.time
 }
 
