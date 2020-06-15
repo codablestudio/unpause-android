@@ -1,57 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:padding="20dp">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical"
+    android:padding="20dp">
 
     <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/Subtitle16"
-            android:layout_marginBottom="15dp"
-            android:text="@string/what_did_you_work_on"/>
+        android:id="@+id/textView"
+        style="@style/Subtitle16"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/what_did_you_work_on"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-            android:id="@+id/descriptionEditText"
-            android:inputType="textMultiLine|textCapSentences"
-            android:lines="8"
-            android:minLines="8"
-            android:gravity="top|start"
-            android:maxLines="20"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:scrollbars="vertical"
-            android:background="@android:color/transparent"/>
+        android:id="@+id/descriptionEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:background="@android:color/transparent"
+        android:gravity="top|start"
+        android:inputType="textMultiLine|textCapSentences"
+        android:lines="8"
+        android:maxLines="20"
+        android:minLines="8"
+        android:scrollbars="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
 
-    <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal">
+    <Button
+        android:id="@+id/cancelSaveDialogButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/cancel"
+        android:textSize="18sp"
+        android:layout_marginEnd="5dp"
+        app:layout_constraintEnd_toStartOf="@+id/guideline_save_dialog"
+        app:layout_constraintStart_toStartOf="@+id/descriptionEditText"
+        app:layout_constraintTop_toBottomOf="@+id/descriptionEditText" />
 
-        <Button
-                android:id="@+id/cancelSaveDialogButton"
-                android:layout_weight="0.5"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/cancel"
-                android:textSize="18sp"/>
-        <Space
-                android:layout_width="10dp"
-                android:layout_height="0dp"/>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_save_dialog"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
 
-        <Button
-                android:id="@+id/saveDescriptionButton"
-                android:layout_weight="0.5"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/save"
-                android:textSize="18sp"/>
+    <Button
+        android:id="@+id/saveDescriptionButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/save"
+        android:textSize="18sp"
+        android:layout_marginStart="5dp"
+        app:layout_constraintEnd_toEndOf="@+id/descriptionEditText"
+        app:layout_constraintStart_toStartOf="@+id/guideline_save_dialog"
+        app:layout_constraintTop_toBottomOf="@+id/descriptionEditText" />
 
-    </LinearLayout>
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -66,14 +66,14 @@ class UserActivityFragment : BaseFragment(false) {
 
             mDialogManager = DialogManager(activity as BaseActivity)
 
-            edit_from_date.setOnClickListener {
+            edit_from_img.setOnClickListener {
                 mDialogManager?.openDatePickerDialog { year, month, dayOfMonth ->
                     timeManager.changeArrivalDate(year, month, dayOfMonth)
                     updateFromDate(timeManager.arrivalToArray()[1])
                     updateRecyclerView() }
             }
 
-            edit_to_date.setOnClickListener {
+            edit_to_img.setOnClickListener {
                 mDialogManager?.openDatePickerDialog { year, month, dayOfMonth ->
                     timeManager.changeExitDate(year, month, dayOfMonth)
                     updateToDate(timeManager.exitToArray()[1])

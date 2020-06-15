@@ -16,12 +16,12 @@ class TimeManager(var arrivalTime: Date, var exitTime: Date) {
      * @return difference between exit time and arrival time in
      * the following format: [hours: Int, minutes: Int]
      */
-    fun getWorkingHours(): IntArray {
+    fun getWorkingHours(): HoursAndMinutes {
         val diff = TimeUnit.SECONDS.convert(exitTime.time - arrivalTime.time, TimeUnit.MILLISECONDS)
         val hours = diff / (60 * 60)
         var minutes = exitTime.minute() - arrivalTime.minute()
         if (minutes < 0) minutes += 60
-        return intArrayOf(hours.toInt(), minutes)
+        return HoursAndMinutes(hours.toInt(), minutes)
     }
 
     /**
@@ -122,4 +122,6 @@ class TimeManager(var arrivalTime: Date, var exitTime: Date) {
     fun exitToArray(): List<String> {
         return arrayListOf(exitTime.toPattern("HH:mm"), exitTime.toPattern("dd.MM.yyyy"))
     }
+
+    data class HoursAndMinutes(val hours : Int, val minutes: Int)
 }

@@ -56,8 +56,8 @@ class UserActivityRecyclerViewAdapter constructor(
 
         holder.itemView.text_working_hours.text = context.getString(
             R.string.n_hours_m_minutes,
-            timeManager.getWorkingHours()[0],
-            timeManager.getWorkingHours()[1]
+            timeManager.getWorkingHours().hours,
+            timeManager.getWorkingHours().minutes
         )
 
         holder.itemView.text_job_description.text = shifts[position].description
@@ -80,8 +80,8 @@ class UserActivityRecyclerViewAdapter constructor(
                             timeManager.arrivalToArray()[0])
                         holder.itemView.text_working_hours.crossFadeText(context.getString(
                             R.string.n_hours_m_minutes,
-                            timeManager.getWorkingHours()[0],
-                            timeManager.getWorkingHours()[1]
+                            timeManager.getWorkingHours().hours,
+                            timeManager.getWorkingHours().minutes
                         ))
                     }
 
@@ -91,8 +91,8 @@ class UserActivityRecyclerViewAdapter constructor(
                             timeManager.arrivalToArray()[1])
                         holder.itemView.text_working_hours.crossFadeText(context.getString(
                             R.string.n_hours_m_minutes,
-                            timeManager.getWorkingHours()[0],
-                            timeManager.getWorkingHours()[1]
+                            timeManager.getWorkingHours().hours,
+                            timeManager.getWorkingHours().minutes
                         ))
                     }
 
@@ -102,8 +102,8 @@ class UserActivityRecyclerViewAdapter constructor(
                             timeManager.exitToArray()[0])
                         holder.itemView.text_working_hours.crossFadeText(context.getString(
                             R.string.n_hours_m_minutes,
-                            timeManager.getWorkingHours()[0],
-                            timeManager.getWorkingHours()[1]
+                            timeManager.getWorkingHours().hours,
+                            timeManager.getWorkingHours().minutes
                         ))
                     }
 
@@ -112,8 +112,8 @@ class UserActivityRecyclerViewAdapter constructor(
                             timeManager.exitToArray()[1])
                         holder.itemView.text_working_hours.crossFadeText(context.getString(
                             R.string.n_hours_m_minutes,
-                            timeManager.getWorkingHours()[0],
-                            timeManager.getWorkingHours()[1]
+                            timeManager.getWorkingHours().hours,
+                            timeManager.getWorkingHours().minutes
                         ))
                     }
 

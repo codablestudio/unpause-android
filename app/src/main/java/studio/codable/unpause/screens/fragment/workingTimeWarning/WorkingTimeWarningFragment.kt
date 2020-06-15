@@ -54,7 +54,7 @@ class WorkingTimeWarningFragment(
         updateFragmentExitDate(timeManager.exitToArray()[1])
         updateMessage()
 
-        changeArrivedAtDateButton.setOnClickListener {
+        edit_arrived_at_date_icon.setOnClickListener {
             if (editArrivalDate) {
                 dialogManager.openDatePickerDialog { year, month, dayOfMonth ->
                     timeManager.changeArrivalDate(year, month, dayOfMonth)
@@ -64,7 +64,7 @@ class WorkingTimeWarningFragment(
             }
         }
 
-        changeArrivedAtTimeButton.setOnClickListener {
+        edit_arrived_at_time_icon.setOnClickListener {
             dialogManager.openTimePickerDialog(
                 null,
                 null
@@ -75,14 +75,14 @@ class WorkingTimeWarningFragment(
             }
         }
 
-        changeExitDateButton.setOnClickListener {
+        edit_exit_at_date_icon.setOnClickListener {
             dialogManager.openDatePickerDialog { year, month, dayOfMonth ->
                 timeManager.changeExitDate(year, month, dayOfMonth)
                 updateFragmentExitDate(timeManager.exitToArray()[1])
                 updateMessage() }
         }
 
-        changeExitTimeButton.setOnClickListener {
+        edit_exit_at_time_icon.setOnClickListener {
             dialogManager.openTimePickerDialog(
                 null,
                 null
@@ -114,15 +114,15 @@ class WorkingTimeWarningFragment(
         updateFragmentWorkingTimeMessage(
             getString(
                 R.string.total_working_hours_message,
-                timeManager.getWorkingHours()[0].toString(),
-                timeManager.getWorkingHours()[1].toString()
+                timeManager.getWorkingHours().hours.toString(),
+                timeManager.getWorkingHours().minutes.toString()
             )
         )
         changeMessageColor()
     }
 
     private fun changeMessageColor() {
-        if (timeManager.getWorkingHours()[0] >= WORKING_TIME_THRESHOLD) {
+        if (timeManager.getWorkingHours().hours >= WORKING_TIME_THRESHOLD) {
             workingTimeEditText.setTextColor(Color.RED)
         } else {
             workingTimeEditText.setTextColor(Color.BLACK)
