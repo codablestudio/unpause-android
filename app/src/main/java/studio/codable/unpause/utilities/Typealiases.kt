@@ -4,7 +4,7 @@ import studio.codable.unpause.model.Shift
 
 typealias BaseClickListener<T> = ((T) -> Any)
 
-typealias StringToUnitLambda = (String) -> Unit
-typealias NoArgumentsUnitLambda = () -> Unit
-typealias ShiftWithPositionLambda = (Shift, Int) -> Unit
-typealias DoubleIntToUnitLambda = (Int, Int) -> Unit
+typealias LambdaStringToUnit = (String) -> Unit
+typealias LambdaNoArgumentsUnit = () -> Unit
+typealias LambdaShiftIntToUnit = (Shift, Int) -> Unit
+typealias LambdaDoubleIntToUnit = (Int, Int) -> Unit

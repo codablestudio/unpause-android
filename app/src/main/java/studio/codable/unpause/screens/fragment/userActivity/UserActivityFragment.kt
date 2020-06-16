@@ -10,7 +10,6 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.leinardi.android.speeddial.SpeedDialView
 import kotlinx.android.synthetic.main.fragment_user_activity.*
 import studio.codable.unpause.R
 import studio.codable.unpause.base.activity.BaseActivity
@@ -30,9 +29,8 @@ class UserActivityFragment : BaseFragment(false) {
 
     private val userVm: UserViewModel by activityViewModels()
 
-    private lateinit var mDialogManager: DialogManager
+    private val mDialogManager: DialogManager by lazy { DialogManager(activity as BaseActivity) }
     private lateinit var timeManager: TimeManager
-    private lateinit var speedDialView: SpeedDialView
     private lateinit var user : User
 
     override fun onCreateView(
@@ -55,20 +53,19 @@ class UserActivityFragment : BaseFragment(false) {
 
         activity?.let {
 
-            intTimeManager()
+            initTimeManager()
 
             initSpeedDialView()
 
             from_date_text_view.text = timeManager.arrivalToArray()[1]
             to_date_text_view.text = timeManager.exitToArray()[1]
 
-            mDialogManager = DialogManager(activity as BaseActivity)
-
             edit_from_img.setOnClickListener {
                 mDialogManager?.openDatePickerDialog { year, month, dayOfMonth ->
                     timeManager.changeArrivalDate(year, month, dayOfMonth)
                     updateFromDate(timeManager.arrivalToArray()[1])
-                    updateRecyclerView() }
+                    updateRecyclerView()
+                }
             }
 
             edit_to_img.setOnClickListener {
@@ -97,6 +94,11 @@ class UserActivityFragment : BaseFragment(false) {
             layoutManager = LinearLayoutManager(context)
             adapter = recyclerViewAdapter
         }
+
+        //update UI every time there are shift changes
+        userVm.user.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            updateRecyclerView()
+        })
 
         updateRecyclerView()
 
@@ -157,11 +159,9 @@ class UserActivityFragment : BaseFragment(false) {
     }
 
     private fun initSpeedDialView() {
-        speedDialView = speed_dial_view
+        speed_dial_view?.inflate(R.menu.menu_speed_dial)
 
-        speedDialView?.inflate(R.menu.menu_speed_dial)
-
-        speedDialView?.setOnActionSelectedListener { speedDialActionItem ->
+        speed_dial_view?.setOnActionSelectedListener { speedDialActionItem ->
             when (speedDialActionItem.id) {
 
                 R.id.open_csv_button -> {
@@ -207,7 +207,7 @@ class UserActivityFragment : BaseFragment(false) {
                                                     description
                                                 )
                                             userVm.addCustomShift(newShift)
-                                            updateRecyclerView()
+//                                            updateRecyclerView()
                                             showMessage(getString(R.string.shift_added))
                                         },
                                         {
@@ -223,7 +223,7 @@ class UserActivityFragment : BaseFragment(false) {
         }
     }
 
-    private fun intTimeManager() {
+    private fun initTimeManager() {
         val cal1 = Calendar.getInstance()
         cal1.apply {
             add(Calendar.MONTH, -1)
@@ -252,28 +252,28 @@ class UserActivityFragment : BaseFragment(false) {
     }
 
     fun editShift(shift: Shift) {
-        mDialogManager?.openWorkingTimeDialog(
-            shift.arrivalTime!!,
-            shift.exitTime!!,
-            false,
-            mDialogManager!!,
-            object : WorkingTimeWarningFragment.DialogListener {
-                override fun onContinue(arrivalTime: Date, exitTime: Date) {
-                    mDialogManager?.openDescriptionDialog(
-                        shift.description, { description: String ->
+        mDialogManager.openWorkingTimeDialog(
+                shift.arrivalTime!!,
+                shift.exitTime!!,
+                false,
+                mDialogManager,
+                object : WorkingTimeWarningFragment.DialogListener {
+                    override fun onContinue(arrivalTime: Date, exitTime: Date) {
+                        mDialogManager.openDescriptionDialog(
+                                shift.description, { description: String ->
 
                             val newShift = Shift(arrivalTime, exitTime, description)
                             userVm.editShift(newShift)
-                            updateRecyclerView()
+                            //                            updateRecyclerView()
                             showMessage(getString(R.string.shift_edited))
 
                         },
-                        {
-                            //no action
-                        })
+                                {
+                                    //no action
+                                })
 
-                }
-            })
+                    }
+                })
     }
 
     private fun updateRecyclerView() {

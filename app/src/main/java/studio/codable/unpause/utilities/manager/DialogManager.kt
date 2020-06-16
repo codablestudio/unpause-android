@@ -6,11 +6,11 @@ import studio.codable.unpause.base.activity.BaseActivity
 import studio.codable.unpause.screens.fragment.datePicker.DatePickerFragment
 import studio.codable.unpause.screens.fragment.datePicker.DatePickerListener
 import studio.codable.unpause.screens.fragment.descriptionDialog.DescriptionDialogFragment
-import studio.codable.unpause.screens.fragment.descriptionDialog.DialogListenerOnCancel
-import studio.codable.unpause.screens.fragment.descriptionDialog.DialogListenerOnSave
 import studio.codable.unpause.screens.fragment.workingTimeWarning.WorkingTimeWarningFragment
-import studio.codable.unpause.view.timePicker.TimePickerFragment
-import studio.codable.unpause.view.timePicker.TimePickerListener
+import studio.codable.unpause.utilities.LambdaDoubleIntToUnit
+import studio.codable.unpause.utilities.LambdaNoArgumentsUnit
+import studio.codable.unpause.utilities.LambdaStringToUnit
+import studio.codable.unpause.screens.fragment.timePicker.TimePickerFragment
 import java.util.*
 
 class DialogManager(private val context: BaseActivity) {
@@ -21,24 +21,24 @@ class DialogManager(private val context: BaseActivity) {
 //    private var confirmDialogFragment: ConfirmDialogFragment? = null
 //    private var shiftSchedulerDialog: ShiftSchedulerDialog? = null
 
-    fun openDescriptionDialog(desctiption: String?, dialogListenerOnSave: DialogListenerOnSave, dialogListenerOnCancel: DialogListenerOnCancel) {
+    fun openDescriptionDialog(desctiption: String?, dialogListenerOnSave: LambdaStringToUnit, dialogListenerOnCancel: LambdaNoArgumentsUnit) {
         descriptionDialogFragment = DescriptionDialogFragment(desctiption).apply {
-            setListener(dialogListenerOnSave)
-            setListener(dialogListenerOnCancel)
+            setOnSaveListener(dialogListenerOnSave)
+            setOnCancelListener(dialogListenerOnCancel)
             setStyle(DialogFragment.STYLE_NO_TITLE, R.style.full_screen_dialog)
         }
         descriptionDialogFragment.show(context.supportFragmentManager, "Save dialog fragment")
     }
 
     fun openWorkingTimeDialog(
-        arrivalTime: Date,
-        exitTime: Date,
-        editArrivalDate: Boolean,
-        dialogManager: DialogManager,
-        dialogListener: WorkingTimeWarningFragment.DialogListener
+            arrivalTime: Date,
+            exitTime: Date,
+            isArrivalDateEditable: Boolean,
+            dialogManager: DialogManager,
+            dialogListener: WorkingTimeWarningFragment.DialogListener
     ) {
         workingTimeWarningFragment =
-            WorkingTimeWarningFragment(arrivalTime, exitTime, editArrivalDate, dialogManager)
+            WorkingTimeWarningFragment(arrivalTime, exitTime, isArrivalDateEditable, dialogManager)
         workingTimeWarningFragment.addListener(dialogListener)
         workingTimeWarningFragment.show(context.supportFragmentManager, "Working time warning fragment")
     }
@@ -48,9 +48,9 @@ class DialogManager(private val context: BaseActivity) {
         datePickerFragment.show(context.supportFragmentManager, "Date picker fragment")
     }
 
-    fun openTimePickerDialog(hour: Int?, minute: Int?, timePickerListener: TimePickerListener) {
+    fun openTimePickerDialog(hour: Int, minute: Int, timePickerListener: LambdaDoubleIntToUnit) {
         timePickerFragment = TimePickerFragment(hour, minute)
-        timePickerFragment.addListener(timePickerListener)
+        timePickerFragment.setListener(timePickerListener)
         timePickerFragment.show(context.supportFragmentManager, "Time picker fragment")
     }
 //
@@ -91,10 +91,10 @@ class DialogManager(private val context: BaseActivity) {
 //        }
 //        dialog.show()
 //    }
-
-    interface OptionPickerListener {
-        fun onOption1()
-        fun onOption2()
-    }
+//
+//    interface OptionPickerListener {
+//        fun onOption1()
+//        fun onOption2()
+//    }
 
 }

@@ -21,7 +21,3 @@ fun TextView.crossFadeText(newText: String?, duration: Long = 1000) {
         }
 
 }
-
-fun View.setVisibility(isVisible : Boolean) {
-    this.visibility = if (isVisible) View.VISIBLE else View.INVISIBLE
-}

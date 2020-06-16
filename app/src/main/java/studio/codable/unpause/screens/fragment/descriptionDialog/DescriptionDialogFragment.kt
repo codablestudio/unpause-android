@@ -7,16 +7,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import kotlinx.android.synthetic.main.save_dialog.*
 import studio.codable.unpause.R
-import studio.codable.unpause.utilities.StringToUnitLambda
-import studio.codable.unpause.utilities.NoArgumentsUnitLambda
-
-typealias DialogListenerOnSave = StringToUnitLambda
-typealias DialogListenerOnCancel = NoArgumentsUnitLambda
+import studio.codable.unpause.utilities.LambdaStringToUnit
+import studio.codable.unpause.utilities.LambdaNoArgumentsUnit
 
 class DescriptionDialogFragment(private val description: String?) : DialogFragment() {
 
-    private lateinit var dialogListenerOnSave: DialogListenerOnSave
-    private lateinit var dialogListenerOnCancel: DialogListenerOnCancel
+    private lateinit var dialogListenerOnSave: LambdaStringToUnit
+    private lateinit var dialogListenerOnCancel: LambdaNoArgumentsUnit
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.save_dialog, container)
@@ -38,11 +35,11 @@ class DescriptionDialogFragment(private val description: String?) : DialogFragme
         }
     }
 
-    fun setListener(dialogListenerOnSave: DialogListenerOnSave) {
+    fun setOnSaveListener(dialogListenerOnSave: LambdaStringToUnit) {
         this.dialogListenerOnSave = dialogListenerOnSave
     }
 
-    fun setListener(dialogListenerOnCancel: DialogListenerOnCancel) {
+    fun setOnCancelListener(dialogListenerOnCancel: LambdaNoArgumentsUnit) {
         this.dialogListenerOnCancel = dialogListenerOnCancel
     }
 }

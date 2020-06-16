@@ -43,10 +43,10 @@ class CsvManager {
                     if (!file.isDirectory)
                         file.delete()
             }
-            val pdfFile =
+            val tempFile =
                     File.createTempFile(context?.getString(R.string.csv_file_name_2nd_part, name), ".csv", storageDir)
-            pdfFile.deleteOnExit()
-            return pdfFile
+            tempFile.deleteOnExit()
+            return tempFile
         }
 
         private fun saveFileToPhone(context: Context, path: File, shifts: List<Shift>?) {

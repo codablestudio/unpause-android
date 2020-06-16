@@ -62,7 +62,8 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             processTask(account.await()) {
                 process(loginRepository.signInWithGoogle(it, clientId)) {
-                    when (userRepository.getUser(account.result!!.email!!))  {
+                    sessionManager.userId = account.result!!.email!!
+                    when (userRepository.getUser())  {
 
                         is Result.GenericError -> process( userRepository.createUser(
                             User(account.result!!.email!!, account.result!!.email!!,

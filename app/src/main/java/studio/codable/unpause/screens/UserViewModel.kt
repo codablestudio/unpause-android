@@ -69,7 +69,7 @@ class UserViewModel @Inject constructor(
 
     private fun getUser() {
         viewModelScope.launch {
-            process(userRepository.getUser(sessionManager.userId)) {
+            process(userRepository.getUser()) {
                 _user.value = it
                 it.companyId?.let { id -> getCompany(id) }
             }
@@ -78,7 +78,7 @@ class UserViewModel @Inject constructor(
 
     private fun getShifts() {
         viewModelScope.launch {
-            process(shiftRepository.getAll(sessionManager.userId)) {
+            process(shiftRepository.getAll()) {
                 _shifts.value = it
             }
         }
@@ -94,7 +94,7 @@ class UserViewModel @Inject constructor(
 
     private fun addShift(shift: Shift) {
         viewModelScope.launch {
-            process(shiftRepository.addNew(sessionManager.userId, shift)) {
+            process(shiftRepository.addNew(shift)) {
                 getShifts()
             }
         }
@@ -104,25 +104,16 @@ class UserViewModel @Inject constructor(
         viewModelScope.launch {
             shifts.value.active().let { active ->
                 val updated = active.copy().addExit(exitTime, description)
-                process(shiftRepository.update(sessionManager.userId, updated)) {
+                process(shiftRepository.update(updated)) {
                     getShifts()
                 }
             }
         }
     }
 
-    private fun updateUserInDatabase(user: User) {
-        viewModelScope.launch {
-                process(userRepository.updateUser(user)) {
-                getUser()
-                getShifts()
-            }
-        }
-    }
-
     fun deleteShift(shift: Shift) {
         viewModelScope.launch {
-            process(shiftRepository.delete(_user.value!!.id, shift)) {
+            process(shiftRepository.delete(shift)) {
                 getShifts()
             }
         }
@@ -130,7 +121,7 @@ class UserViewModel @Inject constructor(
 
     fun editShift(shift: Shift) {
         viewModelScope.launch {
-            process(shiftRepository.update(_user.value!!.id, shift)) {
+            process(shiftRepository.update(shift)) {
                 getShifts()
             }
         }

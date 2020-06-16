@@ -9,18 +9,15 @@ import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import kotlinx.android.synthetic.main.working_time_warning_dialog.*
 import studio.codable.unpause.R
-import studio.codable.unpause.screens.fragment.datePicker.DatePickerFragment
-import studio.codable.unpause.utilities.extensions.setVisibility
 import studio.codable.unpause.utilities.manager.DialogManager
 import studio.codable.unpause.utilities.manager.TimeManager
-import studio.codable.unpause.view.timePicker.TimePickerFragment
 import java.util.*
 
 class WorkingTimeWarningFragment(
-    private var arrivalTime: Date,
-    private var exitTime: Date,
-    private var editArrivalDate: Boolean,
-    private var dialogManager: DialogManager
+        private var arrivalTime: Date,
+        private var exitTime: Date,
+        private var isArrivalDateEditable: Boolean,
+        private var dialogManager: DialogManager
 ) : DialogFragment() {
 
     companion object {
@@ -41,7 +38,8 @@ class WorkingTimeWarningFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        edit_arrived_at_date_icon.setVisibility(editArrivalDate)
+        edit_arrived_at_date_icon.visibility =
+                if (isArrivalDateEditable) View.VISIBLE else View.INVISIBLE
 
         timeManager = TimeManager(arrivalTime, exitTime)
 
@@ -55,7 +53,7 @@ class WorkingTimeWarningFragment(
         updateMessage()
 
         edit_arrived_at_date_icon.setOnClickListener {
-            if (editArrivalDate) {
+            if (isArrivalDateEditable) {
                 dialogManager.openDatePickerDialog { year, month, dayOfMonth ->
                     timeManager.changeArrivalDate(year, month, dayOfMonth)
                     updateFragmentArrivedAtDate(timeManager.arrivalToArray()[1])
@@ -66,8 +64,8 @@ class WorkingTimeWarningFragment(
 
         edit_arrived_at_time_icon.setOnClickListener {
             dialogManager.openTimePickerDialog(
-                null,
-                null
+                    Integer.parseInt(arrivedAtTimeTextView.text.split(":")[0]),
+                    Integer.parseInt(arrivedAtTimeTextView.text.split(":")[1])
             ) { hourOfDay, minute ->
                 timeManager.changeArrivalTime(hourOfDay, minute)
                 updateFragmentArrivedAtTime(timeManager.arrivalToArray()[0])
@@ -84,8 +82,8 @@ class WorkingTimeWarningFragment(
 
         edit_exit_at_time_icon.setOnClickListener {
             dialogManager.openTimePickerDialog(
-                null,
-                null
+                    Integer.parseInt(activeExitTimeTextView.text.split(":")[0]),
+                    Integer.parseInt(activeExitTimeTextView.text.split(":")[1])
             ) { hourOfDay, minute ->
                 timeManager.changeExitTime(hourOfDay, minute)
                 updateFragmentExitTime(timeManager.exitToArray()[0])
@@ -118,10 +116,10 @@ class WorkingTimeWarningFragment(
                 timeManager.getWorkingHours().minutes.toString()
             )
         )
-        changeMessageColor()
+        updateMessageColor()
     }
 
-    private fun changeMessageColor() {
+    private fun updateMessageColor() {
         if (timeManager.getWorkingHours().hours >= WORKING_TIME_THRESHOLD) {
             workingTimeEditText.setTextColor(Color.RED)
         } else {

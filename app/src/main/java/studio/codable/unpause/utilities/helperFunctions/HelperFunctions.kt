@@ -9,7 +9,3 @@ fun areDatesEqual(first: Date?, second: Date?): Boolean {
 
     return first!!.time / 1000 == second!!.time / 1000
 }
-
-
-
-

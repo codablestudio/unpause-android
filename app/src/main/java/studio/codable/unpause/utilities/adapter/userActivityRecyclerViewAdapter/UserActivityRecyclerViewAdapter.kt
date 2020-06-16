@@ -10,14 +10,14 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.item_user_activity.view.*
 import studio.codable.unpause.R
 import studio.codable.unpause.model.Shift
-import studio.codable.unpause.utilities.ShiftWithPositionLambda
+import studio.codable.unpause.utilities.LambdaShiftIntToUnit
 import studio.codable.unpause.utilities.adapter.SwipeActions
 import studio.codable.unpause.utilities.extensions.crossFadeText
 import studio.codable.unpause.utilities.manager.TimeManager
 import studio.codable.unpause.utils.adapters.userActivityRecyclerViewAdapter.ShiftsDiffCallback
 import java.util.*
 
-typealias UserActivityListener = ShiftWithPositionLambda
+typealias UserActivityListener = LambdaShiftIntToUnit
 
 
 class UserActivityRecyclerViewAdapter constructor(

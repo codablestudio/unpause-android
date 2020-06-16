@@ -55,10 +55,12 @@ class HomeFragment : BaseFragment(true) {
         })
 
         userVm.user.observe(viewLifecycleOwner, Observer {
-            text_email.text = it.email
-            text_first_name.text = it.firstName.orEmpty()
-            text_last_name.text = it.lastName.orEmpty()
-            text_company.text = it.company?.name.orEmpty()
+            with(it) {
+                text_email.text = email
+                text_first_name.text = firstName.orEmpty()
+                text_last_name.text = lastName.orEmpty()
+                text_company.text = company?.name.orEmpty()
+            }
         })
 
         userVm.shifts.observe(viewLifecycleOwner, Observer {
