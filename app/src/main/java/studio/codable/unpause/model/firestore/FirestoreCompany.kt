@@ -3,6 +3,7 @@ package studio.codable.unpause.model.firestore
 import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.GeoPoint
 import studio.codable.unpause.model.Company
+import studio.codable.unpause.utilities.latlng.LatLng
 
 data class FirestoreCompany(
     @DocumentId
@@ -13,6 +14,9 @@ data class FirestoreCompany(
     var locations: List<GeoPoint>? = null
 ) {
     fun toCompany(): Company {
-        return Company(documentId, email, name, locations)
+        val loc = locations?.map {
+            LatLng(it.latitude,it.longitude)
+        }
+        return Company(documentId, email, name, loc)
     }
 }

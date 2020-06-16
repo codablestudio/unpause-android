@@ -1,19 +1,27 @@
-package studio.codable.unpause.utils.openCSV
+package studio.codable.unpause.utilities.manager
 
 import android.content.Context
+import android.net.Uri
 import android.os.Environment
+import androidx.core.content.FileProvider
 import com.opencsv.CSVWriter
+import studio.codable.unpause.BuildConfig
 import studio.codable.unpause.R
 import studio.codable.unpause.model.Shift
-import studio.codable.unpause.utilities.manager.TimeManager
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
 import java.io.Writer
 
-class OpenCSVWriter {
+class CsvManager {
     companion object{
-        fun writeShiftsToCSV(context: Context?, shifts: List<Shift>?, name: String): File? {
+
+        fun getCsvFileUri(context: Context, shifts: List<Shift>?, name: String) : Uri {
+            val file = writeShiftsToCSV(context, shifts, name)
+            return FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID, file!!)
+        }
+
+        private fun writeShiftsToCSV(context: Context?, shifts: List<Shift>?, name: String): File? {
             var csvFile: File? = null
             try {
                 csvFile = createCSVFile(context, name)
@@ -36,7 +44,7 @@ class OpenCSVWriter {
                         file.delete()
             }
             val pdfFile =
-                File.createTempFile(context?.getString(R.string.csv_file_name_2nd_part, name), ".csv", storageDir)
+                    File.createTempFile(context?.getString(R.string.csv_file_name_2nd_part, name), ".csv", storageDir)
             pdfFile.deleteOnExit()
             return pdfFile
         }
@@ -46,22 +54,22 @@ class OpenCSVWriter {
                 val writer = CSVWriter(FileWriter(path) as Writer?)
                 val data = ArrayList<Array<String>>()
                 data.add(
-                    arrayOf(
-                        context.getString(R.string.arrivedAt),
-                        context.getString(R.string.leftAt),
-                        context.getString(R.string.description),
-                        context.getString(R.string.hours)
-                    )
+                        arrayOf(
+                                context.getString(R.string.arrivedAt),
+                                context.getString(R.string.leftAt),
+                                context.getString(R.string.description),
+                                context.getString(R.string.hours)
+                        )
                 )
                 var totalHours = 0.0
                 if (shifts != null) {
                     for (shift in shifts){
                         val timeManager = TimeManager(shift.arrivalTime!!, shift.exitTime!!)
                         data.add(arrayOf(
-                            "${timeManager.arrivalToArray()[1]} ${timeManager.arrivalToArray()[0]}",
-                            "${timeManager.exitToArray()[1]} ${timeManager.exitToArray()[0]}",
-                            shift.description.toString(),
-                            timeManager.getWorkingHoursDecimal().toString()))
+                                "${timeManager.arrivalToArray()[1]} ${timeManager.arrivalToArray()[0]}",
+                                "${timeManager.exitToArray()[1]} ${timeManager.exitToArray()[0]}",
+                                shift.description.toString(),
+                                timeManager.getWorkingHoursDecimal().toString()))
                         totalHours += TimeManager(shift.arrivalTime!!, shift.exitTime!!).getWorkingHoursDecimal()
                     }
                 }

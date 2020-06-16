@@ -1,18 +1,17 @@
 package studio.codable.unpause.screens.fragment.userActivity
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.FileProvider
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.leinardi.android.speeddial.SpeedDialView
 import kotlinx.android.synthetic.main.fragment_user_activity.*
-import studio.codable.unpause.BuildConfig
 import studio.codable.unpause.R
 import studio.codable.unpause.base.activity.BaseActivity
 import studio.codable.unpause.base.fragment.BaseFragment
@@ -21,11 +20,10 @@ import studio.codable.unpause.model.User
 import studio.codable.unpause.screens.UserViewModel
 import studio.codable.unpause.screens.fragment.workingTimeWarning.WorkingTimeWarningFragment
 import studio.codable.unpause.utilities.adapter.userActivityRecyclerViewAdapter.UserActivityRecyclerViewAdapter
+import studio.codable.unpause.utilities.manager.CsvManager
 import studio.codable.unpause.utilities.manager.DialogManager
 import studio.codable.unpause.utilities.manager.TimeManager
 import studio.codable.unpause.utils.adapters.userActivityRecyclerViewAdapter.SwipeActionCallback
-import studio.codable.unpause.utils.openCSV.OpenCSVWriter
-import java.io.File
 import java.util.*
 
 class UserActivityFragment : BaseFragment(false) {
@@ -118,32 +116,26 @@ class UserActivityFragment : BaseFragment(false) {
 //            val intent = Intent(context, BossInfoActivity::class.java)
 //            startActivityForResult(intent, 1234)
 //        } else {
-            val file = OpenCSVWriter.writeShiftsToCSV(
-                context,
+        val fileUri =  CsvManager.getCsvFileUri(
+                requireContext(),
                 user.getUserActivity(
-                    timeManager.arrivalTime,
-                    timeManager.exitTime
+                        timeManager.arrivalTime,
+                        timeManager.exitTime
                 ),
                 getString(R.string.csv_file_name, user.firstName, user.lastName)
-            )
-            startEmailActivity(file)
+        )
+        val emailIntent = prepareEmail(fileUri)
+        startActivity(Intent.createChooser(emailIntent, getString(R.string.send_email)))
 //        }
     }
 
-    private fun startEmailActivity(file: File?) {
-        val emailIntent = prepareEmail(file)
-        startActivity(Intent.createChooser(emailIntent, getString(R.string.send_email)))
-    }
-
-    private fun prepareEmail(file: File?): Intent {
-        val uri =
-            FileProvider.getUriForFile(requireContext(), BuildConfig.APPLICATION_ID, file!!)
+    private fun prepareEmail(fileUri: Uri): Intent {
         val to = arrayOf(user.company?.email.toString())
 
         return Intent(Intent.ACTION_SEND).apply {
             type = "text/html"
             putExtra(Intent.EXTRA_EMAIL, to)
-            putExtra(Intent.EXTRA_STREAM, uri)
+            putExtra(Intent.EXTRA_STREAM, fileUri)
             putExtra(
                 Intent.EXTRA_SUBJECT,
                 getString(R.string.email_subject)
@@ -155,13 +147,10 @@ class UserActivityFragment : BaseFragment(false) {
 
     }
 
-    private fun openCSV(file: File?) {
+    private fun openCSV(fileUri: Uri) {
         val csvIntent = Intent(Intent.ACTION_VIEW)
 
-        val uri =
-            FileProvider.getUriForFile(requireContext(), BuildConfig.APPLICATION_ID, file!!)
-
-        csvIntent.setDataAndType(uri, "text/csv")
+        csvIntent.setDataAndType(fileUri, "text/csv")
         csvIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
         csvIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         requireActivity().startActivity(csvIntent)
@@ -176,15 +165,15 @@ class UserActivityFragment : BaseFragment(false) {
             when (speedDialActionItem.id) {
 
                 R.id.open_csv_button -> {
-                    val file = OpenCSVWriter.writeShiftsToCSV(
-                        context,
+                    val fileUri = CsvManager.getCsvFileUri(
+                        requireContext(),
                         user.getUserActivity(
                             timeManager.arrivalTime,
                             timeManager.exitTime
                         ),
                         getString(R.string.csv_file_name, user.firstName, user.lastName)
                     )
-                    openCSV(file)
+                    openCSV(fileUri)
                     false
                 }
 
