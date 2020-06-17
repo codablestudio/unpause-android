@@ -71,5 +71,9 @@
     <string name="custom_shift_adding_outside_of_working_time_warning">Custom shift can only be added after working
         hours
     </string>
+    <string name="your_location_has_changed">We noticed that your location has changed</string>
+    <string name="arrived_at_location">Arrived at %s</string>
+    <string name="left_location">Left %s</string>
+    <string name="im_watching_you">Marko is watching you</string>
 
 </resources>

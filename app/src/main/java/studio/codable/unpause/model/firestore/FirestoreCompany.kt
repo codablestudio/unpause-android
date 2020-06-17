@@ -11,12 +11,17 @@ data class FirestoreCompany(
     var email: String = "",
     var name: String = "",
     var passcode: String = "",
-    var locations: List<GeoPoint>? = null
+    var locations: List<Map<String, Any>>? = null
 ) {
     fun toCompany(): Company {
         val loc = locations?.map {
-            LatLng(it.latitude,it.longitude)
+            //mapped example:
+            //{name=Codable Studio Zagreb,
+            //geopoint=GeoPoint { latitude=45.787424, longitude=15.949704 }}, size: 2
+            val geopoint = it.values.elementAt(1) as GeoPoint
+            LatLng(geopoint.latitude, geopoint.longitude)
         }
+
         return Company(documentId, email, name, loc)
     }
 }

@@ -20,7 +20,19 @@
                 android:resource="@xml/file_provider_paths" />
         </provider>
 
-        <activity android:name=".screens.activity.emailVerification.EmailVerificationActivity"></activity>
+        <receiver
+            android:name="studio.codable.unpause.utilities.broadcastReceiver.UnpauseBroadcastReceiver"
+            android:enabled="true"
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
+            <intent-filter>
+                <action android:name="studio.codable.unpause.utils.geofencing.geofenceManager.GeofencingManager.GEOFENCING_ACTION" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name=".utilities.geofencing.GeofenceProcessingService" />
+
+
+        <activity android:name=".screens.activity.emailVerification.EmailVerificationActivity" />
         <activity android:name=".screens.activity.home.HomeActivity" />
         <activity android:name=".screens.activity.register.RegisterActivity" />
         <activity
