@@ -99,6 +99,9 @@ class UserActivityFragment : BaseFragment(false) {
         userVm.user.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             updateRecyclerView()
         })
+        userVm.shifts.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            updateRecyclerView()
+        })
 
         updateRecyclerView()
 
@@ -284,6 +287,7 @@ class UserActivityFragment : BaseFragment(false) {
                     timeManager.exitTime
                 )
             )
+        user_activity_recycler_view?.adapter?.notifyDataSetChanged()
     }
 
 //    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
