@@ -38,20 +38,27 @@ class WorkingTimeWarningFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initUI()
+        initListeners()
+    }
+
+    private fun initUI() {
         edit_arrived_at_date_icon.visibility =
                 if (isArrivalDateEditable) View.VISIBLE else View.INVISIBLE
 
         timeManager = TimeManager(arrivalTime, exitTime)
 
         arrivedAtDateTextView.text =
-            timeManager.arrivalToArray()[1]
+                timeManager.arrivalToArray()[1]
         arrivedAtTimeTextView.text =
-            timeManager.arrivalToArray()[0]
+                timeManager.arrivalToArray()[0]
 
         updateFragmentExitTime(timeManager.exitToArray()[0])
         updateFragmentExitDate(timeManager.exitToArray()[1])
         updateMessage()
+    }
 
+    private fun initListeners() {
         edit_arrived_at_date_icon.setOnClickListener {
             if (isArrivalDateEditable) {
                 dialogManager.openDatePickerDialog { year, month, dayOfMonth ->
@@ -77,7 +84,8 @@ class WorkingTimeWarningFragment(
             dialogManager.openDatePickerDialog { year, month, dayOfMonth ->
                 timeManager.changeExitDate(year, month, dayOfMonth)
                 updateFragmentExitDate(timeManager.exitToArray()[1])
-                updateMessage() }
+                updateMessage()
+            }
         }
 
         edit_exit_at_time_icon.setOnClickListener {
@@ -96,8 +104,8 @@ class WorkingTimeWarningFragment(
                 showError(getString(R.string.working_hours_must_be_positive))
             } else {
                 dialogListener.onContinue(
-                    timeManager.arrivalTime,
-                    timeManager.exitTime
+                        timeManager.arrivalTime,
+                        timeManager.exitTime
                 )
                 dismiss()
             }

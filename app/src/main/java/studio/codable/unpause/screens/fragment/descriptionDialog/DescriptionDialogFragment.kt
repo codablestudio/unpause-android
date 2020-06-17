@@ -12,8 +12,8 @@ import studio.codable.unpause.utilities.LambdaNoArgumentsUnit
 
 class DescriptionDialogFragment(private val description: String?) : DialogFragment() {
 
-    private lateinit var dialogListenerOnSave: LambdaStringToUnit
-    private lateinit var dialogListenerOnCancel: LambdaNoArgumentsUnit
+    private var dialogListenerOnSave: LambdaStringToUnit? = null
+    private var dialogListenerOnCancel: LambdaNoArgumentsUnit? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.save_dialog, container)
@@ -25,12 +25,12 @@ class DescriptionDialogFragment(private val description: String?) : DialogFragme
         descriptionEditText.setText(description.orEmpty())
 
         saveDescriptionButton.setOnClickListener {
-            dialogListenerOnSave.invoke(descriptionEditText.text.toString())
+            dialogListenerOnSave?.invoke(descriptionEditText.text.toString())
             dismiss()
         }
 
         cancelSaveDialogButton.setOnClickListener {
-            dialogListenerOnCancel.invoke()
+            dialogListenerOnCancel?.invoke()
             dismiss()
         }
     }

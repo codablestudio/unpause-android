@@ -48,19 +48,21 @@ class UserActivityRecyclerViewAdapter constructor(
         val timeManager =
             TimeManager(shifts[position].arrivalTime!!, shifts[position].exitTime!!)
 
-        holder.itemView.text_arrived_at_time.text = timeManager.arrivalToArray()[0]
-        holder.itemView.text_arrived_at_date.text = timeManager.arrivalToArray()[1]
+        holder.itemView.apply {
+            text_arrived_at_time.text = timeManager.arrivalToArray()[0]
+            text_arrived_at_date.text = timeManager.arrivalToArray()[1]
 
-        holder.itemView.text_left_at_time.text = timeManager.exitToArray()[0]
-        holder.itemView.text_left_at_date.text = timeManager.exitToArray()[1]
+            text_left_at_time.text = timeManager.exitToArray()[0]
+            text_left_at_date.text = timeManager.exitToArray()[1]
 
-        holder.itemView.text_working_hours.text = context.getString(
-            R.string.n_hours_m_minutes,
-            timeManager.getWorkingHours().hours,
-            timeManager.getWorkingHours().minutes
-        )
+            text_working_hours.text = context.getString(
+                    R.string.n_hours_m_minutes,
+                    timeManager.getWorkingHours().hours,
+                    timeManager.getWorkingHours().minutes
+            )
 
-        holder.itemView.text_job_description.text = shifts[position].description
+            text_job_description.text = shifts[position].description
+        }
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int, payloads: MutableList<Any>) {
@@ -69,57 +71,59 @@ class UserActivityRecyclerViewAdapter constructor(
         } else {
 
             val timeManager =
-                TimeManager(shifts[position].arrivalTime!!, shifts[position].exitTime!!)
+                    TimeManager(shifts[position].arrivalTime!!, shifts[position].exitTime!!)
 
             payloads.forEach { list ->
 
                 (list as List<Any?>).forEach {
 
-                    if (it is ShiftsDiffCallback.ArrivalTimeChanged) {
-                        holder.itemView.text_arrived_at_time.crossFadeText(
-                            timeManager.arrivalToArray()[0])
-                        holder.itemView.text_working_hours.crossFadeText(context.getString(
-                            R.string.n_hours_m_minutes,
-                            timeManager.getWorkingHours().hours,
-                            timeManager.getWorkingHours().minutes
-                        ))
-                    }
+                    when (it) {
+                        is ShiftsDiffCallback.ArrivalTimeChanged -> {
+                            holder.itemView.text_arrived_at_time.crossFadeText(
+                                    timeManager.arrivalToArray()[0])
+                            holder.itemView.text_working_hours.crossFadeText(context.getString(
+                                    R.string.n_hours_m_minutes,
+                                    timeManager.getWorkingHours().hours,
+                                    timeManager.getWorkingHours().minutes
+                            ))
+                        }
 
-                    if (it is ShiftsDiffCallback.ArrivalDateChanged) {
+                        is ShiftsDiffCallback.ArrivalDateChanged -> {
 
-                        holder.itemView.text_arrived_at_date.crossFadeText(
-                            timeManager.arrivalToArray()[1])
-                        holder.itemView.text_working_hours.crossFadeText(context.getString(
-                            R.string.n_hours_m_minutes,
-                            timeManager.getWorkingHours().hours,
-                            timeManager.getWorkingHours().minutes
-                        ))
-                    }
+                            holder.itemView.text_arrived_at_date.crossFadeText(
+                                    timeManager.arrivalToArray()[1])
+                            holder.itemView.text_working_hours.crossFadeText(context.getString(
+                                    R.string.n_hours_m_minutes,
+                                    timeManager.getWorkingHours().hours,
+                                    timeManager.getWorkingHours().minutes
+                            ))
+                        }
 
-                    if (it is ShiftsDiffCallback.ExitTimeChanged) {
+                        is ShiftsDiffCallback.ExitTimeChanged -> {
 
-                        holder.itemView.text_left_at_time.crossFadeText(
-                            timeManager.exitToArray()[0])
-                        holder.itemView.text_working_hours.crossFadeText(context.getString(
-                            R.string.n_hours_m_minutes,
-                            timeManager.getWorkingHours().hours,
-                            timeManager.getWorkingHours().minutes
-                        ))
-                    }
+                            holder.itemView.text_left_at_time.crossFadeText(
+                                    timeManager.exitToArray()[0])
+                            holder.itemView.text_working_hours.crossFadeText(context.getString(
+                                    R.string.n_hours_m_minutes,
+                                    timeManager.getWorkingHours().hours,
+                                    timeManager.getWorkingHours().minutes
+                            ))
+                        }
 
-                    if (it is ShiftsDiffCallback.ExitDateChanged) {
-                        holder.itemView.text_left_at_date.crossFadeText(
-                            timeManager.exitToArray()[1])
-                        holder.itemView.text_working_hours.crossFadeText(context.getString(
-                            R.string.n_hours_m_minutes,
-                            timeManager.getWorkingHours().hours,
-                            timeManager.getWorkingHours().minutes
-                        ))
-                    }
+                        is ShiftsDiffCallback.ExitDateChanged -> {
+                            holder.itemView.text_left_at_date.crossFadeText(
+                                    timeManager.exitToArray()[1])
+                            holder.itemView.text_working_hours.crossFadeText(context.getString(
+                                    R.string.n_hours_m_minutes,
+                                    timeManager.getWorkingHours().hours,
+                                    timeManager.getWorkingHours().minutes
+                            ))
+                        }
 
-                    if (it is ShiftsDiffCallback.DescriptionChanged) {
-                        holder.itemView.text_job_description.crossFadeText(
-                            shifts[position].description)
+                        is ShiftsDiffCallback.DescriptionChanged -> {
+                            holder.itemView.text_job_description.crossFadeText(
+                                    shifts[position].description)
+                        }
                     }
                 }
             }
