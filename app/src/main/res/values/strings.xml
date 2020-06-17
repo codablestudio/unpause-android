@@ -32,4 +32,44 @@
     <string name="email_confirmation_continue">We have sent you
     an email confirmation. Please verify your email and we will continue.
     </string>
+    <string name="from">From:</string>
+    <string name="to">To:</string>
+    <string name="job_description">Job description</string>
+    <string name="working_hours">Working hours</string>
+    <string name="n_hours_m_minutes">%d hours %d minutes</string>
+    <string name="shift_edited">Shift edited</string>
+    <string name="shift_removed">Shift removed</string>
+    <string name="shift_added">Shift added</string>
+    <string name="search">Search</string>
+    <string name="undo">Undo</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="working_hours_must_be_positive">Working hours must be positive</string>
+    <string name="total_working_hours_message">You have been working for %s hours and %s minutes, would you like to
+        continue?
+    </string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="what_did_you_work_on">What did you work on?</string>
+    <string name="adding_shift">Adding shift</string>
+    <string name="you_arived_at">You arived at:</string>
+    <string name="continue_text">Continue</string>
+    <string name="you_are_leaving_at">You are leaving at:</string>
+    <string name="send_email">Send email…</string>
+    <string name="csv_file_name">%s_%s</string>
+    <string name="csv_file_name_2nd_part">%s_isplata_</string>
+    <string name="arrivedAt">Arrival time</string>
+    <string name="leftAt">Leaving time</string>
+    <string name="description">Description</string>
+    <string name="hours">Hours</string>
+    <string name="total_hours">Total hours:</string>
+    <string name="email_subject">Working hours</string>
+    <string name="email_body">Hello,\nhere are my working hours\n\nCheers :)</string>
+    <string name="open_csv">Open CSV</string>
+    <string name="send_as_email">Send as email</string>
+    <string name="add_custom_shift">Add custom shift</string>
+    <string name="custom_shift_adding_outside_of_working_time_warning">Custom shift can only be added after working
+        hours
+    </string>
+
 </resources>

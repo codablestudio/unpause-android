@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="20dp"
+    android:layout_marginTop="20dp"
+    android:layout_marginEnd="20dp"
+    android:elevation="5dp"
+    app:cardCornerRadius="8dp"
+    tools:ignore="SmallSp,ContentDescription">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/anchor_img_arriving"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="20dp"
+            android:src="@drawable/launcher"
+            app:layout_constraintBottom_toBottomOf="@id/text_arrived_at_date"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/anchor_img_calendar_arrived_at"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="41dp"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/calendar_75x75_black"
+            app:layout_constraintBottom_toTopOf="@id/text_arrived_at_date"
+            app:layout_constraintStart_toEndOf="@id/anchor_img_arriving"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/text_arrived_at_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="5dp"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/separator1"
+            app:layout_constraintStart_toEndOf="@id/anchor_img_arriving"
+            app:layout_constraintTop_toBottomOf="@id/anchor_img_calendar_arrived_at"
+            tools:text="20.02.2020." />
+
+        <ImageView
+            android:id="@+id/anchor_img_time_arrived_at"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="41dp"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/time_75x75_black"
+            app:layout_constraintBottom_toTopOf="@id/text_arrived_at_time"
+            app:layout_constraintStart_toEndOf="@id/text_arrived_at_date"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/text_arrived_at_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="5dp"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/text_arrived_at_date"
+            app:layout_constraintStart_toEndOf="@id/text_arrived_at_date"
+            app:layout_constraintTop_toBottomOf="@id/anchor_img_time_arrived_at"
+            tools:text="20.02.2020." />
+
+        <View
+            android:id="@+id/separator1"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/textColorDark"
+            app:layout_constraintBottom_toTopOf="@id/anchor_text_job_description"
+            app:layout_constraintEnd_toEndOf="@id/text_arrived_at_time"
+            app:layout_constraintStart_toStartOf="@id/anchor_img_arriving"
+            app:layout_constraintTop_toBottomOf="@id/text_arrived_at_date" />
+
+        <TextView
+            android:id="@+id/anchor_text_job_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/job_description"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/text_job_description"
+            app:layout_constraintStart_toStartOf="@id/anchor_img_arriving"
+            app:layout_constraintTop_toBottomOf="@id/separator1" />
+
+        <TextView
+            android:id="@+id/text_job_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="10dp"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toTopOf="@id/separator2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/anchor_img_arriving"
+            app:layout_constraintTop_toBottomOf="@id/anchor_text_job_description"
+            tools:text="Fixing some constraints on HomeViewController. Making UI of ShiftViewController more inutitive." />
+
+        <View
+            android:id="@+id/separator2"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/textColorDark"
+            app:layout_constraintEnd_toEndOf="@id/text_job_description"
+            app:layout_constraintStart_toStartOf="@id/anchor_img_arriving"
+            app:layout_constraintTop_toBottomOf="@id/text_job_description" />
+
+        <ImageView
+            android:id="@+id/anchor_img_leaving"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/unpause_white_logo_back_75x75"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@id/anchor_img_arriving"
+            app:layout_constraintTop_toBottomOf="@id/separator2" />
+
+        <ImageView
+            android:id="@+id/anchor_img_calendar_left_at"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="41dp"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/calendar_75x75_black"
+            app:layout_constraintBottom_toTopOf="@id/text_left_at_date"
+            app:layout_constraintStart_toEndOf="@id/anchor_img_leaving"
+            app:layout_constraintTop_toBottomOf="@id/separator2" />
+
+        <TextView
+            android:id="@+id/text_left_at_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="5dp"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/anchor_img_leaving"
+            app:layout_constraintStart_toEndOf="@id/anchor_img_leaving"
+            app:layout_constraintTop_toBottomOf="@id/anchor_img_calendar_left_at"
+            tools:text="20.02.2020." />
+
+        <ImageView
+            android:id="@+id/anchor_img_time_left_at"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="41dp"
+            android:layout_marginBottom="5dp"
+            android:src="@drawable/time_75x75_black"
+            app:layout_constraintBottom_toTopOf="@id/text_left_at_time"
+            app:layout_constraintStart_toEndOf="@id/text_left_at_date"
+            app:layout_constraintTop_toTopOf="@id/anchor_img_calendar_left_at" />
+
+        <TextView
+            android:id="@+id/text_left_at_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="5dp"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/anchor_img_leaving"
+            app:layout_constraintStart_toEndOf="@id/text_left_at_date"
+            app:layout_constraintTop_toBottomOf="@id/anchor_img_calendar_left_at"
+            tools:text="20.02.2020." />
+
+        <TextView
+            android:id="@+id/anchor_text_working_hours"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:text="@string/working_hours"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toTopOf="@id/text_working_hours"
+            app:layout_constraintStart_toEndOf="@id/text_left_at_time"
+            app:layout_constraintTop_toTopOf="@+id/anchor_img_time_left_at" />
+
+        <TextView
+            android:id="@+id/text_working_hours"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="5dp"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toBottomOf="@+id/anchor_img_leaving"
+            app:layout_constraintStart_toEndOf="@+id/text_left_at_time"
+            app:layout_constraintTop_toBottomOf="@+id/anchor_text_working_hours"
+            tools:text="0 hours 9 minutes" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".screens.fragment.userActivity.UserActivityFragment">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        android:scrollbars="vertical">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/date_filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                app:layout_constraintBottom_toTopOf="@id/recycler_view_separator"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/from_text"
+                    style="@style/Title24"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="6dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="3dp"
+                    android:text="@string/from"
+                    app:layout_constraintBottom_toTopOf="@id/to_text"
+                    app:layout_constraintEnd_toStartOf="@id/from_date_text_view"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/from_date_text_view"
+                    style="@style/Title24"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="6dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="3dp"
+                    android:textStyle="normal"
+                    app:layout_constraintBottom_toTopOf="@id/to_date_text_view"
+                    app:layout_constraintEnd_toStartOf="@id/edit_from_img"
+                    app:layout_constraintStart_toEndOf="@id/from_text"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="01.08.2019." />
+
+                <ImageView
+                    android:id="@+id/edit_from_img"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginHorizontal="6dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="3dp"
+                    android:src="@drawable/ic_edit_black_24dp"
+                    app:layout_constraintBottom_toTopOf="@id/edit_to_img"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/from_date_text_view"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/to_text"
+                    style="@style/Title24"
+                    android:layout_width="65dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="6dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="5dp"
+                    android:text="@string/to"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/to_date_text_view"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/from_text" />
+
+                <TextView
+                    android:id="@+id/to_date_text_view"
+                    style="@style/Title24"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="6dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="5dp"
+                    android:textStyle="normal"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/edit_to_img"
+                    app:layout_constraintStart_toEndOf="@id/to_text"
+                    app:layout_constraintTop_toBottomOf="@id/from_date_text_view"
+                    tools:text="15.08.2019." />
+
+                <ImageView
+                    android:id="@+id/edit_to_img"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginHorizontal="6dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="5dp"
+                    android:src="@drawable/ic_edit_black_24dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/to_date_text_view"
+                    app:layout_constraintTop_toBottomOf="@id/edit_from_img" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <View
+                android:id="@+id/recycler_view_separator"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/black"
+                android:layout_marginTop="15dp"
+                app:layout_constraintBottom_toTopOf="@id/user_activity_recycler_view"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/date_filter" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/user_activity_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingBottom="20dp"
+                android:scrollbars="vertical"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"></androidx.recyclerview.widget.RecyclerView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.core.widget.NestedScrollView>
+
+    <com.leinardi.android.speeddial.SpeedDialView
+        android:id="@+id/speed_dial_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="60dp"
+        app:sdMainFabAnimationRotateAngle="180"
+        app:sdMainFabClosedBackgroundColor="@color/accent"
+        app:sdMainFabClosedSrc="@drawable/ic_keyboard_arrow_up_black_24dp"
+        app:sdMainFabOpenedBackgroundColor="@color/accent" />
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

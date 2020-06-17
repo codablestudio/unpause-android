@@ -5,7 +5,7 @@ import studio.codable.unpause.utilities.networking.Result
 
 interface IUserRepository {
 
-    suspend fun getUser(userId: String): Result<User>
+    suspend fun getUser(): Result<User>
 
     suspend fun createUser(user: User): Result<Unit>
 

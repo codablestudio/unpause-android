@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/open_csv_button"
+          android:title="@string/open_csv"
+          android:icon="@drawable/ic_file_download_black_24dp"/>
+
+    <item android:id="@+id/send_as_email_button"
+          android:title="@string/send_as_email"
+          android:icon="@drawable/ic_email_black_24dp"/>
+
+    <item android:id="@+id/add_custom_shift_button"
+          android:title="@string/add_custom_shift"
+          android:icon="@drawable/ic_add_black_24dp"/>
+
+</menu>

@@ -10,7 +10,7 @@
 
     <!--    <include-->
     <!--        android:id="@id/nav_graph_activity"-->
-    <!--        app:graph="@navigation/navigation_activity" />-->
+    <!--        app:graph="@navigation/navigation_user_activity" />-->
 
     <!--    <include-->
     <!--        android:id="@id/nav_graph_home"-->

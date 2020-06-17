@@ -31,6 +31,10 @@ buildscript {
         googleServicesAuth_version = '17.0.0'
 
         lottie_version = '3.0.7'
+
+        speedDial_version = '1.0-alpha06'
+
+        openCsv_version = '4.6'
     }
     repositories {
         google()

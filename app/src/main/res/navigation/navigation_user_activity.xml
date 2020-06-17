@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_user_activity"
+    app:startDestination="@id/userActivityFragment">
+
+    <fragment
+        android:id="@+id/userActivityFragment"
+        android:name="studio.codable.unpause.screens.fragment.userActivity.UserActivityFragment"
+        android:label="fragment_user_activity"
+        tools:layout="@layout/fragment_user_activity" />
+</navigation>

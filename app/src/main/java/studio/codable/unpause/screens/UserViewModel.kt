@@ -1,16 +1,20 @@
 package studio.codable.unpause.screens
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import studio.codable.unpause.base.viewModel.BaseViewModel
+import studio.codable.unpause.model.Company
 import studio.codable.unpause.model.Shift
 import studio.codable.unpause.model.User
+import studio.codable.unpause.repository.ICompanyRepository
 import studio.codable.unpause.repository.IShiftRepository
 import studio.codable.unpause.repository.IUserRepository
 import studio.codable.unpause.utilities.extensions.active
 import studio.codable.unpause.utilities.manager.SessionManager
+import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
@@ -20,19 +24,33 @@ class UserViewModel @Inject constructor(
     private val userRepository: IUserRepository,
     @Named("firebaseShiftRepository")
     private val shiftRepository: IShiftRepository,
+    @Named("firebaseCompanyRepository")
+    private val companyRepository: ICompanyRepository,
     private val sessionManager: SessionManager
 ) : BaseViewModel() {
 
-    init {
-        getUser()
-        getShifts()
-    }
-
-    private val _user = MutableLiveData<User>()
+    private val _user = MediatorLiveData<User>()
     val user: LiveData<User> = _user
 
     private val _shifts = MutableLiveData<List<Shift>>()
     val shifts: LiveData<List<Shift>> = _shifts
+
+    private val _company = MutableLiveData<Company>()
+    val company: LiveData<Company> = _company
+
+    init {
+        getUser()
+        _user.addSource(_shifts) {
+            _user.value?.shifts = it as ArrayList<Shift>
+            Timber.i("Shifts received: ${_shifts.value}")
+        }
+        _user.addSource(_company) {
+            _user.value?.company = it
+            Timber.i("Company received: ${_company.value}")
+        }
+        getShifts()
+
+    }
 
     var isCheckedIn: Boolean
         get() = sessionManager.isCheckedIn
@@ -51,23 +69,32 @@ class UserViewModel @Inject constructor(
 
     private fun getUser() {
         viewModelScope.launch {
-            process(userRepository.getUser(sessionManager.userId)) {
+            process(userRepository.getUser()) {
                 _user.value = it
+                it.companyId?.let { id -> getCompany(id) }
             }
         }
     }
 
     private fun getShifts() {
         viewModelScope.launch {
-            process(shiftRepository.getAll(sessionManager.userId)) {
+            process(shiftRepository.getAll()) {
                 _shifts.value = it
+            }
+        }
+    }
+
+    private fun getCompany(companyId : String) {
+        viewModelScope.launch {
+            process(companyRepository.getCompany(companyId)) {
+                _company.value = it
             }
         }
     }
 
     private fun addShift(shift: Shift) {
         viewModelScope.launch {
-            process(shiftRepository.addNew(sessionManager.userId, shift)) {
+            process(shiftRepository.addNew(shift)) {
                 getShifts()
             }
         }
@@ -77,10 +104,30 @@ class UserViewModel @Inject constructor(
         viewModelScope.launch {
             shifts.value.active().let { active ->
                 val updated = active.copy().addExit(exitTime, description)
-                process(shiftRepository.update(sessionManager.userId, updated)) {
+                process(shiftRepository.update(updated)) {
                     getShifts()
                 }
             }
         }
+    }
+
+    fun deleteShift(shift: Shift) {
+        viewModelScope.launch {
+            process(shiftRepository.delete(shift)) {
+                getShifts()
+            }
+        }
+    }
+
+    fun editShift(shift: Shift) {
+        viewModelScope.launch {
+            process(shiftRepository.update(shift)) {
+                getShifts()
+            }
+        }
+    }
+
+    fun addCustomShift(shift: Shift) {
+        addShift(shift)
     }
 }

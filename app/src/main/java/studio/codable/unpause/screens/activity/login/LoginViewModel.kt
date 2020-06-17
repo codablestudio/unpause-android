@@ -47,11 +47,12 @@ class LoginViewModel @Inject constructor(
         _loading.value = Event(true)
         viewModelScope.launch {
             process(loginRepository.login(email, password)) {
-                if (loginRepository.isUserVerified()) {
+//                  uncomment to enable verification
+//                if (loginRepository.isUserVerified()) {
                     _userId.value = it
-                } else {
-                    _userVerified.value = false
-                }
+//                } else {
+//                    _userVerified.value = false
+//                }
             }
         }
     }
@@ -61,7 +62,8 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             processTask(account.await()) {
                 process(loginRepository.signInWithGoogle(it, clientId)) {
-                    when (userRepository.getUser(account.result!!.email!!))  {
+                    sessionManager.userId = account.result!!.email!!
+                    when (userRepository.getUser())  {
 
                         is Result.GenericError -> process( userRepository.createUser(
                             User(account.result!!.email!!, account.result!!.email!!,

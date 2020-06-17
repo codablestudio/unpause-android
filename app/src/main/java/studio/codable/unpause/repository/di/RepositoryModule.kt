@@ -19,4 +19,8 @@ abstract class RepositoryModule {
     @Binds
     @Named("firebaseShiftRepository")
     internal abstract fun bindFirebaseShiftRepository(firebaseShiftRepository: FirebaseShiftRepository): IShiftRepository
+
+    @Binds
+    @Named("firebaseCompanyRepository")
+    internal abstract fun bindFirebaseCompanyRepository(firebaseCompanyRepository: FirebaseCompanyRepository): ICompanyRepository
 }
