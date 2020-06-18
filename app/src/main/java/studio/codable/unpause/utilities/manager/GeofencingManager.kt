@@ -1,9 +1,15 @@
 package studio.codable.unpause.utilities.manager
 
+import android.Manifest
+import android.Manifest.*
+import android.app.Activity
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
+import androidx.core.app.ActivityCompat.requestPermissions
+import androidx.core.content.ContextCompat
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingClient
 import com.google.android.gms.location.GeofencingRequest
@@ -65,8 +71,10 @@ class GeofencingManager private constructor(context: Context) {
             Geofence.Builder()
                 .setRequestId(geofence.requestId)
                 .setCircularRegion(geofence.lat, geofence.long, geofence.radius)
-                //Geofence.GEOFENCE_TRANSITION_DWELL is just for testing, remove later
+                //TODO: Geofence.GEOFENCE_TRANSITION_DWELL is just for testing, remove later
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT or Geofence.GEOFENCE_TRANSITION_DWELL)
+                    //TODO: also remove this line later
+                    .setLoiteringDelay(500)
                 .setExpirationDuration(Geofence.NEVER_EXPIRE)
                 .build()
         )
@@ -85,7 +93,7 @@ class GeofencingManager private constructor(context: Context) {
             }
 
             addOnFailureListener {
-                Timber.d( "Failed to enable geofences")
+                Timber.d( "Failed to enable geofences: ${it.localizedMessage}")
             }
         }
     }

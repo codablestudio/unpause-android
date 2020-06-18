@@ -2,6 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="studio.codable.unpause">
 
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+<!--    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />-->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <application
         android:name=".app.App"
         android:allowBackup="true"
@@ -10,6 +15,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}"
@@ -22,8 +28,8 @@
 
         <receiver
             android:name="studio.codable.unpause.utilities.broadcastReceiver.UnpauseBroadcastReceiver"
-            android:enabled="true"
-            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
+            android:enabled="true">
+<!--            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">-->
             <intent-filter>
                 <action android:name="studio.codable.unpause.utils.geofencing.geofenceManager.GeofencingManager.GEOFENCING_ACTION" />
             </intent-filter>

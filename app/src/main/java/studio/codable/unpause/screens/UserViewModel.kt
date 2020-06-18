@@ -1,5 +1,9 @@
 package studio.codable.unpause.screens
 
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
@@ -13,6 +17,8 @@ import studio.codable.unpause.repository.ICompanyRepository
 import studio.codable.unpause.repository.IShiftRepository
 import studio.codable.unpause.repository.IUserRepository
 import studio.codable.unpause.utilities.extensions.active
+import studio.codable.unpause.utilities.manager.GeofencingManager
+import studio.codable.unpause.utilities.manager.GeofencingManager.*
 import studio.codable.unpause.utilities.manager.SessionManager
 import timber.log.Timber
 import java.util.*
@@ -38,6 +44,9 @@ class UserViewModel @Inject constructor(
     private val _company = MutableLiveData<Company>()
     val company: LiveData<Company> = _company
 
+    private val _geofences = MediatorLiveData<List<GeofenceModel>>()
+    val geofences: LiveData<List<GeofenceModel>> = _geofences
+
     init {
         getUser()
         _user.addSource(_shifts) {
@@ -49,6 +58,12 @@ class UserViewModel @Inject constructor(
             Timber.i("Company received: ${_company.value}")
         }
         getShifts()
+
+        _geofences.addSource(_company) {
+            if (_geofences.value == null) {
+                getGeofences(_company.value!!.id)
+            }
+        }
 
     }
 
@@ -88,6 +103,14 @@ class UserViewModel @Inject constructor(
         viewModelScope.launch {
             process(companyRepository.getCompany(companyId)) {
                 _company.value = it
+            }
+        }
+    }
+
+    private fun getGeofences(companyId : String) {
+        viewModelScope.launch {
+            process(companyRepository.getGeofences(company.value!!.id)) {
+                _geofences.value = it
             }
         }
     }

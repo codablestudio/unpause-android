@@ -29,7 +29,7 @@ class GeofenceProcessingService : IntentService("Geofence processing service") {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-
+        Timber.i("GeofenceProcessingService started")
         startForeground()
         return super.onStartCommand(intent, flags, startId)
     }
@@ -72,7 +72,9 @@ class GeofenceProcessingService : IntentService("Geofence processing service") {
         val geofenceTransition = geofencingEvent.geofenceTransition
 
         if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER ||
-            geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT
+            geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT ||
+                //TODO: for testing, remove later
+                geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL
         ) {
 
             val triggeringGeofences = geofencingEvent.triggeringGeofences

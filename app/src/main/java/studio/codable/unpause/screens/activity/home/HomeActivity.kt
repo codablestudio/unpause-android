@@ -13,8 +13,6 @@ import studio.codable.unpause.R
 import studio.codable.unpause.base.activity.BaseActivity
 import studio.codable.unpause.screens.UserViewModel
 import studio.codable.unpause.utilities.extensions.setupWithNavController
-import studio.codable.unpause.utilities.manager.GeofencingManager
-import studio.codable.unpause.utilities.manager.SessionManager
 import javax.inject.Inject
 
 class HomeActivity : BaseActivity() {
@@ -22,10 +20,6 @@ class HomeActivity : BaseActivity() {
     @Inject
     lateinit var vmFactory: ViewModelProvider.Factory
     private val userVm: UserViewModel by viewModels { vmFactory }
-
-    private val geofenceManager: GeofencingManager by lazy {
-        GeofencingManager.getInstance(this)
-    }
 
     companion object {
         private const val USER_ID = "userId"
@@ -42,10 +36,6 @@ class HomeActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
-
-        if (sessionManager.locationServiceStatus) {
-            geofenceManager.reloadSavedGeofences(true)
-        }
 
         setupBottomNavigationBar()
         userVm

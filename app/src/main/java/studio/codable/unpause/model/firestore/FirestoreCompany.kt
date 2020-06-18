@@ -3,7 +3,9 @@ package studio.codable.unpause.model.firestore
 import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.GeoPoint
 import studio.codable.unpause.model.Company
+import studio.codable.unpause.utilities.Constants
 import studio.codable.unpause.utilities.latlng.LatLng
+import studio.codable.unpause.utilities.manager.GeofencingManager.*
 
 data class FirestoreCompany(
     @DocumentId
@@ -24,4 +26,13 @@ data class FirestoreCompany(
 
         return Company(documentId, email, name, loc)
     }
+
+    fun extractGeofences() : List<GeofenceModel> {
+        return locations?.map{
+            val name = it.values.elementAt(0) as String
+            val geopoint = it.values.elementAt(1) as GeoPoint
+            GeofenceModel(name, geopoint.latitude, geopoint.longitude, Constants.Geofencing.DEFAULT_RADIUS)
+        } ?: arrayListOf()
+    }
+
 }
