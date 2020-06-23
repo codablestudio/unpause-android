@@ -31,7 +31,7 @@
             android:enabled="true">
 <!--            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">-->
             <intent-filter>
-                <action android:name="studio.codable.unpause.utils.geofencing.geofenceManager.GeofencingManager.GEOFENCING_ACTION" />
+                <action android:name="studio.codable.unpause.utilities.manager.GeofencingManager.GEOFENCING_ACTION" />
             </intent-filter>
         </receiver>
 
