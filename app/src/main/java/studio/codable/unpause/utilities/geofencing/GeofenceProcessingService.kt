@@ -97,6 +97,7 @@ class GeofenceProcessingService : IntentService("Geofence processing service") {
                 title = applicationContext.getString(R.string.left_location, sb.toString().trim())
             }
 
+            //TODO: Add checkin button to eneter notif, add description button to exit notif
             notificationManager.sendNotification(
                     title,
                     applicationContext.getString(R.string.your_location_has_changed)
