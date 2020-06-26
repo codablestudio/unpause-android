@@ -144,7 +144,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="20dp"
-        android:layout_marginBottom="60dp"
+        android:layout_marginBottom="30dp"
         app:sdMainFabAnimationRotateAngle="180"
         app:sdMainFabClosedBackgroundColor="@color/accent"
         app:sdMainFabClosedSrc="@drawable/ic_keyboard_arrow_up_black_24dp"

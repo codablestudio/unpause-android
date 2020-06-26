@@ -4,7 +4,6 @@ import android.app.IntentService
 import android.app.PendingIntent
 import android.content.Intent
 import android.os.Build
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofenceStatusCodes
@@ -72,10 +71,7 @@ class GeofenceProcessingService : IntentService("Geofence processing service") {
         val geofenceTransition = geofencingEvent.geofenceTransition
 
         if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER ||
-            geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT ||
-                //TODO: for testing, remove later
-                geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL
-        ) {
+            geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
 
             val triggeringGeofences = geofencingEvent.triggeringGeofences
 
@@ -88,6 +84,8 @@ class GeofenceProcessingService : IntentService("Geofence processing service") {
                 sb.deleteCharAt(sb.indexOf(","))
                 title =
                         applicationContext.getString(R.string.arrived_at_location, sb.toString().trim())
+                notificationManager.sendCheckInNotification(title,
+                        applicationContext.getString(R.string.your_location_has_changed))
 
             } else if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
                 triggeringGeofences.forEach {
@@ -95,13 +93,9 @@ class GeofenceProcessingService : IntentService("Geofence processing service") {
                 }
                 sb.deleteCharAt(sb.indexOf(","))
                 title = applicationContext.getString(R.string.left_location, sb.toString().trim())
+                notificationManager.sendCheckOutNotification(title,
+                        applicationContext.getString(R.string.your_location_has_changed))
             }
-
-            //TODO: Add checkin button to eneter notif, add description button to exit notif
-            notificationManager.sendNotification(
-                    title,
-                    applicationContext.getString(R.string.your_location_has_changed)
-            )
             Timber.d(triggeringGeofences.toString())
         } else {
             Timber.e("Geofence detection error")

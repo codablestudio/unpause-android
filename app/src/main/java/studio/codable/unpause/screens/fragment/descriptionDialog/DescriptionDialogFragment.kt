@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import kotlinx.android.synthetic.main.save_dialog.*
 import studio.codable.unpause.R
-import studio.codable.unpause.utilities.LambdaStringToUnit
 import studio.codable.unpause.utilities.LambdaNoArgumentsUnit
+import studio.codable.unpause.utilities.LambdaStringToUnit
 
 class DescriptionDialogFragment(private val description: String?) : DialogFragment() {
 
@@ -16,7 +16,7 @@ class DescriptionDialogFragment(private val description: String?) : DialogFragme
     private var dialogListenerOnCancel: LambdaNoArgumentsUnit? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.save_dialog, container)
+        return inflater.inflate(R.layout.save_dialog, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

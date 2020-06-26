@@ -7,13 +7,14 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import studio.codable.unpause.R
 import studio.codable.unpause.screens.activity.start.StartActivity
+import studio.codable.unpause.utilities.Constants
+import studio.codable.unpause.utilities.broadcastReceiver.UnpauseBroadcastReceiver
 import timber.log.Timber
 
 class NotificationManagerUnpause private constructor(
     private val context: Context,
     private val notificationChannelId: String
 ) {
-
     companion object {
         @Volatile
         private var instance: NotificationManagerUnpause? = null
@@ -27,7 +28,21 @@ class NotificationManagerUnpause private constructor(
             }
     }
 
-    fun sendNotification(title: String, content: String) {
+    private val checkInIntent: PendingIntent by lazy {
+        val intent = Intent(context, UnpauseBroadcastReceiver::class.java).apply {
+            action = Constants.Actions.ACTION_CHECK_IN
+        }
+        PendingIntent.getBroadcast(context, 21, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+    }
+
+    private val checkOutIntent: PendingIntent by lazy {
+        val intent = Intent(context, UnpauseBroadcastReceiver::class.java).apply {
+            action = Constants.Actions.ACTION_CHECK_OUT
+        }
+        PendingIntent.getBroadcast(context, 20, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+    }
+
+    fun sendNotification(title: String, content: String, action: PendingIntent?, buttonTitle: String) {
 
         val notificationIntent = Intent(context, StartActivity::class.java)
 
@@ -50,10 +65,21 @@ class NotificationManagerUnpause private constructor(
                 .setAutoCancel(true)
                 .setStyle(NotificationCompat.BigTextStyle().bigText(content))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .addAction(R.drawable.ic_app_icon, buttonTitle,
+                            action)
+
 
         NotificationManagerCompat.from(context)
             .notify(System.currentTimeMillis().toInt(), builder.build())
 
         Timber.d("Notification should be delivered")
+    }
+
+    fun sendCheckInNotification(title: String, content: String) {
+        sendNotification(title, content, checkInIntent, "CHECK IN")
+    }
+
+    fun sendCheckOutNotification(title: String, content: String) {
+        sendNotification(title, content, checkOutIntent, "CHECK OUT")
     }
 }

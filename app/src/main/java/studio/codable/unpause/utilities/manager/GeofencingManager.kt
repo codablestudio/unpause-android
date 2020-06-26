@@ -71,10 +71,7 @@ class GeofencingManager private constructor(context: Context) {
             Geofence.Builder()
                 .setRequestId(geofence.requestId)
                 .setCircularRegion(geofence.lat, geofence.long, geofence.radius)
-                //TODO: Geofence.GEOFENCE_TRANSITION_DWELL is just for testing, remove later
-                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT or Geofence.GEOFENCE_TRANSITION_DWELL)
-                    //TODO: also remove this line later
-                    .setLoiteringDelay(500)
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT)
                 .setExpirationDuration(Geofence.NEVER_EXPIRE)
                 .build()
         )

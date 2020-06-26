@@ -32,7 +32,7 @@ class WorkingTimeWarningFragment(
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.working_time_warning_dialog, container)
+        return inflater.inflate(R.layout.working_time_warning_dialog, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
