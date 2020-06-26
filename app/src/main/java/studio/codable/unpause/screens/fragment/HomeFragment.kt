@@ -86,8 +86,7 @@ class HomeFragment : BaseFragment(true) {
                 }
             }
             else {
-                permissionManager.shouldShowFineLocationPermissionExplanation(this)
-                permissionManager.requestFineLocationPermission(this)
+                permissionManager.requestLocationPermission(this)
             }
         })
     }
