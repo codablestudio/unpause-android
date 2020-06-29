@@ -3,6 +3,7 @@ package studio.codable.unpause.utilities.geofencing
 import android.app.IntentService
 import android.content.Intent
 import android.widget.Toast
+import androidx.core.app.RemoteInput
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.*
 import studio.codable.unpause.model.Shift
@@ -16,9 +17,10 @@ import kotlin.coroutines.CoroutineContext
 
 class CheckInCheckOutService : IntentService("CheckInCheckOutService"), CoroutineScope {
 
+    private val sessionManager by lazy { SessionManager(this.applicationContext) }
     private val shiftRepository by lazy { FirebaseShiftRepository(
             FirebaseFirestore.getInstance(),
-            SessionManager(this.applicationContext)) }
+            sessionManager) }
 
     private val errorHandler = CoroutineExceptionHandler { _, throwable -> Timber.w(throwable) }
     private val job = Job()
@@ -32,25 +34,37 @@ class CheckInCheckOutService : IntentService("CheckInCheckOutService"), Coroutin
             checkIn()
         }
         if (intent?.action == Constants.Actions.ACTION_CHECK_OUT) {
-            checkOut()
+            checkOut(getDescription(intent))
         }
     }
 
     @ExperimentalStdlibApi
     private fun checkIn() {
-        val newShift = Shift(arrivalTime = Date())
-        currentShift = newShift
-        launch {
-            process(shiftRepository.addNew(newShift)) {}
+        if (!sessionManager.isCheckedIn) {
+            val newShift = Shift(arrivalTime = Date())
+            currentShift = newShift
+            launch {
+                process(shiftRepository.addNew(newShift)) {
+                    sessionManager.isCheckedIn = true
+                }
+            }
+        } else {
+            Toast.makeText(applicationContext, "You are already checked in.", Toast.LENGTH_SHORT).show()
         }
     }
 
     @ExperimentalStdlibApi
-    private fun checkOut() {
-
-        val updatedShift = currentShift.copy().addExit(Date(), "description")
-        launch {
-            process(shiftRepository.update(updatedShift)) {}
+    private fun checkOut(description : String?) {
+        if (sessionManager.isCheckedIn) {
+            val updatedShift = currentShift.copy().addExit(Date(), description ?: "description")
+            launch {
+                process(shiftRepository.update(updatedShift)) {
+                    sessionManager.isCheckedIn = false
+                }
+            }
+        } else {
+            Toast.makeText(applicationContext, "You need to check in before you check out",
+                Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -71,5 +85,10 @@ class CheckInCheckOutService : IntentService("CheckInCheckOutService"), Coroutin
             }
         }
     }
+
+    private fun getDescription(intent: Intent): String? {
+        return RemoteInput.getResultsFromIntent(intent)?.getString(Constants.Notifications.KEY_DESCRIPTION)
+    }
+
 
 }

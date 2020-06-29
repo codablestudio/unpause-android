@@ -4,7 +4,6 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
 import studio.codable.unpause.R
 import studio.codable.unpause.base.activity.BaseActivity
-import studio.codable.unpause.screens.fragment.confirmDialog.ConfirmDialogFragment
 import studio.codable.unpause.screens.fragment.datePicker.DatePickerFragment
 import studio.codable.unpause.screens.fragment.datePicker.DatePickerListener
 import studio.codable.unpause.screens.fragment.descriptionDialog.DescriptionDialogFragment
@@ -20,7 +19,7 @@ class DialogManager(private val context: BaseActivity) {
     private lateinit var workingTimeWarningFragment: WorkingTimeWarningFragment
     private val datePickerFragment: DatePickerFragment by lazy { DatePickerFragment() }
     private lateinit var timePickerFragment: TimePickerFragment
-    private val confirmDialogFragment: ConfirmDialogFragment by lazy { ConfirmDialogFragment() }
+//    private val confirmDialogFragment: ConfirmDialogFragment by lazy { ConfirmDialogFragment() }
 //    private var shiftSchedulerDialog: ShiftSchedulerDialog? = null
 
     fun openDescriptionDialog(desctiption: String?, dialogListenerOnSave: LambdaStringToUnit, dialogListenerOnCancel: LambdaNoArgumentsUnit) {
@@ -56,10 +55,10 @@ class DialogManager(private val context: BaseActivity) {
         timePickerFragment.show(context.supportFragmentManager, "Time picker fragment")
     }
 
-    fun openConfirmDialog(confirmDialogListener: LambdaNoArgumentsUnit) {
-        confirmDialogFragment?.addListener(confirmDialogListener)
-        confirmDialogFragment?.show(context.supportFragmentManager, "Confirm dialog fragment")
-    }
+//    fun openConfirmDialog(confirmDialogListener: LambdaNoArgumentsUnit) {
+//        confirmDialogFragment?.addListener(confirmDialogListener)
+//        confirmDialogFragment?.show(context.supportFragmentManager, "Confirm dialog fragment")
+//    }
 //
 //    fun openShiftScheduleDialog(
 //        startHour: Int,

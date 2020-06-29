@@ -76,10 +76,12 @@ class UserViewModel @Inject constructor(
     fun checkIn() {
         val newShift = Shift(arrivalTime = Date())
         addShift(newShift)
+        isCheckedIn = true
     }
 
     fun checkOut(description: String) {
         addExit(Date(), description)
+        isCheckedIn = false
     }
 
     private fun getUser() {

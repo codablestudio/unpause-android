@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.app.RemoteInput
 import studio.codable.unpause.R
 import studio.codable.unpause.screens.activity.start.StartActivity
 import studio.codable.unpause.utilities.Constants
@@ -28,21 +29,49 @@ class NotificationManagerUnpause private constructor(
             }
     }
 
-    private val checkInIntent: PendingIntent by lazy {
+    private val checkInIntent: NotificationCompat.Action by lazy {
         val intent = Intent(context, UnpauseBroadcastReceiver::class.java).apply {
             action = Constants.Actions.ACTION_CHECK_IN
         }
-        PendingIntent.getBroadcast(context, 21, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            Constants.RequestCode.CHECK_IN,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
+        NotificationCompat.Action.Builder(
+            R.drawable.ic_app_icon,
+            context.getString(R.string.check_in), pendingIntent
+        )
+        .build()
     }
 
-    private val checkOutIntent: PendingIntent by lazy {
+
+    private val checkOutIntent: NotificationCompat.Action by lazy {
+        val replyLabel: String = context.getString(R.string.enter_description)
+        val remoteInput: RemoteInput = RemoteInput.Builder(Constants.Notifications.KEY_DESCRIPTION)
+            .run {
+                setLabel(replyLabel)
+                build()
+            }
         val intent = Intent(context, UnpauseBroadcastReceiver::class.java).apply {
             action = Constants.Actions.ACTION_CHECK_OUT
         }
-        PendingIntent.getBroadcast(context, 20, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            Constants.RequestCode.CHECK_OUT,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
+        NotificationCompat.Action.Builder(
+            R.drawable.ic_app_icon,
+            context.getString(R.string.check_out), pendingIntent
+        )
+        .addRemoteInput(remoteInput)
+        .build()
     }
 
-    fun sendNotification(title: String, content: String, action: PendingIntent?, buttonTitle: String) {
+    private fun sendNotification(title: String, content: String, action : NotificationCompat.Action) {
 
         val notificationIntent = Intent(context, StartActivity::class.java)
 
@@ -64,9 +93,10 @@ class NotificationManagerUnpause private constructor(
                 .setContentIntent(intent)
                 .setAutoCancel(true)
                 .setStyle(NotificationCompat.BigTextStyle().bigText(content))
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .addAction(R.drawable.ic_app_icon, buttonTitle,
-                            action)
+//                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setWhen(0)
+                .addAction(action)
 
 
         NotificationManagerCompat.from(context)
@@ -76,10 +106,10 @@ class NotificationManagerUnpause private constructor(
     }
 
     fun sendCheckInNotification(title: String, content: String) {
-        sendNotification(title, content, checkInIntent, "CHECK IN")
+        sendNotification(title, content, checkInIntent)
     }
 
     fun sendCheckOutNotification(title: String, content: String) {
-        sendNotification(title, content, checkOutIntent, "CHECK OUT")
+        sendNotification(title, content, checkOutIntent)
     }
 }

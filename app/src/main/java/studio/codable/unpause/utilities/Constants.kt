@@ -7,12 +7,18 @@ object Constants {
         const val GOOGLE_SIGN_IN = 0
         const val FINE_LOCATION_PERMISSION = 11
         const val BACKGROUND_LOCATION_PERMISSION = 12
+        const val CHECK_IN = 22
+        const val CHECK_OUT = 21
     }
 
     const val NOTIFICATION_CHANNEL_ID = "schedule notifications channel"
 
     object Geofencing {
         const val DEFAULT_RADIUS = 100.0F
+    }
+
+    object Notifications {
+        const val KEY_DESCRIPTION = "key_description"
     }
 
     object Actions {
