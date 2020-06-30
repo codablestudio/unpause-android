@@ -1,8 +1,12 @@
 package studio.codable.unpause.utilities.manager
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
+import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
+import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.RemoteInput
@@ -27,8 +31,24 @@ class NotificationManagerUnpause private constructor(
                     notificationChannelId
                 ).also { instance = it }
             }
+
+        fun createNotificationChannel(context: Context, notificationChannelId: String) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                // Create the NotificationChannel
+                val name = notificationChannelId//context.getString(R.string.channel_name)
+                val descriptionText = notificationChannelId//context.getString(R.string.channel_description)
+                val importance = NotificationManager.IMPORTANCE_DEFAULT
+                val mChannel = NotificationChannel(notificationChannelId, "Notification Channel", importance)
+                mChannel.description = "Channel for all notifications"
+                // Register the channel with the system; you can't change the importance
+                // or other notification behaviors after this
+                val notificationManager = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+                notificationManager.createNotificationChannel(mChannel)
+            }
+        }
     }
 
+    //TODO: dismiss(cancel) notification after action has been clicked, TEST
     private val checkInIntent: NotificationCompat.Action by lazy {
         val intent = Intent(context, UnpauseBroadcastReceiver::class.java).apply {
             action = Constants.Actions.ACTION_CHECK_IN
@@ -85,7 +105,7 @@ class NotificationManagerUnpause private constructor(
         val builder =
             NotificationCompat.Builder(
                     context,
-                    notificationChannelId // todo add channel for location based notifications
+                    notificationChannelId
                 )
                 .setSmallIcon(R.drawable.ic_app_icon)
                 .setContentTitle(title)
@@ -93,14 +113,12 @@ class NotificationManagerUnpause private constructor(
                 .setContentIntent(intent)
                 .setAutoCancel(true)
                 .setStyle(NotificationCompat.BigTextStyle().bigText(content))
-//                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setPriority(NotificationCompat.PRIORITY_MAX)
-                .setWhen(0)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .addAction(action)
 
 
-        NotificationManagerCompat.from(context)
-            .notify(System.currentTimeMillis().toInt(), builder.build())
+        createNotificationChannel(context, notificationChannelId)
+        NotificationManagerCompat.from(context).notify(Constants.Notifications.CHECK_IN_CHECK_OUT_ID, builder.build())
 
         Timber.d("Notification should be delivered")
     }

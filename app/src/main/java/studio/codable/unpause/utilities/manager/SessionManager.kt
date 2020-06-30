@@ -2,6 +2,7 @@ package studio.codable.unpause.utilities.manager
 
 import android.content.Context
 import android.content.SharedPreferences
+import studio.codable.unpause.model.Shift
 import javax.inject.Inject
 
 class SessionManager @Inject constructor(context: Context) {
@@ -28,5 +29,7 @@ class SessionManager @Inject constructor(context: Context) {
         set(value) {
             preferences.edit().putBoolean(LOCATION_SERVICE_STATUS, value).apply()
         }
+
+    lateinit var currentShift : Shift
 
 }

@@ -24,7 +24,7 @@ class UnpauseBroadcastReceiver : BroadcastReceiver() {
 
         if (intent?.action == Constants.Actions.ACTION_CHECK_IN || intent?.action == Constants.Actions.ACTION_CHECK_OUT) {
             val i = Intent(context, CheckInCheckOutService::class.java)
-            i.putExtras(intent)
+            i.action = intent.action
             startService(context, i)
             Timber.d( "Started CheckInCheckOutService")
         }

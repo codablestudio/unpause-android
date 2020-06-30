@@ -10,7 +10,7 @@ import com.google.android.gms.location.GeofenceStatusCodes
 import com.google.android.gms.location.GeofencingEvent
 import studio.codable.unpause.R
 import studio.codable.unpause.screens.activity.start.StartActivity
-import studio.codable.unpause.utilities.Constants.NOTIFICATION_CHANNEL_ID
+import studio.codable.unpause.utilities.Constants.Notifications.NOTIFICATION_CHANNEL_ID
 import studio.codable.unpause.utilities.manager.NotificationManagerUnpause
 import timber.log.Timber
 
@@ -36,7 +36,7 @@ class GeofenceProcessingService : IntentService("Geofence processing service") {
     private fun startForeground() {
         val notificationIntent = Intent(this, StartActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
-            this, 0,
+            this, 122,
             notificationIntent, 0
         )
 
@@ -51,6 +51,7 @@ class GeofenceProcessingService : IntentService("Geofence processing service") {
             .setContentIntent(pendingIntent)
             .setCategory(NotificationCompat.CATEGORY_SERVICE)
 
+        Timber.i("StartForeground")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForeground(NOTIF_ID, notification.build())
         } else {
@@ -87,6 +88,8 @@ class GeofenceProcessingService : IntentService("Geofence processing service") {
                 notificationManager.sendCheckInNotification(title,
                         applicationContext.getString(R.string.your_location_has_changed))
 
+                Timber.i("You entered geofence perimeter!")
+
             } else if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
                 triggeringGeofences.forEach {
                     sb.append(it.requestId + ", ")
@@ -95,6 +98,8 @@ class GeofenceProcessingService : IntentService("Geofence processing service") {
                 title = applicationContext.getString(R.string.left_location, sb.toString().trim())
                 notificationManager.sendCheckOutNotification(title,
                         applicationContext.getString(R.string.your_location_has_changed))
+
+                Timber.i("You exited geofence perimeter!")
             }
             Timber.d(triggeringGeofences.toString())
         } else {

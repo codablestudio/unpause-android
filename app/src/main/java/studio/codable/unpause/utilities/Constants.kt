@@ -11,14 +11,16 @@ object Constants {
         const val CHECK_OUT = 21
     }
 
-    const val NOTIFICATION_CHANNEL_ID = "schedule notifications channel"
+
+
 
     object Geofencing {
         const val DEFAULT_RADIUS = 100.0F
     }
-
     object Notifications {
+        const val CHECK_IN_CHECK_OUT_ID = 7
         const val KEY_DESCRIPTION = "key_description"
+        const val NOTIFICATION_CHANNEL_ID = "unpause_notifications_channel"
     }
 
     object Actions {
