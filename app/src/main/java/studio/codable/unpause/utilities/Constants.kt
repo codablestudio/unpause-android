@@ -21,11 +21,14 @@ object Constants {
         const val CHECK_IN_CHECK_OUT_ID = 7
         const val KEY_DESCRIPTION = "key_description"
         const val NOTIFICATION_CHANNEL_ID = "unpause_notifications_channel"
+        const val CHECK_IN_TAG = "check_in"
+        const val CHECK_OUT_TAG = "check_out"
     }
 
     object Actions {
         const val ACTION_CHECK_IN = "action_check_in"
         const val ACTION_CHECK_OUT = "action_check_out"
+        const val ACTION_DISMISS_CHECK_OUT = "action_dismiss_check_out"
     }
 
     object FirestoreCollections {

@@ -85,5 +85,9 @@
     <string name="no">No</string>
     <string name="are_you_sure">Are you sure?</string>
     <string name="enter_description">Enter description</string>
+    <string name="channel_name">Notification Channel</string>
+    <string name="channel_description">Channel for all notifications</string>
+    <string name="check_out_successful">Check out successful.</string>
+
 
 </resources>

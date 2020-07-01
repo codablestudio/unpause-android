@@ -12,3 +12,14 @@ fun List<Shift>?.active(): Shift {
     }
     throw IllegalStateException("There are no active shifts")
 }
+
+fun List<Shift>?.existActive(): Boolean {
+    this?.let {
+        for (shift in this) {
+            if (!shift.isCheckedOut()) {
+                return true
+            }
+        }
+    }
+    return false
+}

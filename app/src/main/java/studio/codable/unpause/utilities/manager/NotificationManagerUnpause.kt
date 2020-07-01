@@ -35,11 +35,13 @@ class NotificationManagerUnpause private constructor(
         fun createNotificationChannel(context: Context, notificationChannelId: String) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 // Create the NotificationChannel
-                val name = notificationChannelId//context.getString(R.string.channel_name)
-                val descriptionText = notificationChannelId//context.getString(R.string.channel_description)
+                val name = context.getString(R.string.channel_name)
+                val descriptionText = context.getString(R.string.channel_description)
                 val importance = NotificationManager.IMPORTANCE_DEFAULT
-                val mChannel = NotificationChannel(notificationChannelId, "Notification Channel", importance)
-                mChannel.description = "Channel for all notifications"
+                val mChannel = NotificationChannel(notificationChannelId, name, importance)
+                    .apply {
+                    description = descriptionText
+                }
                 // Register the channel with the system; you can't change the importance
                 // or other notification behaviors after this
                 val notificationManager = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
@@ -48,7 +50,6 @@ class NotificationManagerUnpause private constructor(
         }
     }
 
-    //TODO: dismiss(cancel) notification after action has been clicked, TEST
     private val checkInIntent: NotificationCompat.Action by lazy {
         val intent = Intent(context, UnpauseBroadcastReceiver::class.java).apply {
             action = Constants.Actions.ACTION_CHECK_IN
@@ -91,17 +92,21 @@ class NotificationManagerUnpause private constructor(
         .build()
     }
 
-    private fun sendNotification(title: String, content: String, action : NotificationCompat.Action) {
-
-        val notificationIntent = Intent(context, StartActivity::class.java)
-
-        notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-
-        val intent = PendingIntent.getActivity(
-            context, 0,
-            notificationIntent, 0
+    private val startActivityIntent: PendingIntent by lazy {
+        PendingIntent.getActivity(
+            context,
+            0,
+            Intent(
+                context,
+                StartActivity::class.java
+            ).apply {
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            },
+            0
         )
+    }
 
+    private fun sendNotification(title: String, content: String, action : NotificationCompat.Action, tag : String) {
         val builder =
             NotificationCompat.Builder(
                     context,
@@ -110,7 +115,7 @@ class NotificationManagerUnpause private constructor(
                 .setSmallIcon(R.drawable.ic_app_icon)
                 .setContentTitle(title)
                 .setContentText(content)
-                .setContentIntent(intent)
+                .setContentIntent(startActivityIntent)
                 .setAutoCancel(true)
                 .setStyle(NotificationCompat.BigTextStyle().bigText(content))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -118,16 +123,44 @@ class NotificationManagerUnpause private constructor(
 
 
         createNotificationChannel(context, notificationChannelId)
-        NotificationManagerCompat.from(context).notify(Constants.Notifications.CHECK_IN_CHECK_OUT_ID, builder.build())
+        NotificationManagerCompat.from(context).notify(tag, Constants.Notifications.CHECK_IN_CHECK_OUT_ID, builder.build())
 
         Timber.d("Notification should be delivered")
     }
 
     fun sendCheckInNotification(title: String, content: String) {
-        sendNotification(title, content, checkInIntent)
+        sendNotification(title, content, checkInIntent, Constants.Notifications.CHECK_IN_TAG)
     }
 
     fun sendCheckOutNotification(title: String, content: String) {
-        sendNotification(title, content, checkOutIntent)
+        sendNotification(title, content, checkOutIntent, Constants.Notifications.CHECK_OUT_TAG)
+    }
+
+    fun updateCheckOutNotification() {
+        // Build a new notification, which informs the user that the system
+        // handled their interaction with the previous notification.
+        val builder = NotificationCompat.Builder(
+            context,
+            notificationChannelId
+        )
+            .setSmallIcon(R.drawable.ic_app_icon)
+            .setContentText(context.getString(R.string.check_out_successful))
+            .setContentIntent(startActivityIntent)
+            .setAutoCancel(true)
+
+        // Issue the new notification.
+        NotificationManagerCompat.from(context).notify(
+            Constants.Notifications.CHECK_OUT_TAG,
+            Constants.Notifications.CHECK_IN_CHECK_OUT_ID,
+            builder.build()
+        )
+    }
+
+    fun cancelCheckInNotification() {
+        NotificationManagerCompat.from(context).cancel(
+            Constants.Notifications.CHECK_IN_TAG,
+            Constants.Notifications.CHECK_IN_CHECK_OUT_ID
+        )
     }
 }
+

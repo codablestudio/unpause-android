@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import androidx.core.app.RemoteInput
 import studio.codable.unpause.utilities.Constants
 import studio.codable.unpause.utilities.geofencing.CheckInCheckOutService
 import studio.codable.unpause.utilities.geofencing.GeofenceProcessingService
@@ -23,8 +24,10 @@ class UnpauseBroadcastReceiver : BroadcastReceiver() {
         }
 
         if (intent?.action == Constants.Actions.ACTION_CHECK_IN || intent?.action == Constants.Actions.ACTION_CHECK_OUT) {
+            Timber.i(getDescription(intent))
             val i = Intent(context, CheckInCheckOutService::class.java)
             i.action = intent.action
+            i.putExtra(Constants.Notifications.KEY_DESCRIPTION, getDescription(intent))
             startService(context, i)
             Timber.d( "Started CheckInCheckOutService")
         }
@@ -37,5 +40,9 @@ class UnpauseBroadcastReceiver : BroadcastReceiver() {
         } else {
             context?.startService(intent)
         }
+    }
+
+    private fun getDescription(intent: Intent): String? {
+        return RemoteInput.getResultsFromIntent(intent)?.getString(Constants.Notifications.KEY_DESCRIPTION)
     }
 }

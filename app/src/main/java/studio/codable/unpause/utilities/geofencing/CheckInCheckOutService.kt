@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Build
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
-import androidx.core.app.RemoteInput
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.*
 import studio.codable.unpause.R
@@ -15,11 +14,13 @@ import studio.codable.unpause.repository.FirebaseShiftRepository
 import studio.codable.unpause.screens.activity.start.StartActivity
 import studio.codable.unpause.utilities.Constants
 import studio.codable.unpause.utilities.Constants.Notifications.NOTIFICATION_CHANNEL_ID
+import studio.codable.unpause.utilities.manager.NotificationManagerUnpause
 import studio.codable.unpause.utilities.manager.SessionManager
 import studio.codable.unpause.utilities.networking.Result
 import timber.log.Timber
 import java.util.*
 import kotlin.coroutines.CoroutineContext
+
 
 class CheckInCheckOutService : IntentService("CheckInCheckOutService"), CoroutineScope {
 
@@ -27,6 +28,12 @@ class CheckInCheckOutService : IntentService("CheckInCheckOutService"), Coroutin
     private val shiftRepository by lazy { FirebaseShiftRepository(
             FirebaseFirestore.getInstance(),
             sessionManager) }
+    private val notificationManager by lazy {
+        NotificationManagerUnpause.getInstance(
+            this,
+            NOTIFICATION_CHANNEL_ID
+        )
+    }
 
     private val errorHandler = CoroutineExceptionHandler { _, throwable -> Timber.w(throwable) }
     private val job = Job()
@@ -70,43 +77,54 @@ class CheckInCheckOutService : IntentService("CheckInCheckOutService"), Coroutin
     override fun onHandleIntent(intent: Intent?) {
         if (intent?.action == Constants.Actions.ACTION_CHECK_IN) {
             checkIn()
-        }
-        if (intent?.action == Constants.Actions.ACTION_CHECK_OUT) {
+        } else if (intent?.action == Constants.Actions.ACTION_CHECK_OUT) {
             checkOut(getDescription(intent))
         }
     }
 
     @ExperimentalStdlibApi
     private fun checkIn() {
-        if (!sessionManager.isCheckedIn) {
-            val newShift = Shift(arrivalTime = Date())
-            sessionManager.currentShift = newShift
-            Timber.d("New shift added")
-            launch {
-                process(shiftRepository.addNew(newShift)) {
-                    sessionManager.isCheckedIn = true
+        launch {
+            process(shiftRepository.getCurrent()) { shift ->
+                if (shift == null) {
+                    val newShift = Shift(arrivalTime = Date())
+                    Timber.d("New shift added")
+                    launch {
+                        process(shiftRepository.addNew(newShift)) {
+                            notificationManager.cancelCheckInNotification()
+                        }
+                    }
+                } else {
+                    Toast.makeText(applicationContext, "You are already checked in.", Toast.LENGTH_SHORT).show()
+                    Timber.i("You are already checked in.")
                 }
             }
-        } else {
-//            Toast.makeText(applicationContext, "You are already checked in.", Toast.LENGTH_SHORT).show()
-            Timber.i("You are already checked in.")
         }
     }
 
     @ExperimentalStdlibApi
-    private fun checkOut(description : String?) {
-        if (sessionManager.isCheckedIn) {
-            val updatedShift = sessionManager.currentShift.copy().addExit(Date(), description ?: "description")
-            Timber.d("Shift updated")
-            launch {
-                process(shiftRepository.update(updatedShift)) {
-                    sessionManager.isCheckedIn = false
+    private fun checkOut(description: String?) {
+        launch {
+            process(shiftRepository.getCurrent()) { shift ->
+                if (shift != null) {
+                    val updatedShift = shift.copy()
+                        .addExit(Date(), description ?: "description")
+                    Timber.d("Shift updated")
+                    launch {
+                        process(shiftRepository.update(updatedShift)) {
+                            // for remoteInput notifications you have update
+                            // the current notification to let the user know everything is ok
+                            notificationManager.updateCheckOutNotification()
+                        }
+                    }
+                } else {
+                    Toast.makeText(
+                        applicationContext, "You need to check in before you check out.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    Timber.i("You need to check in before you check out.")
                 }
             }
-        } else {
-//            Toast.makeText(applicationContext, "You need to check in before you check out.",
-//                Toast.LENGTH_SHORT).show()
-            Timber.i("You need to check in before you check out.")
         }
     }
 
@@ -119,17 +137,17 @@ class CheckInCheckOutService : IntentService("CheckInCheckOutService"), Coroutin
             }
             is Result.GenericError -> {
                 Timber.tag(this::class.java.simpleName).e("Network call failed: $result")
-//                Toast.makeText(this.applicationContext, result.errorResponse.toString(), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this.applicationContext, result.errorResponse.toString(), Toast.LENGTH_SHORT).show()
             }
             is Result.IOError -> {
                 Timber.tag(this::class.java.simpleName).e("Network call failed: network error")
-//                Toast.makeText(this.applicationContext, "Network error", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this.applicationContext, "Network error", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
     private fun getDescription(intent: Intent): String? {
-        return RemoteInput.getResultsFromIntent(intent)?.getString(Constants.Notifications.KEY_DESCRIPTION)
+        return intent.getStringExtra(Constants.Notifications.KEY_DESCRIPTION)
     }
 
 

@@ -30,6 +30,4 @@ class SessionManager @Inject constructor(context: Context) {
             preferences.edit().putBoolean(LOCATION_SERVICE_STATUS, value).apply()
         }
 
-    lateinit var currentShift : Shift
-
 }
