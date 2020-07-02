@@ -135,11 +135,9 @@ class CheckInCheckOutService : IntentService("CheckInCheckOutService"), Coroutin
             }
             is Result.GenericError -> {
                 Timber.e("Network call failed: $result")
-                Toast.makeText(this.applicationContext, result.errorResponse.toString(), Toast.LENGTH_SHORT).show()
             }
             is Result.IOError -> {
                 Timber.e("Network call failed: network error")
-                Toast.makeText(this.applicationContext, "Network error", Toast.LENGTH_SHORT).show()
             }
         }
     }

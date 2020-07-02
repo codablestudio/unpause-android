@@ -68,7 +68,7 @@ class UserViewModel @Inject constructor(
 
     var isCheckedIn: Boolean
         get() = sessionManager.isCheckedIn
-        set(value) {
+        private set(value) {
             sessionManager.isCheckedIn = value
         }
 
