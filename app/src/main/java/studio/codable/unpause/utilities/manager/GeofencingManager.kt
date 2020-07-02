@@ -1,25 +1,28 @@
 package studio.codable.unpause.utilities.manager
 
-import android.Manifest
-import android.Manifest.*
-import android.app.Activity
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.content.pm.PackageManager
-import androidx.core.app.ActivityCompat.requestPermissions
-import androidx.core.content.ContextCompat
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingClient
 import com.google.android.gms.location.GeofencingRequest
 import com.google.android.gms.location.LocationServices
 import com.google.gson.Gson
+import studio.codable.unpause.utilities.Constants.Actions.GEOFENCING_ACTION
+import studio.codable.unpause.utilities.LambdaExceptionToUnit
+import studio.codable.unpause.utilities.LambdaNoArgumentsUnit
 import studio.codable.unpause.utilities.broadcastReceiver.UnpauseBroadcastReceiver
+import studio.codable.unpause.utilities.geofencing.GeofenceModel
 import timber.log.Timber
-import java.io.Serializable
+import javax.inject.Inject
 
-class GeofencingManager private constructor(context: Context) {
+class GeofencingManager @Inject constructor(context: Context) {
+
+    companion object {
+
+        private const val GEOFENCES_STRING = "geofences"
+    }
 
     private val geofencingClient: GeofencingClient = LocationServices.getGeofencingClient(context)
     private val geofenceList: List<Geofence> = arrayListOf()
@@ -51,17 +54,6 @@ class GeofencingManager private constructor(context: Context) {
             preferences.edit().putStringSet(GEOFENCES_STRING, set).apply()
         }
 
-    companion object {
-        @Volatile
-        private var instance: GeofencingManager? = null
-
-        fun getInstance(context: Context) = instance ?: synchronized(this) {
-            instance ?: GeofencingManager(context).also { instance = it }
-        }
-
-        const val GEOFENCING_ACTION = "geofence broadcast"
-        private const val GEOFENCES_STRING = "geofences"
-    }
 
     /**
      * needs to be called before enabling geofences
@@ -83,14 +75,17 @@ class GeofencingManager private constructor(context: Context) {
     /**
      * needs to be called after adding geofences with addGeofence()
      */
-    fun enableGeofences() {
+    fun enableGeofences(
+        onSuccessListener: LambdaNoArgumentsUnit = { Timber.d("Enabled geofences") },
+        onFailureListener: LambdaExceptionToUnit = { Timber.d("Failed to enable geofences: ${it.localizedMessage}") }
+    ) {
         geofencingClient.addGeofences(getGeofencingRequest(), geofencePendingIntent)?.run {
             addOnSuccessListener {
-                Timber.d( "Enabled geofences")
+                onSuccessListener
             }
 
             addOnFailureListener {
-                Timber.d( "Failed to enable geofences: ${it.localizedMessage}")
+                onFailureListener(it)
             }
         }
     }
@@ -166,13 +161,5 @@ class GeofencingManager private constructor(context: Context) {
         savedGeofences = geofences.toSet()
     }
 
-    /**
-     * @param requestId unique string representing a geofence (e.g. name)
-     */
-    data class GeofenceModel(
-        val requestId: String,
-        val lat: Double,
-        val long: Double,
-        val radius: Float
-    ) : Serializable
+
 }

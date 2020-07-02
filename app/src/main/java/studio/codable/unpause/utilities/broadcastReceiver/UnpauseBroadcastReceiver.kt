@@ -6,28 +6,29 @@ import android.content.Intent
 import android.os.Build
 import androidx.core.app.RemoteInput
 import studio.codable.unpause.utilities.Constants
+import studio.codable.unpause.utilities.Constants.Actions.ACTION_CHECK_IN
+import studio.codable.unpause.utilities.Constants.Actions.ACTION_CHECK_OUT
+import studio.codable.unpause.utilities.Constants.Actions.GEOFENCING_ACTION
 import studio.codable.unpause.utilities.geofencing.CheckInCheckOutService
 import studio.codable.unpause.utilities.geofencing.GeofenceProcessingService
-import studio.codable.unpause.utilities.manager.GeofencingManager
 import timber.log.Timber
 
 class UnpauseBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
 
-        if (intent?.action == GeofencingManager.GEOFENCING_ACTION) {
+        if (intent?.action == GEOFENCING_ACTION) {
             Timber.d( "Geofence triggered")
-            val i = Intent(context, GeofenceProcessingService::class.java)
-            i.putExtras(intent)
+            val i = Intent(context, GeofenceProcessingService::class.java).apply {
+                putExtras(intent)
+            }
             startService(context, i)
             Timber.d( "Started GeofenceProcessingService")
-        }
-
-        if (intent?.action == Constants.Actions.ACTION_CHECK_IN || intent?.action == Constants.Actions.ACTION_CHECK_OUT) {
-            Timber.i(getDescription(intent))
-            val i = Intent(context, CheckInCheckOutService::class.java)
-            i.action = intent.action
-            i.putExtra(Constants.Notifications.KEY_DESCRIPTION, getDescription(intent))
+        } else if (intent?.action == ACTION_CHECK_IN || intent?.action == ACTION_CHECK_OUT) {
+            val i = Intent(context, CheckInCheckOutService::class.java).apply {
+                action = intent.action
+                putExtra(Constants.Notifications.KEY_DESCRIPTION, getDescription(intent))
+            }
             startService(context, i)
             Timber.d( "Started CheckInCheckOutService")
         }

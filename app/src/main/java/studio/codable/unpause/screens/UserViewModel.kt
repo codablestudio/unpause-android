@@ -17,6 +17,7 @@ import studio.codable.unpause.repository.ICompanyRepository
 import studio.codable.unpause.repository.IShiftRepository
 import studio.codable.unpause.repository.IUserRepository
 import studio.codable.unpause.utilities.extensions.active
+import studio.codable.unpause.utilities.geofencing.GeofenceModel
 import studio.codable.unpause.utilities.manager.GeofencingManager
 import studio.codable.unpause.utilities.manager.GeofencingManager.*
 import studio.codable.unpause.utilities.manager.SessionManager
@@ -60,9 +61,7 @@ class UserViewModel @Inject constructor(
         getShifts()
 
         _geofences.addSource(_company) {
-            if (_geofences.value == null) {
                 getGeofences(_company.value!!.id)
-            }
         }
 
     }
@@ -128,9 +127,11 @@ class UserViewModel @Inject constructor(
     private fun addExit(exitTime: Date, description: String) {
         viewModelScope.launch {
             shifts.value.active().let { active ->
-                val updated = active.copy().addExit(exitTime, description)
-                process(shiftRepository.update(updated)) {
-                    getShifts()
+                active?.let {
+                    val updated = active.copy().addExit(exitTime, description)
+                    process(shiftRepository.update(updated)) {
+                        getShifts()
+                    }
                 }
             }
         }

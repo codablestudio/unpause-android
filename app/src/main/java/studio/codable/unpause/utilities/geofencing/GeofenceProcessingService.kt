@@ -10,7 +10,7 @@ import com.google.android.gms.location.GeofenceStatusCodes
 import com.google.android.gms.location.GeofencingEvent
 import studio.codable.unpause.R
 import studio.codable.unpause.screens.activity.start.StartActivity
-import studio.codable.unpause.utilities.Constants.Notifications.NOTIFICATION_CHANNEL_ID
+import studio.codable.unpause.utilities.Constants.Notifications.LOCATION_NOTIFICATION_CHANNEL_ID
 import studio.codable.unpause.utilities.manager.NotificationManagerUnpause
 import timber.log.Timber
 
@@ -23,7 +23,7 @@ class GeofenceProcessingService : IntentService("Geofence processing service") {
     private val notificationManager: NotificationManagerUnpause by lazy {
         NotificationManagerUnpause.getInstance(
             applicationContext,
-            NOTIFICATION_CHANNEL_ID
+            LOCATION_NOTIFICATION_CHANNEL_ID
         )
     }
 
@@ -42,7 +42,7 @@ class GeofenceProcessingService : IntentService("Geofence processing service") {
 
         val notification = NotificationCompat.Builder(
                 this,
-                NOTIFICATION_CHANNEL_ID
+                LOCATION_NOTIFICATION_CHANNEL_ID
             )
             .setOngoing(true)
             .setSmallIcon(R.drawable.ic_app_icon)

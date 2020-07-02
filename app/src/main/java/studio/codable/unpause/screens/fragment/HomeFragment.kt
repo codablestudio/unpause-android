@@ -18,16 +18,17 @@ import studio.codable.unpause.screens.UserViewModel
 import studio.codable.unpause.utilities.manager.GeofencingManager
 import studio.codable.unpause.utilities.manager.PermissionManager
 import timber.log.Timber
+import javax.inject.Inject
 
 class HomeFragment : BaseFragment(true) {
 
     private val userVm: UserViewModel by activityViewModels()
 
-    private val geofenceManager: GeofencingManager by lazy {
-        GeofencingManager.getInstance(requireContext())
-    }
+    @Inject
+    lateinit var geofenceManager: GeofencingManager
 
-    private val permissionManager by lazy { PermissionManager(requireContext()) }
+    @Inject
+    lateinit var permissionManager : PermissionManager
 
     /**
      * isChecked -> user is checked in = state ON

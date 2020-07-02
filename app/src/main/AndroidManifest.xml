@@ -4,7 +4,6 @@
     package="studio.codable.unpause">
 
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -31,7 +30,7 @@
 
         <receiver
             android:name="studio.codable.unpause.utilities.broadcastReceiver.UnpauseBroadcastReceiver"
-            android:enabled="true">
+            android:enabled="true"
             android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
             <intent-filter>
                 <action android:name="studio.codable.unpause.utilities.manager.GeofencingManager.GEOFENCING_ACTION" />

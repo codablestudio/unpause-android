@@ -28,17 +28,16 @@ class PermissionManager @Inject constructor(private val context: Context) {
     fun requestBackgroundLocationPermission(fragment: BaseFragment) {
         fragment.requestPermissions(
                 arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION),
-                Constants.RequestCode.FINE_LOCATION_PERMISSION
+                Constants.RequestCode.BACKGROUND_LOCATION_PERMISSION
         )
-        Timber.d("Requested ACCESS_FINE_LOCATION permission")
+        Timber.d("Requested ACCESS_BACKGROUND_LOCATION permission")
     }
 
     fun requestLocationPermission(fragment: BaseFragment) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             requestBackgroundLocationPermission(fragment)
-        } else {
-            requestFineLocationPermission(fragment)
         }
+        requestFineLocationPermission(fragment)
     }
 
     fun shouldShowFineLocationPermissionExplanation(fragment: BaseFragment): Boolean {

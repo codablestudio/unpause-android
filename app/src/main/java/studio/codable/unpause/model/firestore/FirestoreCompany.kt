@@ -4,8 +4,8 @@ import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.GeoPoint
 import studio.codable.unpause.model.Company
 import studio.codable.unpause.utilities.Constants
+import studio.codable.unpause.utilities.geofencing.GeofenceModel
 import studio.codable.unpause.utilities.latlng.LatLng
-import studio.codable.unpause.utilities.manager.GeofencingManager.*
 
 data class FirestoreCompany(
     @DocumentId

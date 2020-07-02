@@ -12,7 +12,7 @@ import kotlinx.android.synthetic.main.activity_home.*
 import studio.codable.unpause.R
 import studio.codable.unpause.base.activity.BaseActivity
 import studio.codable.unpause.screens.UserViewModel
-import studio.codable.unpause.utilities.Constants.Notifications.NOTIFICATION_CHANNEL_ID
+import studio.codable.unpause.utilities.Constants.Notifications.LOCATION_NOTIFICATION_CHANNEL_ID
 import studio.codable.unpause.utilities.extensions.setupWithNavController
 import studio.codable.unpause.utilities.manager.NotificationManagerUnpause
 import javax.inject.Inject
@@ -41,7 +41,7 @@ class HomeActivity : BaseActivity() {
 
         setupBottomNavigationBar()
         userVm
-        NotificationManagerUnpause.createNotificationChannel(this, NOTIFICATION_CHANNEL_ID)
+        NotificationManagerUnpause.createNotificationChannel(this, LOCATION_NOTIFICATION_CHANNEL_ID)
 
     }
 

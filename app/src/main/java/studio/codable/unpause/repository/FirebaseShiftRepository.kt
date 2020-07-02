@@ -5,7 +5,6 @@ import studio.codable.unpause.model.Shift
 import studio.codable.unpause.model.firestore.FirestoreShift
 import studio.codable.unpause.utilities.Constants
 import studio.codable.unpause.utilities.extensions.active
-import studio.codable.unpause.utilities.extensions.existActive
 import studio.codable.unpause.utilities.manager.SessionManager
 import studio.codable.unpause.utilities.networking.Result
 import studio.codable.unpause.utilities.networking.callFirebase
@@ -28,12 +27,7 @@ class FirebaseShiftRepository @Inject constructor(
 
     override suspend fun getCurrent(): Result<Shift?> {
         return callFirebase(usersCol.document(sessionManager.userId).get()) {
-            val shifts = FirebaseUserRepository.extractFirestoreUser(it).extractShifts()
-            if (shifts.existActive()) {
-                shifts.active()
-            } else {
-                null
-            }
+            FirebaseUserRepository.extractFirestoreUser(it).extractShifts().active()
         }
     }
 

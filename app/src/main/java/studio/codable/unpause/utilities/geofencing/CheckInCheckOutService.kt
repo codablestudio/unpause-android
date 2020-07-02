@@ -13,7 +13,10 @@ import studio.codable.unpause.model.Shift
 import studio.codable.unpause.repository.FirebaseShiftRepository
 import studio.codable.unpause.screens.activity.start.StartActivity
 import studio.codable.unpause.utilities.Constants
-import studio.codable.unpause.utilities.Constants.Notifications.NOTIFICATION_CHANNEL_ID
+import studio.codable.unpause.utilities.Constants.Notifications.CHECK_IN_CHECK_OUT_ID
+import studio.codable.unpause.utilities.Constants.Notifications.CHECK_IN_CHECK_OUT_SERVICE_ID
+import studio.codable.unpause.utilities.Constants.Notifications.LOCATION_NOTIFICATION_CHANNEL_ID
+import studio.codable.unpause.utilities.Constants.RequestCode.CHECK_IN_CHECK_OUT_SERVICE
 import studio.codable.unpause.utilities.manager.NotificationManagerUnpause
 import studio.codable.unpause.utilities.manager.SessionManager
 import studio.codable.unpause.utilities.networking.Result
@@ -31,7 +34,7 @@ class CheckInCheckOutService : IntentService("CheckInCheckOutService"), Coroutin
     private val notificationManager by lazy {
         NotificationManagerUnpause.getInstance(
             this,
-            NOTIFICATION_CHANNEL_ID
+            LOCATION_NOTIFICATION_CHANNEL_ID
         )
     }
 
@@ -40,7 +43,7 @@ class CheckInCheckOutService : IntentService("CheckInCheckOutService"), Coroutin
     override val coroutineContext: CoroutineContext = Dispatchers.IO + job + errorHandler
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Timber.i("CheckInCheckOutService started")
+        Timber.i("CheckInCheckOutService started with intent: %s", intent?.toString())
         startForeground()
         return super.onStartCommand(intent, flags, startId)
     }
@@ -48,13 +51,13 @@ class CheckInCheckOutService : IntentService("CheckInCheckOutService"), Coroutin
     private fun startForeground() {
         val notificationIntent = Intent(this, StartActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
-            this, 123,
+            this, CHECK_IN_CHECK_OUT_SERVICE,
             notificationIntent, 0
         )
 
         val notification = NotificationCompat.Builder(
             this,
-            NOTIFICATION_CHANNEL_ID
+            LOCATION_NOTIFICATION_CHANNEL_ID
         )
             .setOngoing(true)
             .setSmallIcon(R.drawable.ic_app_icon)
@@ -65,20 +68,21 @@ class CheckInCheckOutService : IntentService("CheckInCheckOutService"), Coroutin
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForeground(2121, notification.build())
+            startForeground(CHECK_IN_CHECK_OUT_SERVICE_ID, notification.build())
         } else {
             notification.priority = NotificationCompat.PRIORITY_MIN
-            startForeground(2121, notification.build())
+            startForeground(CHECK_IN_CHECK_OUT_SERVICE_ID, notification.build())
         }
     }
 
 
     @ExperimentalStdlibApi
     override fun onHandleIntent(intent: Intent?) {
-        if (intent?.action == Constants.Actions.ACTION_CHECK_IN) {
-            checkIn()
-        } else if (intent?.action == Constants.Actions.ACTION_CHECK_OUT) {
-            checkOut(getDescription(intent))
+        intent?.let {
+            when (it.action) {
+                Constants.Actions.ACTION_CHECK_IN -> checkIn()
+                Constants.Actions.ACTION_CHECK_OUT -> checkOut(getDescription(it))
+            }
         }
     }
 
@@ -95,7 +99,6 @@ class CheckInCheckOutService : IntentService("CheckInCheckOutService"), Coroutin
                         }
                     }
                 } else {
-                    Toast.makeText(applicationContext, "You are already checked in.", Toast.LENGTH_SHORT).show()
                     Timber.i("You are already checked in.")
                 }
             }
@@ -118,10 +121,6 @@ class CheckInCheckOutService : IntentService("CheckInCheckOutService"), Coroutin
                         }
                     }
                 } else {
-                    Toast.makeText(
-                        applicationContext, "You need to check in before you check out.",
-                        Toast.LENGTH_SHORT
-                    ).show()
                     Timber.i("You need to check in before you check out.")
                 }
             }
@@ -131,16 +130,15 @@ class CheckInCheckOutService : IntentService("CheckInCheckOutService"), Coroutin
     private inline fun <T> process(result: Result<T>, onSuccess: (value: T) -> Unit) {
         when (result) {
             is Result.Success -> {
-                Timber.tag(this::class.java.simpleName)
-                        .i("Network call successful: ${result.value}")
+                Timber.i("Network call successful: ${result.value}")
                 onSuccess(result.value)
             }
             is Result.GenericError -> {
-                Timber.tag(this::class.java.simpleName).e("Network call failed: $result")
+                Timber.e("Network call failed: $result")
                 Toast.makeText(this.applicationContext, result.errorResponse.toString(), Toast.LENGTH_SHORT).show()
             }
             is Result.IOError -> {
-                Timber.tag(this::class.java.simpleName).e("Network call failed: network error")
+                Timber.e("Network call failed: network error")
                 Toast.makeText(this.applicationContext, "Network error", Toast.LENGTH_SHORT).show()
             }
         }

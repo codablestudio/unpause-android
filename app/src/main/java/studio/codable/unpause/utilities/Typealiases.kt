@@ -8,3 +8,4 @@ typealias LambdaStringToUnit = (String) -> Unit
 typealias LambdaNoArgumentsUnit = () -> Unit
 typealias LambdaShiftIntToUnit = (Shift, Int) -> Unit
 typealias LambdaDoubleIntToUnit = (Int, Int) -> Unit
+typealias LambdaExceptionToUnit = (Exception) -> Unit

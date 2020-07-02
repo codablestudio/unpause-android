@@ -1,7 +1,7 @@
 package studio.codable.unpause.repository
 
 import studio.codable.unpause.model.Company
-import studio.codable.unpause.utilities.manager.GeofencingManager.*
+import studio.codable.unpause.utilities.geofencing.GeofenceModel
 import studio.codable.unpause.utilities.networking.Result
 
 interface ICompanyRepository {
