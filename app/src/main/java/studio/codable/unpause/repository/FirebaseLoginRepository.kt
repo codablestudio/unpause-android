@@ -45,7 +45,8 @@ class FirebaseLoginRepository @Inject constructor(
     }
 
     override suspend fun signOut(): Result<Unit> {
-        TODO("Not yet implemented")
+        firebaseAuth.signOut()
+        return Result.Success(Unit)
     }
 
     override suspend fun updateEmail(newEmail: String): Result<Unit> {

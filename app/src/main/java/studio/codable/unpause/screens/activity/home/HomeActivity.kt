@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
+import androidx.navigation.ui.setupActionBarWithNavController
 import kotlinx.android.synthetic.main.activity_home.*
 import studio.codable.unpause.R
 import studio.codable.unpause.base.activity.BaseActivity
@@ -48,8 +49,8 @@ class HomeActivity : BaseActivity() {
     private fun setupBottomNavigationBar() {
         val navGraphIds = listOf(
             R.navigation.navigation_home,
-            R.navigation.navigation_user_activity
-//            R.navigation.navigation_settings
+            R.navigation.navigation_user_activity,
+            R.navigation.navigation_settings
         )
 
         val controller = bottom_nav_main.setupWithNavController(

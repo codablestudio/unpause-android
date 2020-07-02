@@ -14,6 +14,7 @@ import studio.codable.unpause.model.Company
 import studio.codable.unpause.model.Shift
 import studio.codable.unpause.model.User
 import studio.codable.unpause.repository.ICompanyRepository
+import studio.codable.unpause.repository.ILoginRepository
 import studio.codable.unpause.repository.IShiftRepository
 import studio.codable.unpause.repository.IUserRepository
 import studio.codable.unpause.utilities.extensions.active
@@ -33,6 +34,8 @@ class UserViewModel @Inject constructor(
     private val shiftRepository: IShiftRepository,
     @Named("firebaseCompanyRepository")
     private val companyRepository: ICompanyRepository,
+    @Named("firebaseLoginRepository")
+    private val loginRepository: ILoginRepository,
     private val sessionManager: SessionManager
 ) : BaseViewModel() {
 
@@ -155,5 +158,11 @@ class UserViewModel @Inject constructor(
 
     fun addCustomShift(shift: Shift) {
         addShift(shift)
+    }
+
+    fun signOut() {
+        viewModelScope.launch {
+            process(loginRepository.signOut()) {}
+        }
     }
 }

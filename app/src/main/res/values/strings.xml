@@ -88,6 +88,13 @@
     <string name="channel_name">Notification Channel</string>
     <string name="channel_description">Channel for all notifications</string>
     <string name="check_out_successful">Check out successful.</string>
+    <string name="enter_new_first_name">Enter new first name</string>
+    <string name="enter_new_last_name">Enter new last name</string>
+    <string name="enter_current_password">Enter current password</string>
+    <string name="enter_new_password">Enter new password</string>
+    <string name="update_password">Update password</string>
+    <string name="update_info">Update info</string>
+    <string name="update_personal_info">Update personal info</string>
 
 
 </resources>
