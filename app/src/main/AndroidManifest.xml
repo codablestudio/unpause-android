@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="studio.codable.unpause">
+
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
 
     <application
         android:name=".app.App"
@@ -10,6 +17,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}"
@@ -20,7 +28,22 @@
                 android:resource="@xml/file_provider_paths" />
         </provider>
 
-        <activity android:name=".screens.activity.emailVerification.EmailVerificationActivity"></activity>
+        <receiver
+            android:name="studio.codable.unpause.utilities.broadcastReceiver.UnpauseBroadcastReceiver"
+            android:enabled="true"
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
+            <intent-filter>
+                <action android:name="studio.codable.unpause.utilities.manager.GeofencingManager.GEOFENCING_ACTION" />
+                <action android:name="studio.codable.unpause.utilities.Constants.Action.ACTION_CHECK_IN" />
+                <action android:name="studio.codable.unpause.utilities.Constants.Action.ACTION_CHECK_OUT" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name=".utilities.geofencing.GeofenceProcessingService" />
+        <service android:name=".utilities.geofencing.CheckInCheckOutService" />
+
+
+        <activity android:name=".screens.activity.emailVerification.EmailVerificationActivity" />
         <activity android:name=".screens.activity.home.HomeActivity" />
         <activity android:name=".screens.activity.register.RegisterActivity" />
         <activity

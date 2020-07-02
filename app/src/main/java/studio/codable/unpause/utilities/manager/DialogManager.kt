@@ -1,6 +1,7 @@
 package studio.codable.unpause.utilities.manager
 
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentTransaction
 import studio.codable.unpause.R
 import studio.codable.unpause.base.activity.BaseActivity
 import studio.codable.unpause.screens.fragment.datePicker.DatePickerFragment
@@ -18,7 +19,7 @@ class DialogManager(private val context: BaseActivity) {
     private lateinit var workingTimeWarningFragment: WorkingTimeWarningFragment
     private val datePickerFragment: DatePickerFragment by lazy { DatePickerFragment() }
     private lateinit var timePickerFragment: TimePickerFragment
-//    private var confirmDialogFragment: ConfirmDialogFragment? = null
+//    private val confirmDialogFragment: ConfirmDialogFragment by lazy { ConfirmDialogFragment() }
 //    private var shiftSchedulerDialog: ShiftSchedulerDialog? = null
 
     fun openDescriptionDialog(desctiption: String?, dialogListenerOnSave: LambdaStringToUnit, dialogListenerOnCancel: LambdaNoArgumentsUnit) {
@@ -27,7 +28,7 @@ class DialogManager(private val context: BaseActivity) {
             setOnCancelListener(dialogListenerOnCancel)
             setStyle(DialogFragment.STYLE_NO_TITLE, R.style.full_screen_dialog)
         }
-        descriptionDialogFragment.show(context.supportFragmentManager, "Save dialog fragment")
+        showFullscreenDialog(descriptionDialogFragment)
     }
 
     fun openWorkingTimeDialog(
@@ -40,7 +41,7 @@ class DialogManager(private val context: BaseActivity) {
         workingTimeWarningFragment =
             WorkingTimeWarningFragment(arrivalTime, exitTime, isArrivalDateEditable, dialogManager)
         workingTimeWarningFragment.addListener(dialogListener)
-        workingTimeWarningFragment.show(context.supportFragmentManager, "Working time warning fragment")
+        showFullscreenDialog(workingTimeWarningFragment)
     }
 
     fun openDatePickerDialog(datePickerListener: DatePickerListener) {
@@ -53,9 +54,8 @@ class DialogManager(private val context: BaseActivity) {
         timePickerFragment.setListener(timePickerListener)
         timePickerFragment.show(context.supportFragmentManager, "Time picker fragment")
     }
-//
-//    fun openConfirmDialog(confirmDialogListener: ConfirmDialogFragment.DialogListener) {
-//        confirmDialogFragment = ConfirmDialogFragment()
+
+//    fun openConfirmDialog(confirmDialogListener: LambdaNoArgumentsUnit) {
 //        confirmDialogFragment?.addListener(confirmDialogListener)
 //        confirmDialogFragment?.show(context.supportFragmentManager, "Confirm dialog fragment")
 //    }
@@ -96,5 +96,17 @@ class DialogManager(private val context: BaseActivity) {
 //        fun onOption1()
 //        fun onOption2()
 //    }
+
+    private fun showFullscreenDialog(dialogFragment: DialogFragment) {
+        val transaction = context.supportFragmentManager.beginTransaction()
+        // For a little polish, specify a transition animation
+        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+        // To make it fullscreen, use the 'content' root view as the container
+        // for the fragment, which is always the root view for the activity
+        transaction
+                .add(android.R.id.content, dialogFragment)
+                .addToBackStack(null)
+                .commit()
+    }
 
 }

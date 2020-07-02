@@ -12,6 +12,7 @@ import androidx.navigation.ui.setupWithNavController
 import kotlinx.android.synthetic.main.layout_toolbar.*
 import studio.codable.unpause.R
 import studio.codable.unpause.app.App
+import studio.codable.unpause.screens.fragment.HomeFragment
 import timber.log.Timber
 
 abstract class BaseFragment(private val hasDefaultToolbar: Boolean) : Fragment() {
@@ -33,11 +34,11 @@ abstract class BaseFragment(private val hasDefaultToolbar: Boolean) : Fragment()
     }
 
     private fun inject() {
-//     component.let {
-//            when (this) {
-//            is HomeFragment -> it.plusFragment().inject(this)
-//        }
-//     }
+     component.let {
+            when (this) {
+            is HomeFragment -> it.plusFragment().inject(this)
+        }
+     }
     }
 
     protected open fun initToolbar() {

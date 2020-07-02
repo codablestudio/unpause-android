@@ -111,6 +111,9 @@ dependencies {
     //Play Services - Authentication
     implementation "com.google.android.gms:play-services-auth:$googleServicesAuth_version"
 
+    //Play Services - Location
+    implementation "com.google.android.gms:play-services-location:$googleServicesLocation_version"
+
     //Animations
     implementation "com.airbnb.android:lottie:$lottie_version"
 
