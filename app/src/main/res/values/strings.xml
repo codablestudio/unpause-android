@@ -95,6 +95,10 @@
     <string name="update_password">Update password</string>
     <string name="update_info">Update info</string>
     <string name="update_personal_info">Update personal info</string>
+    <string name="updated_user_info">Updated user info</string>
+    <string name="fields_cannot_be_blank">Fields cannot be blank</string>
+    <string name="updated_password">Updated password</string>
+    <string name="password_cannot_be_blank">Password cannot be blank</string>
 
 
 </resources>

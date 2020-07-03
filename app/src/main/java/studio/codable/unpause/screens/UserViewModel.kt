@@ -165,4 +165,28 @@ class UserViewModel @Inject constructor(
             process(loginRepository.signOut()) {}
         }
     }
+
+    fun updateFirstName(firstName: String) {
+        viewModelScope.launch {
+            process(userRepository.updateFirstName(_user.value!!.id, firstName)) {
+                getUser()
+            }
+        }
+    }
+
+    fun updateLastName(lastName: String) {
+        viewModelScope.launch {
+            process(userRepository.updateFirstName(_user.value!!.id, lastName)) {
+                getUser()
+            }
+        }
+    }
+
+    fun updatePassword(oldPassword : String, newPassword : String) {
+        viewModelScope.launch {
+            process(loginRepository.login(_user.value!!.email,oldPassword)) {
+                process(loginRepository.updatePassword(newPassword)) {}
+            }
+        }
+    }
 }

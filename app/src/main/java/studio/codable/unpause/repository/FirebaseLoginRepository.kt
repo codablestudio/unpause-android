@@ -54,7 +54,9 @@ class FirebaseLoginRepository @Inject constructor(
     }
 
     override suspend fun updatePassword(newPassword: String): Result<Unit> {
-        TODO("Not yet implemented")
+        return callFirebase(firebaseAuth.currentUser!!.updatePassword(newPassword)) {
+            Unit
+        }
     }
 
     override suspend fun sendPasswordResetEmail(email: String): Result<Unit> {

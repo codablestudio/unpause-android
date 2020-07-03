@@ -2,6 +2,7 @@ package studio.codable.unpause.base.activity
 
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.NavController
 import studio.codable.unpause.app.App
 import studio.codable.unpause.screens.activity.emailVerification.EmailVerificationActivity
 import studio.codable.unpause.screens.activity.home.HomeActivity
@@ -12,6 +13,8 @@ import studio.codable.unpause.screens.activity.start.StartActivity
 abstract class BaseActivity : AppCompatActivity() {
 
     private val component = App.instance.applicationComponent
+
+    protected abstract val navController: NavController
 
     init {
         inject()

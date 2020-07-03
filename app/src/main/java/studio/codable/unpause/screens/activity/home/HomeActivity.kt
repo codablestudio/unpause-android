@@ -8,10 +8,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
+import androidx.navigation.findNavController
 import androidx.navigation.ui.setupActionBarWithNavController
 import kotlinx.android.synthetic.main.activity_home.*
 import studio.codable.unpause.R
 import studio.codable.unpause.base.activity.BaseActivity
+import studio.codable.unpause.screens.SharedViewModel
 import studio.codable.unpause.screens.UserViewModel
 import studio.codable.unpause.utilities.Constants.Notifications.LOCATION_NOTIFICATION_CHANNEL_ID
 import studio.codable.unpause.utilities.extensions.setupWithNavController
@@ -23,6 +25,8 @@ class HomeActivity : BaseActivity() {
     @Inject
     lateinit var vmFactory: ViewModelProvider.Factory
     private val userVm: UserViewModel by viewModels { vmFactory }
+    override val navController: NavController by lazy { findNavController(R.id.nav_host_home_activity) }
+    private val svm: SharedViewModel by viewModels { vmFactory }
 
     companion object {
         private const val USER_ID = "userId"
@@ -41,6 +45,7 @@ class HomeActivity : BaseActivity() {
         setContentView(R.layout.activity_home)
 
         setupBottomNavigationBar()
+        svm // instantiated to become available to all BaseFragment instances
         userVm
         NotificationManagerUnpause.createNotificationChannel(this, LOCATION_NOTIFICATION_CHANNEL_ID)
 
