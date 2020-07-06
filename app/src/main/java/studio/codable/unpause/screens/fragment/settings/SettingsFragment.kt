@@ -72,7 +72,7 @@ class SettingsFragment : BaseFragment(false) {
     private fun enableLocationService() {
         sessionManager.locationServiceStatus = true
         val geofencingManager = GeofencingManager(requireContext())
-        geofencingManager.reloadSavedGeofences(true)
+        userVm.geofences.value?.let { geofencingManager.reloadGeofences(it) }
     }
 
     private fun disableLocationService() {

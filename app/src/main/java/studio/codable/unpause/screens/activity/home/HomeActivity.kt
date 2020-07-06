@@ -9,7 +9,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import androidx.navigation.ui.setupActionBarWithNavController
 import kotlinx.android.synthetic.main.activity_home.*
 import studio.codable.unpause.R
 import studio.codable.unpause.base.activity.BaseActivity
