@@ -1,11 +1,9 @@
 package studio.codable.unpause.screens.fragment.confirmDialog
 
+import android.app.Dialog
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
-import kotlinx.android.synthetic.main.confirm_dialog.*
 import studio.codable.unpause.R
 import studio.codable.unpause.utilities.LambdaNoArgumentsUnit
 
@@ -13,21 +11,22 @@ class ConfirmDialogFragment : DialogFragment() {
 
     private lateinit var dialogListenerOnYes: LambdaNoArgumentsUnit
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.confirm_dialog, container)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        yes_button.setOnClickListener {
-            dialogListenerOnYes.invoke()
-            dismiss()
-        }
-
-        no_button.setOnClickListener {
-            dismiss()
-        }
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return activity?.let {
+            val builder = AlertDialog.Builder(it)
+            builder.setMessage(R.string.are_you_sure)
+                .setPositiveButton(R.string.yes
+                ) { _, _ ->
+                    dialogListenerOnYes.invoke()
+                    dismiss()
+                }
+                .setNegativeButton(R.string.no
+                ) { _, _ ->
+                    dismiss()
+                }
+            // Create the AlertDialog object and return it
+            builder.create()
+        } ?: throw IllegalStateException("Activity cannot be null")
     }
 
     fun addListener(dialogListenerOnYes: LambdaNoArgumentsUnit) {

@@ -19,8 +19,6 @@ import studio.codable.unpause.repository.IShiftRepository
 import studio.codable.unpause.repository.IUserRepository
 import studio.codable.unpause.utilities.extensions.active
 import studio.codable.unpause.utilities.geofencing.GeofenceModel
-import studio.codable.unpause.utilities.manager.GeofencingManager
-import studio.codable.unpause.utilities.manager.GeofencingManager.*
 import studio.codable.unpause.utilities.manager.SessionManager
 import timber.log.Timber
 import java.util.*
@@ -161,9 +159,7 @@ class UserViewModel @Inject constructor(
     }
 
     fun signOut() {
-        viewModelScope.launch {
-            process(loginRepository.signOut()) {}
-        }
+        loginRepository.signOut()
     }
 
     fun updateFirstName(firstName: String) {
@@ -176,7 +172,7 @@ class UserViewModel @Inject constructor(
 
     fun updateLastName(lastName: String) {
         viewModelScope.launch {
-            process(userRepository.updateFirstName(_user.value!!.id, lastName)) {
+            process(userRepository.updateLastName(_user.value!!.id, lastName)) {
                 getUser()
             }
         }

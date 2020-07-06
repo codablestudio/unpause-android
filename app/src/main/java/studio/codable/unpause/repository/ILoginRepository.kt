@@ -17,7 +17,7 @@ interface ILoginRepository {
 
     suspend fun verifyEmail(email: String, password: String): Result<Boolean>
 
-    suspend fun signOut(): Result<Unit>
+    fun signOut()
 
     suspend fun updateEmail(newEmail: String): Result<Unit>
 

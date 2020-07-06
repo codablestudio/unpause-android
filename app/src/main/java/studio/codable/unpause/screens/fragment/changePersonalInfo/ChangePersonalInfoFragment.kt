@@ -17,6 +17,7 @@ class ChangePersonalInfoFragment : BaseFragment(false) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initUI()
         initListeners()
     }
 
@@ -27,22 +28,18 @@ class ChangePersonalInfoFragment : BaseFragment(false) {
         return inflater.inflate(R.layout.fragment_change_personal_info, container, false)
     }
 
+    private fun initUI() {
+        userVm.user.value?.let {
+            first_name_edit_text.setText(it.firstName)
+            last_name_edit_text.setText(it.lastName)
+        }
+    }
+
     private fun initListeners() {
         update_personal_info_button.setOnClickListener {
-
-            var changed = false
-
-            if (first_name_edit_text.text.toString().isNotBlank()) {
+            if (areFieldsValid()) {
                 userVm.updateFirstName(first_name_edit_text.text.toString())
-                changed = true
-            }
-
-            if (last_name_edit_text.text.toString().isNotBlank()) {
                 userVm.updateLastName(last_name_edit_text.text.toString())
-                changed = true
-            }
-
-            if (changed) {
                 showMessage(getString(R.string.updated_user_info))
                 svm.navigateUp()
             } else {
@@ -50,4 +47,8 @@ class ChangePersonalInfoFragment : BaseFragment(false) {
             }
         }
     }
+
+    private fun areFieldsValid(): Boolean =
+        first_name_edit_text.text.toString().isNotBlank() && last_name_edit_text.text.toString()
+            .isNotBlank()
 }
