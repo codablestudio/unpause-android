@@ -7,12 +7,16 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import kotlinx.android.synthetic.main.layout_toolbar.*
 import studio.codable.unpause.R
 import studio.codable.unpause.app.App
+import studio.codable.unpause.screens.SharedViewModel
 import studio.codable.unpause.screens.fragment.HomeFragment
+import studio.codable.unpause.utilities.navigation.NavCommand
 import timber.log.Timber
 
 abstract class BaseFragment(private val hasDefaultToolbar: Boolean) : Fragment() {
@@ -23,12 +27,46 @@ abstract class BaseFragment(private val hasDefaultToolbar: Boolean) : Fragment()
 
     private val component = App.instance.applicationComponent
 
+    protected val svm: SharedViewModel by activityViewModels()
+
+
     init {
         inject()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        svm.navCommand.observe(viewLifecycleOwner, Observer {
+            val content: NavCommand? = it.getContentIfNotHandled()
+            try {
+                content?.let { command ->
+                    when (command) {
+                        is NavCommand.To -> {
+                            Timber.tag(this::class.java.simpleName)
+                                .i("Navigating from ${navController.currentDestination}")
+                            Timber.tag(this::class.java.simpleName)
+                                .i("with action: ${command.directions.actionId}")
+                            Timber.tag(this::class.java.simpleName)
+                                .i("with arguments: ${command.directions.arguments}")
+                            navController.navigate(command.directions)
+                            Timber.tag(this::class.java.simpleName)
+                                .i("Navigated to: ${navController.currentDestination}")
+                        }
+                        is NavCommand.ToRoot -> TODO("not implemented")
+                        is NavCommand.Up -> {
+                            Timber.tag(this::class.java.simpleName)
+                                .i("Navigating *UP* from ${navController.currentDestination}")
+                            navController.navigateUp()
+                            Timber.tag(this::class.java.simpleName)
+                                .i("Navigated *UP* to ${navController.currentDestination}")
+                        }
+                        is NavCommand.UpTo -> TODO("not implemented")
+                    }
+                }
+            } catch (exc: Exception) {
+                Timber.e(exc, "Failed to navigate $content")
+            }
+        })
 
         initToolbar()
     }

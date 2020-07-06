@@ -97,6 +97,13 @@ class GeofencingManager @Inject constructor(context: Context) {
         geofencingClient.removeGeofences(geofencePendingIntent)
     }
 
+    fun reloadGeofences(geofences : List<GeofenceModel>) {
+        (geofenceList as ArrayList).clear()
+        geofences.forEach {
+            addGeofence(it, true)
+        }
+    }
+
     /**
      * removes the geofence from the list
      */
@@ -160,6 +167,4 @@ class GeofencingManager @Inject constructor(context: Context) {
     fun saveGeofencesToPreferences(geofences: List<GeofenceModel>) {
         savedGeofences = geofences.toSet()
     }
-
-
 }

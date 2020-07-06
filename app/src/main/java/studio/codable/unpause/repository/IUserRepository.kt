@@ -12,4 +12,8 @@ interface IUserRepository {
     suspend fun updateUser(user: User): Result<Unit>
 
     suspend fun isUserVerified(user: User): Result<Boolean>
+
+    suspend fun updateFirstName(userId : String, firstName : String) : Result<Unit>
+
+    suspend fun updateLastName(userId : String, lastName : String) : Result<Unit>
 }

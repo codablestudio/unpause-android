@@ -1,5 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/nav_graph_home">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_settings"
+    app:startDestination="@id/settingsFragment">
 
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="studio.codable.unpause.screens.fragment.settings.SettingsFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_settings" >
+        <action
+            android:id="@+id/action_settingsFragment_to_changeUserPasswordFragment"
+            app:destination="@id/changeUserPasswordFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_changePersonalInfoFragment"
+            app:destination="@id/changePersonalInfoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/changePersonalInfoFragment"
+        android:name="studio.codable.unpause.screens.fragment.changePersonalInfo.ChangePersonalInfoFragment"
+        android:label="fragment_change_personal_info"
+        tools:layout="@layout/fragment_change_personal_info" />
+    <fragment
+        android:id="@+id/changeUserPasswordFragment"
+        android:name="studio.codable.unpause.screens.fragment.changeUserPassword.ChangeUserPasswordFragment"
+        android:label="fragment_change_user_password"
+        tools:layout="@layout/fragment_change_user_password" />
 </navigation>

@@ -14,12 +14,11 @@ import studio.codable.unpause.model.Company
 import studio.codable.unpause.model.Shift
 import studio.codable.unpause.model.User
 import studio.codable.unpause.repository.ICompanyRepository
+import studio.codable.unpause.repository.ILoginRepository
 import studio.codable.unpause.repository.IShiftRepository
 import studio.codable.unpause.repository.IUserRepository
 import studio.codable.unpause.utilities.extensions.active
 import studio.codable.unpause.utilities.geofencing.GeofenceModel
-import studio.codable.unpause.utilities.manager.GeofencingManager
-import studio.codable.unpause.utilities.manager.GeofencingManager.*
 import studio.codable.unpause.utilities.manager.SessionManager
 import timber.log.Timber
 import java.util.*
@@ -33,6 +32,8 @@ class UserViewModel @Inject constructor(
     private val shiftRepository: IShiftRepository,
     @Named("firebaseCompanyRepository")
     private val companyRepository: ICompanyRepository,
+    @Named("firebaseLoginRepository")
+    private val loginRepository: ILoginRepository,
     private val sessionManager: SessionManager
 ) : BaseViewModel() {
 
@@ -155,5 +156,33 @@ class UserViewModel @Inject constructor(
 
     fun addCustomShift(shift: Shift) {
         addShift(shift)
+    }
+
+    fun signOut() {
+        loginRepository.signOut()
+    }
+
+    fun updateFirstName(firstName: String) {
+        viewModelScope.launch {
+            process(userRepository.updateFirstName(_user.value!!.id, firstName)) {
+                getUser()
+            }
+        }
+    }
+
+    fun updateLastName(lastName: String) {
+        viewModelScope.launch {
+            process(userRepository.updateLastName(_user.value!!.id, lastName)) {
+                getUser()
+            }
+        }
+    }
+
+    fun updatePassword(oldPassword : String, newPassword : String) {
+        viewModelScope.launch {
+            process(loginRepository.login(_user.value!!.email,oldPassword)) {
+                process(loginRepository.updatePassword(newPassword)) {}
+            }
+        }
     }
 }

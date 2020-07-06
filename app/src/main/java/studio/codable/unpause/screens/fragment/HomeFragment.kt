@@ -20,7 +20,7 @@ import studio.codable.unpause.utilities.manager.PermissionManager
 import timber.log.Timber
 import javax.inject.Inject
 
-class HomeFragment : BaseFragment(true) {
+class HomeFragment : BaseFragment(false) {
 
     private val userVm: UserViewModel by activityViewModels()
 

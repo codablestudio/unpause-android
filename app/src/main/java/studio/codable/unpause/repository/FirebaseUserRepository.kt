@@ -44,4 +44,16 @@ class FirebaseUserRepository @Inject constructor(
     override suspend fun isUserVerified(user: User): Result<Boolean> {
         TODO("Not yet implemented")
     }
+
+    override suspend fun updateFirstName(userId : String, firstName : String) : Result<Unit> {
+        return callFirebase(usersCol.document(userId).update(FirestoreUser.FIRST_NAME, firstName)) {
+            Unit
+        }
+    }
+
+    override suspend fun updateLastName(userId : String, lastName : String) : Result<Unit> {
+        return callFirebase(usersCol.document(userId).update(FirestoreUser.LAST_NAME, lastName)) {
+            Unit
+        }
+    }
 }
