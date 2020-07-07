@@ -1,5 +1,6 @@
 package studio.codable.unpause.repository
 
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import studio.codable.unpause.model.User
@@ -19,6 +20,8 @@ class FirebaseUserRepository @Inject constructor(
         fun extractFirestoreUser(documentSnapshot: DocumentSnapshot): FirestoreUser {
             return documentSnapshot.toObject(FirestoreUser::class.java)!!
         }
+
+        private const val COMPANY_REFERENCE_FIELD = "companyReference"
     }
 
     private val usersCol = firestore.collection(Constants.FirestoreCollections.USERS)
@@ -53,6 +56,12 @@ class FirebaseUserRepository @Inject constructor(
 
     override suspend fun updateLastName(userId : String, lastName : String) : Result<Unit> {
         return callFirebase(usersCol.document(userId).update(FirestoreUser.LAST_NAME, lastName)) {
+            Unit
+        }
+    }
+
+    override suspend fun updateCompany(userId : String, companyReference: DocumentReference) : Result<Unit> {
+        return callFirebase(usersCol.document(userId).update(COMPANY_REFERENCE_FIELD, companyReference)) {
             Unit
         }
     }

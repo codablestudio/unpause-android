@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_settingsFragment_to_changePersonalInfoFragment"
             app:destination="@id/changePersonalInfoFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_changeCompanyFragment"
+            app:destination="@id/changeCompanyFragment" />
     </fragment>
     <fragment
         android:id="@+id/changePersonalInfoFragment"
@@ -27,4 +30,8 @@
         android:name="studio.codable.unpause.screens.fragment.changeUserPassword.ChangeUserPasswordFragment"
         android:label="fragment_change_user_password"
         tools:layout="@layout/fragment_change_user_password" />
+    <fragment
+        android:id="@+id/changeCompanyFragment"
+        android:name="studio.codable.unpause.screens.fragment.connectCompany.ChangeCompanyFragment"
+        android:label="ChangeCompanyFragment" />
 </navigation>

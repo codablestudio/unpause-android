@@ -1,5 +1,6 @@
 package studio.codable.unpause.repository
 
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import studio.codable.unpause.model.Company
@@ -18,6 +19,8 @@ class FirebaseCompanyRepository @Inject constructor(
         fun extractFirestoreCompany(documentSnapshot: DocumentSnapshot): FirestoreCompany {
             return documentSnapshot.toObject(FirestoreCompany::class.java)!!
         }
+
+        private const val PASSCODE_FIELD = "passcode"
     }
 
     private val companiesCol = firestore.collection(Constants.FirestoreCollections.COMPANIES)
@@ -32,5 +35,15 @@ class FirebaseCompanyRepository @Inject constructor(
         return callFirebase(companiesCol.document(companyId).get()) {
             extractFirestoreCompany(it).extractGeofences()
         }
+    }
+
+    override suspend fun getCompanyId(passcode : String) : Result<String> {
+        return callFirebase(companiesCol.whereEqualTo(PASSCODE_FIELD, passcode).get()) {
+                extractFirestoreCompany(it.documents[0]).documentId
+        }
+    }
+
+    override fun getCompanyReference(companyId: String): DocumentReference {
+        return companiesCol.document(companyId)
     }
 }

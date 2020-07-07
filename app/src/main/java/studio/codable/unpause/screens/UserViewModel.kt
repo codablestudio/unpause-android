@@ -185,4 +185,14 @@ class UserViewModel @Inject constructor(
             }
         }
     }
+
+    fun updateCompany(passcode : String) {
+        viewModelScope.launch {
+            process(companyRepository.getCompanyId(passcode)) {
+                process(userRepository.updateCompany(_user.value!!.id, companyRepository.getCompanyReference(it))) {
+                    getUser()
+                }
+            }
+        }
+    }
 }
