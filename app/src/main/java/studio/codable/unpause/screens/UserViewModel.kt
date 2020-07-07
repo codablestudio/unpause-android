@@ -159,6 +159,7 @@ class UserViewModel @Inject constructor(
     }
 
     fun signOut() {
+        sessionManager.userId = ""
         loginRepository.signOut()
     }
 
