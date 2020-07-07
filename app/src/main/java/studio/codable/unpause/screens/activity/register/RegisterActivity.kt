@@ -34,8 +34,8 @@ class RegisterActivity : BaseActivity() {
         setContentView(R.layout.activity_register)
 
         svm // instantiated to become available to all BaseFragment instances
+        registerVm
 
-        initUI()
         initObservers()
     }
 
@@ -44,29 +44,11 @@ class RegisterActivity : BaseActivity() {
             showError(it.getContentIfNotHandled())
         })
 
-        registerVm.userId.observe(this, Observer {
-            startActivity(HomeActivity.getIntent(this, it))
-            finish()
-        })
-    }
-
-    private fun initUI() {
-
-        btn_register.setOnClickListener {
-            if (checkFields()) {
-                registerVm.register(
-                    text_email.text.toString(),
-                    text_password.text.toString(),
-                    text_first_name.text.toString(),
-                    text_last_name.text.toString()
-                )
-            } else {
-                showMessage("Invalid input")
+        registerVm.registrationFinished.observe(this, Observer {
+            if (it) {
+                startActivity(HomeActivity.getIntent(this, registerVm.getUserID()))
+                finish()
             }
-        }
-    }
-
-    private fun checkFields(): Boolean {
-        return text_email.text.isNotBlank() && text_password.text.isNotBlank()
+        })
     }
 }

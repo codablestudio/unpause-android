@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/navigation_register_activity">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_register_activity"
+    app:startDestination="@id/registerFragment">
 
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="studio.codable.unpause.screens.fragment.register.RegisterFragment"
+        android:label="fragment_register"
+        tools:layout="@layout/fragment_register" >
+        <action
+            android:id="@+id/action_registerFragment_to_connectCompanyFragment"
+            app:destination="@id/connectCompanyFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/connectCompanyFragment"
+        android:name="studio.codable.unpause.screens.fragment.connectCompany.ConnectCompanyFragment"
+        android:label="ConnectCompanyFragment" />
 </navigation>
