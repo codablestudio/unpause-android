@@ -1,114 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include layout="@layout/layout_toolbar" />
+    <include
+        android:id="@+id/include_toolbar"
+        layout="@layout/layout_toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <RelativeLayout
+<!--    TODO: finish design-->
+    <ImageView
+        android:id="@+id/user_img"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:src="@drawable/user_60x60_black"
+        app:layout_constraintTop_toBottomOf="@id/include_toolbar"
+        app:layout_constraintStart_toStartOf="parent"/>
+    <TextView
+        android:id="@+id/text_name"
+        style="@style/TextLight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/user_img"
+        app:layout_constraintTop_toBottomOf="@id/include_toolbar"
+        tools:text="Dinko Marinac" />
+
+    <TextView
+        android:id="@+id/text_company"
+        style="@style/TextLight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_name"
+        tools:text="Codable Studio" />
+
+    <ToggleButton
+        android:id="@+id/btn_check_in_out"
+        style="@style/Button.Round"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:textOff="@string/check_in"
+        android:textOn="@string/check_out"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_company"
+        tools:text="Check in" />
+
+    <com.github.mikephil.charting.charts.BarChart
+        android:id="@+id/chart"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="50dp">
-
-        <TextView
-            android:id="@+id/t_signed_in_as"
-            style="@style/TextDark.Bold"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/signed_in_as"
-            android:textSize="18sp" />
-
-        <TextView
-            android:id="@+id/t_email"
-            style="@style/TextLight"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/t_signed_in_as"
-            android:layout_marginTop="20dp"
-            android:text="@string/email_colon" />
-
-        <TextView
-            android:id="@+id/text_email"
-            style="@style/TextLight"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@id/t_email"
-            android:layout_marginStart="20dp"
-            android:layout_toEndOf="@id/t_email"
-            tools:text="filip@codable.studio" />
-
-        <TextView
-            android:id="@+id/t_first_name"
-            style="@style/TextLight"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/t_email"
-            android:layout_marginTop="20dp"
-            android:text="@string/first_name_colon" />
-
-        <TextView
-            android:id="@+id/text_first_name"
-            style="@style/TextLight"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@id/t_first_name"
-            android:layout_marginStart="20dp"
-            android:layout_toEndOf="@id/t_first_name"
-            tools:text="Filip" />
-
-        <TextView
-            android:id="@+id/t_last_name"
-            style="@style/TextLight"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/t_first_name"
-            android:layout_marginTop="20dp"
-            android:text="@string/last_name_colon" />
-
-        <TextView
-            android:id="@+id/text_last_name"
-            style="@style/TextLight"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@id/t_last_name"
-            android:layout_marginStart="20dp"
-            android:layout_toEndOf="@id/t_last_name"
-            tools:text="Pranklin" />
-
-        <TextView
-            android:id="@+id/t_company"
-            style="@style/TextLight"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/t_last_name"
-            android:layout_marginTop="20dp"
-            android:text="@string/company_colon" />
-
-        <TextView
-            android:id="@+id/text_company"
-            style="@style/TextLight"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@id/t_company"
-            android:layout_marginStart="20dp"
-            android:layout_toEndOf="@id/t_company"
-            tools:text="Codable Studio" />
-
-        <ToggleButton
-            android:id="@+id/btn_check_in_out"
-            style="@style/Button.Round"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/t_company"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="100dp"
-            android:textOff="@string/check_in"
-            android:textOn="@string/check_out"
-            tools:text="Check in" />
-
-    </RelativeLayout>
-
-</LinearLayout>
+        android:layout_height="240dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_check_in_out" />
+</androidx.constraintlayout.widget.ConstraintLayout>
