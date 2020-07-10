@@ -107,3 +107,14 @@ fun Date?.dayOfWeek() : Int {
     val day = cal.get(Calendar.DAY_OF_WEEK)-2
     return if (day<0) 6 else day
 }
+
+/**
+ * Returns day of a month as a number (starting with 1)
+ */
+fun Date?.dayOfMonth() : Int {
+    if (this == null) return -1
+    val cal = Calendar.getInstance()
+    cal.clear()
+    cal.time = this
+    return cal.get(Calendar.DAY_OF_MONTH)
+}

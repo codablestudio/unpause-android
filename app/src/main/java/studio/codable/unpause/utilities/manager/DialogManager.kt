@@ -1,7 +1,9 @@
 package studio.codable.unpause.utilities.manager
 
+import androidx.core.util.Pair
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
+import com.google.android.material.datepicker.MaterialDatePicker
 import studio.codable.unpause.R
 import studio.codable.unpause.base.activity.BaseActivity
 import studio.codable.unpause.screens.fragment.confirmDialog.ConfirmDialogFragment
@@ -59,6 +61,17 @@ class DialogManager(private val context: BaseActivity) {
     fun openConfirmDialog(confirmDialogListener: LambdaNoArgumentsUnit) {
         confirmDialogFragment?.addListener(confirmDialogListener)
         confirmDialogFragment?.show(context.supportFragmentManager, "Confirm dialog fragment")
+    }
+
+    fun openDateRangePickerDialog(listener: (Pair<Long, Long>) -> Unit) {
+        val builder = MaterialDatePicker.Builder.dateRangePicker()
+        val now = Calendar.getInstance()
+        builder.setSelection(Pair(now.timeInMillis, now.timeInMillis))
+        builder.build().apply {
+            addOnPositiveButtonClickListener { listener.invoke(it) }
+            addOnNegativeButtonClickListener { dismiss() }
+            addOnCancelListener { dismiss() }
+        }.show(context.supportFragmentManager, "Date range picker fragment")
     }
 
 //    fun openShiftScheduleDialog(

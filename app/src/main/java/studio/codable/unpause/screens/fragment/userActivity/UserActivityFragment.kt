@@ -1,6 +1,8 @@
 package studio.codable.unpause.screens.fragment.userActivity
 
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,6 +12,10 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.*
+import com.github.mikephil.charting.formatter.ValueFormatter
+import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_user_activity.*
 import studio.codable.unpause.R
 import studio.codable.unpause.base.activity.BaseActivity
@@ -18,7 +24,9 @@ import studio.codable.unpause.model.Shift
 import studio.codable.unpause.model.User
 import studio.codable.unpause.screens.UserViewModel
 import studio.codable.unpause.screens.fragment.workingTimeWarning.WorkingTimeWarningFragment
+import studio.codable.unpause.utilities.Constants
 import studio.codable.unpause.utilities.adapter.userActivityRecyclerViewAdapter.UserActivityRecyclerViewAdapter
+import studio.codable.unpause.utilities.helperFunctions.*
 import studio.codable.unpause.utilities.manager.CsvManager
 import studio.codable.unpause.utilities.manager.DialogManager
 import studio.codable.unpause.utilities.manager.TimeManager
@@ -64,7 +72,7 @@ class UserActivityFragment : BaseFragment(false) {
                 mDialogManager?.openDatePickerDialog { year, month, dayOfMonth ->
                     timeManager.changeArrivalDate(year, month, dayOfMonth)
                     updateFromDate(timeManager.arrivalToArray()[1])
-                    updateRecyclerView()
+                    updateUI()
                 }
             }
 
@@ -72,13 +80,27 @@ class UserActivityFragment : BaseFragment(false) {
                 mDialogManager?.openDatePickerDialog { year, month, dayOfMonth ->
                     timeManager.changeExitDate(year, month, dayOfMonth)
                     updateToDate(timeManager.exitToArray()[1])
-                    updateRecyclerView()
+                    updateUI()
+                }
+            }
+
+            proba_Img.setOnClickListener {
+                mDialogManager.openDateRangePickerDialog{ selection ->
+                    val calendar1 = Calendar.getInstance()
+                    calendar1.timeInMillis = selection.first!!
+                    val calendar2 = Calendar.getInstance()
+                    calendar2.timeInMillis = selection.second!!
+                    timeManager.changeArrivalDate(calendar1.time.year(), calendar1.time.month(),calendar1.time.day())
+                    timeManager.changeExitDate(calendar2.time.year(), calendar2.time.month(),calendar2.time.day())
+                    updateUI()
                 }
             }
 
         }
 
         initRecyclerView(requireActivity())
+
+        initLineChart()
     }
 
     private fun initRecyclerView(activity: FragmentActivity) {
@@ -97,13 +119,13 @@ class UserActivityFragment : BaseFragment(false) {
 
         //update UI every time there are shift changes
         userVm.user.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            updateRecyclerView()
+            updateUI()
         })
         userVm.shifts.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            updateRecyclerView()
+            updateUI()
         })
 
-        updateRecyclerView()
+        updateUI()
 
         val itemTouchHelper =
             ItemTouchHelper(
@@ -115,12 +137,61 @@ class UserActivityFragment : BaseFragment(false) {
         itemTouchHelper.attachToRecyclerView(user_activity_recycler_view)
     }
 
-    private fun sendCSV() {
+    @SuppressLint("ResourceType")
+    private fun initLineChart() {
 
-//        if (userVm.user.value?.company == null) {
-//            val intent = Intent(context, BossInfoActivity::class.java)
-//            startActivityForResult(intent, 1234)
-//        } else {
+        val lineDataSet = LineDataSet(getChartData(), getString(R.string.working_hours)).apply {
+            color = Color.parseColor(getString(R.color.primary))
+        }
+
+        val lineData = LineData().apply { addDataSet(lineDataSet) }
+        line_chart.xAxis.apply {
+            position = XAxis.XAxisPosition.BOTTOM
+            setDrawGridLines(false)
+            granularity = 1f
+            labelCount = 7
+            axisMinimum=1f
+            axisMaximum=31f
+        }
+
+        line_chart.apply {
+            data = lineData
+            description.isEnabled = false
+            setTouchEnabled(false)
+            setDrawGridBackground(false)
+            axisLeft.isEnabled = false
+            axisRight.isEnabled = false
+            extraBottomOffset = 3f
+            animateY(600)
+        }
+    }
+
+    private fun getChartData(): MutableList<Entry> {
+
+        val returnList: MutableList<Entry> = mutableListOf()
+                filterActivity()
+            .groupBy({ shift -> shift.arrivalTime.date() },
+                {
+                    if (it.exitTime == null) {
+                        0.000
+                    } else {
+                        TimeManager(it.arrivalTime!!, it.exitTime!!).getWorkingHoursDecimal()
+                    }
+                })
+            .mapValues { entry ->
+                var sum = 0.00
+                entry.value.forEach { sum += it }
+                sum
+            }
+            .mapKeys {
+                it.key.dayOfMonth()
+            }.toList().forEach {
+                        returnList.add(Entry(it.first.toFloat(), it.second.toFloat()))
+                    }
+        return returnList
+    }
+
+    private fun sendCSV() {
         val fileUri =  CsvManager.getCsvFileUri(
                 requireContext(),
                 user.getUserActivity(
@@ -131,7 +202,6 @@ class UserActivityFragment : BaseFragment(false) {
         )
         val emailIntent = prepareEmail(fileUri)
         startActivity(Intent.createChooser(emailIntent, getString(R.string.send_email)))
-//        }
     }
 
     private fun prepareEmail(fileUri: Uri): Intent {
@@ -279,27 +349,25 @@ class UserActivityFragment : BaseFragment(false) {
                 })
     }
 
-    private fun updateRecyclerView() {
+    private fun updateUI() {
+        val shifts = filterActivity()
+        //updateChart(shifts)
+        updateRecyclerView(shifts)
+    }
+
+    private fun updateRecyclerView(shifts: List<Shift>) {
         (user_activity_recycler_view?.adapter as UserActivityRecyclerViewAdapter)
-            .updateContent(
-                user.getUserActivity(
-                    timeManager.arrivalTime,
-                    timeManager.exitTime
-                )
-            )
+            .updateContent(shifts)
         user_activity_recycler_view?.adapter?.notifyDataSetChanged()
     }
 
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, data)
-//
-//        if (data == null) return
-//
-//        if (requestCode == 1234 && resultCode == 1) {
-//            user?.boss = data.getSerializableExtra(BOSS_PARAM) as Boss
-//            mViewModel?.updateUserInDatabase(user!!)
-//            sendCSV()
-//        }
+//    private fun updateChart(shifts: List<Shift>) {
+//        TODO("Not yet implemented")
 //    }
+
+    private fun filterActivity() : List<Shift> = user.getUserActivity(
+        timeManager.arrivalTime,
+        timeManager.exitTime
+    )
 
 }
