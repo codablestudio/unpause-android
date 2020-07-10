@@ -1,5 +1,7 @@
 package studio.codable.unpause.screens.fragment
 
+import android.annotation.SuppressLint
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,28 +9,27 @@ import android.view.ViewGroup
 import android.widget.CompoundButton
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
-import com.github.mikephil.charting.components.Legend
-import com.github.mikephil.charting.components.Legend.LegendForm
 import com.github.mikephil.charting.components.XAxis.XAxisPosition
-import com.github.mikephil.charting.components.YAxis.YAxisLabelPosition
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
-import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.formatter.ValueFormatter
 import kotlinx.android.synthetic.main.fragment_home.*
 import studio.codable.unpause.R
 import studio.codable.unpause.base.fragment.BaseFragment
 import studio.codable.unpause.model.Shift
 import studio.codable.unpause.screens.UserViewModel
+import studio.codable.unpause.utilities.Constants.Chart.xAxisLabels
 import studio.codable.unpause.utilities.helperFunctions.date
+import studio.codable.unpause.utilities.helperFunctions.dayOfWeek
+import studio.codable.unpause.utilities.helperFunctions.getCurrentWeek
 import studio.codable.unpause.utilities.manager.GeofencingManager
 import studio.codable.unpause.utilities.manager.PermissionManager
 import studio.codable.unpause.utilities.manager.TimeManager
 import timber.log.Timber
-import java.time.Month
 import java.util.*
 import javax.inject.Inject
+
 
 class HomeFragment : BaseFragment(false) {
 
@@ -101,37 +102,18 @@ class HomeFragment : BaseFragment(false) {
         })
     }
 
-    fun initGraph() {
+    @SuppressLint("ResourceType")
+    private fun initGraph() {
 
-        getWorkingHours()
-
-        val hours = mutableListOf<BarEntry>().apply {
-            add(BarEntry(0f, 3f))
-            add(BarEntry(1f, 4f))
-            add(BarEntry(2f, 5f))
-            add(BarEntry(3f, 6f))
-            add(BarEntry(4f, 10f))
-            add(BarEntry(5f, 0f))
-            add(BarEntry(6f, 1f))
-        }
-        val barDataSet = BarDataSet(hours, "Working hours").apply {
-            color = R.color.primary
+        val barDataSet = BarDataSet(getWorkingHours(), getString(R.string.working_hours)).apply {
+            color = Color.parseColor(getString(R.color.primary))
         }
 
         val barData = BarData().apply { addDataSet(barDataSet) }
 
         val xAxisFormatter: ValueFormatter = object : ValueFormatter() {
             override fun getFormattedValue(value: Float): String {
-                return when(value) {
-                    0f -> "Mon"
-                    1f -> "Tue"
-                    2f -> "Wed"
-                    3f -> "Thu"
-                    4f -> "Fri"
-                    5f -> "Sat"
-                    6f -> "Sun"
-                    else -> ""
-                }
+                return xAxisLabels[value.toInt()]
             }
         }
         chart.xAxis.apply {
@@ -153,45 +135,42 @@ class HomeFragment : BaseFragment(false) {
             axisRight.isEnabled = false
             extraBottomOffset = 7f
             animateY(600)
-
-
         }
     }
 
-    //    private fun getWorkingHours() : MutableList<BarEntry> {
-    private fun getWorkingHours() : Unit {
-
-        //TODO: make this return a list with 7 elements according to days
-        val workingHours = filterActivity(userVm.shifts.value!!,
-            Calendar.getInstance().apply {
-                add(Calendar.DATE, -7)
-                set(Calendar.HOUR_OF_DAY, 0)
-                set(Calendar.MINUTE, 0)
-                set(Calendar.SECOND, 0)
-            }.time,
-            Calendar.getInstance().apply {
-                time = Date()
-                set(Calendar.HOUR_OF_DAY, 23)
-                set(Calendar.MINUTE, 59)
-                set(Calendar.SECOND, 59)
-            }.time
-        ).groupBy({shift -> shift.arrivalTime.date()},
-            {
-                if (it.exitTime == null ) {
-                    0.000
-                } else {
-                    TimeManager(it.arrivalTime!!, it.exitTime!!).getWorkingHoursDecimal()
-                }
-            })
+    private fun getWorkingHours(): MutableList<BarEntry> {
+        val range = getCurrentWeek()
+        val workingHours = filterActivity(userVm.shifts.value!!, range.firstDay, range.lastDay)
+            .groupBy({ shift -> shift.arrivalTime.date() },
+                {
+                    if (it.exitTime == null) {
+                        0.000
+                    } else {
+                        TimeManager(it.arrivalTime!!, it.exitTime!!).getWorkingHoursDecimal()
+                    }
+                })
             .mapValues { entry ->
-            var sum = 0.00
-            entry.value.forEach { sum+=it }
-            sum
+                var sum = 0.00
+                entry.value.forEach { sum += it }
+                sum
+            }
+            .mapKeys {
+                it.key.dayOfWeek()
+            }
+
+        val returnList: MutableList<BarEntry> = mutableListOf()
+        for (i in 0..6) {
+            if (workingHours.containsKey(i)) {
+                returnList.add(BarEntry(i.toFloat(), workingHours.getValue(i).toFloat()))
+            } else {
+                returnList.add(BarEntry(i.toFloat(), 0f))
+            }
         }
-        Timber.i(workingHours.toString())
+
+        return returnList
     }
 
-    private fun filterActivity(shifts: List<Shift>,from: Date, to: Date): ArrayList<Shift> {
+    private fun filterActivity(shifts: List<Shift>, from: Date, to: Date): ArrayList<Shift> {
         val returnList: ArrayList<Shift> = arrayListOf()
         for (shift in shifts) {
             if (shift.exitTime != null && shift.arrivalTime!! >= from && shift.exitTime!! <= to) {
@@ -200,6 +179,4 @@ class HomeFragment : BaseFragment(false) {
         }
         return returnList
     }
-
-
 }

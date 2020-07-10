@@ -31,6 +31,10 @@ object Constants {
         const val GEOFENCING_ACTION = "geofence_broadcast"
     }
 
+    object Chart {
+        val xAxisLabels = arrayListOf("Mon","Tue","Wed","Thu","Fri","Sat","Sun")
+    }
+
     object FirestoreCollections {
         const val COMPANIES = "companies"
         const val USERS = "users"

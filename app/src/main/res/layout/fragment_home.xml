@@ -13,50 +13,95 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-<!--    TODO: finish design-->
     <ImageView
         android:id="@+id/user_img"
         android:layout_width="25dp"
         android:layout_height="25dp"
+        android:layout_marginStart="45dp"
+        android:layout_marginTop="20dp"
         android:src="@drawable/user_60x60_black"
-        app:layout_constraintTop_toBottomOf="@id/include_toolbar"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/include_toolbar" />
+
     <TextView
         android:id="@+id/text_name"
         style="@style/TextLight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="5dp"
+        app:layout_constraintBottom_toBottomOf="@+id/user_img"
         app:layout_constraintStart_toEndOf="@id/user_img"
         app:layout_constraintTop_toBottomOf="@id/include_toolbar"
         tools:text="Dinko Marinac" />
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="30dp"
+        android:background="@color/primary_dark"
+        app:layout_constraintBottom_toBottomOf="@+id/user_img"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/text_name"
+        app:layout_constraintTop_toBottomOf="@id/user_img" />
+
+    <ImageView
+        android:id="@+id/company_img"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="45dp"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/company_60x60_black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/user_img" />
 
     <TextView
         android:id="@+id/text_company"
         style="@style/TextLight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_name"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        app:layout_constraintBottom_toBottomOf="@id/company_img"
+        app:layout_constraintStart_toEndOf="@id/company_img"
+        app:layout_constraintTop_toBottomOf="@+id/user_img"
         tools:text="Codable Studio" />
+
+    <View
+        android:id="@+id/view2"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginEnd="30dp"
+        android:background="@color/primary_dark"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/text_company"
+        app:layout_constraintTop_toBottomOf="@id/company_img" />
 
     <ToggleButton
         android:id="@+id/btn_check_in_out"
         style="@style/Button.Round"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="130dp"
+        android:layout_height="130dp"
+        android:layout_marginTop="40dp"
         android:textOff="@string/check_in"
         android:textOn="@string/check_out"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_company"
+        app:layout_constraintTop_toBottomOf="@+id/view2"
         tools:text="Check in" />
 
     <com.github.mikephil.charting.charts.BarChart
         android:id="@+id/chart"
         android:layout_width="match_parent"
-        android:layout_height="240dp"
+        android:layout_height="220dp"
+        android:layout_marginHorizontal="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_check_in_out" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
