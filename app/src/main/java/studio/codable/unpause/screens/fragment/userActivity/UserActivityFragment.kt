@@ -25,12 +25,15 @@ import studio.codable.unpause.model.User
 import studio.codable.unpause.screens.UserViewModel
 import studio.codable.unpause.screens.fragment.workingTimeWarning.WorkingTimeWarningFragment
 import studio.codable.unpause.utilities.Constants
+import studio.codable.unpause.utilities.Constants.Chart.MAX_ALLOWED_CHART_TIME_RANGE
 import studio.codable.unpause.utilities.adapter.userActivityRecyclerViewAdapter.UserActivityRecyclerViewAdapter
+import studio.codable.unpause.utilities.chart.ShiftMarkerView
 import studio.codable.unpause.utilities.helperFunctions.*
 import studio.codable.unpause.utilities.manager.CsvManager
 import studio.codable.unpause.utilities.manager.DialogManager
 import studio.codable.unpause.utilities.manager.TimeManager
 import studio.codable.unpause.utils.adapters.userActivityRecyclerViewAdapter.SwipeActionCallback
+import timber.log.Timber
 import java.util.*
 
 class UserActivityFragment : BaseFragment(false) {
@@ -68,23 +71,7 @@ class UserActivityFragment : BaseFragment(false) {
             from_date_text_view.text = timeManager.arrivalToArray()[1]
             to_date_text_view.text = timeManager.exitToArray()[1]
 
-            edit_from_img.setOnClickListener {
-                mDialogManager?.openDatePickerDialog { year, month, dayOfMonth ->
-                    timeManager.changeArrivalDate(year, month, dayOfMonth)
-                    updateFromDate(timeManager.arrivalToArray()[1])
-                    updateUI()
-                }
-            }
-
-            edit_to_img.setOnClickListener {
-                mDialogManager?.openDatePickerDialog { year, month, dayOfMonth ->
-                    timeManager.changeExitDate(year, month, dayOfMonth)
-                    updateToDate(timeManager.exitToArray()[1])
-                    updateUI()
-                }
-            }
-
-            proba_Img.setOnClickListener {
+            selected_date.setOnClickListener {
                 mDialogManager.openDateRangePickerDialog{ selection ->
                     val calendar1 = Calendar.getInstance()
                     calendar1.timeInMillis = selection.first!!
@@ -92,15 +79,18 @@ class UserActivityFragment : BaseFragment(false) {
                     calendar2.timeInMillis = selection.second!!
                     timeManager.changeArrivalDate(calendar1.time.year(), calendar1.time.month(),calendar1.time.day())
                     timeManager.changeExitDate(calendar2.time.year(), calendar2.time.month(),calendar2.time.day())
+                    //update UI
+                    updateFromDate(timeManager.arrivalToArray()[1])
+                    updateToDate(timeManager.exitToArray()[1])
                     updateUI()
                 }
             }
 
         }
 
+        initLineChart()
         initRecyclerView(requireActivity())
 
-        initLineChart()
     }
 
     private fun initRecyclerView(activity: FragmentActivity) {
@@ -125,7 +115,7 @@ class UserActivityFragment : BaseFragment(false) {
             updateUI()
         })
 
-        updateUI()
+        updateRecyclerView()
 
         val itemTouchHelper =
             ItemTouchHelper(
@@ -137,56 +127,60 @@ class UserActivityFragment : BaseFragment(false) {
         itemTouchHelper.attachToRecyclerView(user_activity_recycler_view)
     }
 
-    @SuppressLint("ResourceType")
     private fun initLineChart() {
 
+        val lineData = getLineChartDataset()
+
+        line_chart.apply {
+            data = lineData
+            description.isEnabled = false
+            setDrawGridBackground(false)
+            axisLeft.isEnabled = false
+            axisRight.isEnabled = false
+            extraBottomOffset = 3f
+            animateY(600)
+            marker = ShiftMarkerView(requireContext(), R.layout.shift_marker_view_layout)
+            setPinchZoom(false)
+            isNestedScrollingEnabled = false
+            isHorizontalScrollBarEnabled = false
+            isDoubleTapToZoomEnabled = false
+        }
+    }
+
+    @SuppressLint("ResourceType")
+    private fun getLineChartDataset(): LineData {
         val lineDataSet = LineDataSet(getChartData(), getString(R.string.working_hours)).apply {
             color = Color.parseColor(getString(R.color.primary))
+            setDrawFilled(true)
+            setDrawCircleHole(false)
+            setDrawHighlightIndicators(false)
         }
 
         val lineData = LineData().apply { addDataSet(lineDataSet) }
         line_chart.xAxis.apply {
             position = XAxis.XAxisPosition.BOTTOM
             setDrawGridLines(false)
-            granularity = 1f
-            labelCount = 7
-            axisMinimum=1f
-            axisMaximum=31f
+            setDrawLabels(false)
         }
-
-        line_chart.apply {
-            data = lineData
-            description.isEnabled = false
-            setTouchEnabled(false)
-            setDrawGridBackground(false)
-            axisLeft.isEnabled = false
-            axisRight.isEnabled = false
-            extraBottomOffset = 3f
-            animateY(600)
-        }
+        return lineData
     }
 
     private fun getChartData(): MutableList<Entry> {
-
+        var index = 0
         val returnList: MutableList<Entry> = mutableListOf()
                 filterActivity()
-            .groupBy({ shift -> shift.arrivalTime.date() },
-                {
-                    if (it.exitTime == null) {
-                        0.000
-                    } else {
-                        TimeManager(it.arrivalTime!!, it.exitTime!!).getWorkingHoursDecimal()
-                    }
-                })
-            .mapValues { entry ->
-                var sum = 0.00
-                entry.value.forEach { sum += it }
-                sum
-            }
-            .mapKeys {
-                it.key.dayOfMonth()
-            }.toList().forEach {
-                        returnList.add(Entry(it.first.toFloat(), it.second.toFloat()))
+            .groupBy({ shift -> shift.arrivalTime.date() })
+                    .toSortedMap()
+                    .forEach{
+                        var sum = 0.000
+                        it.value.forEach {
+                            if (it.exitTime != null) {
+                                sum += TimeManager(it.arrivalTime!!, it.exitTime!!).getWorkingHoursDecimal()
+                            }
+                        }
+                        returnList.add(Entry((index++).toFloat(), sum.toFloat()).apply {
+                            data = it.value
+                        })
                     }
         return returnList
     }
@@ -194,10 +188,7 @@ class UserActivityFragment : BaseFragment(false) {
     private fun sendCSV() {
         val fileUri =  CsvManager.getCsvFileUri(
                 requireContext(),
-                user.getUserActivity(
-                        timeManager.arrivalTime,
-                        timeManager.exitTime
-                ),
+                filterActivity(),
                 getString(R.string.csv_file_name, user.firstName, user.lastName)
         )
         val emailIntent = prepareEmail(fileUri)
@@ -350,20 +341,32 @@ class UserActivityFragment : BaseFragment(false) {
     }
 
     private fun updateUI() {
-        val shifts = filterActivity()
-        //updateChart(shifts)
-        updateRecyclerView(shifts)
+        updateChart()
+        updateRecyclerView()
     }
 
-    private fun updateRecyclerView(shifts: List<Shift>) {
+    private fun updateRecyclerView() {
         (user_activity_recycler_view?.adapter as UserActivityRecyclerViewAdapter)
-            .updateContent(shifts)
+            .updateContent(filterActivity())
         user_activity_recycler_view?.adapter?.notifyDataSetChanged()
     }
 
-//    private fun updateChart(shifts: List<Shift>) {
-//        TODO("Not yet implemented")
-//    }
+    private fun updateChart() {
+        val timeRange = timeManager.exitTime.time-timeManager.arrivalTime.time
+        if (timeRange > MAX_ALLOWED_CHART_TIME_RANGE) {
+            line_chart.visibility = View.GONE
+            total_working_hours.visibility = View.VISIBLE
+            var sum = 0f
+            getChartData().forEach{ sum += it.y }
+            text_total_working_hours.text = TimeManager.formatTime(sum)
+        } else {
+            line_chart.visibility = View.VISIBLE
+            total_working_hours.visibility = View.GONE
+            line_chart.data = getLineChartDataset()
+            line_chart.notifyDataSetChanged()
+            line_chart.invalidate()
+        }
+    }
 
     private fun filterActivity() : List<Shift> = user.getUserActivity(
         timeManager.arrivalTime,

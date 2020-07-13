@@ -99,6 +99,7 @@
     <string name="fields_cannot_be_blank">Fields cannot be blank</string>
     <string name="updated_password">Updated password</string>
     <string name="password_cannot_be_blank">Password cannot be blank</string>
+    <string name="working_hours_dd">Working hours: </string>
 
 
 </resources>

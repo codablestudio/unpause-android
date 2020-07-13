@@ -9,6 +9,18 @@ import java.util.concurrent.TimeUnit
 
 class TimeManager(var arrivalTime: Date, var exitTime: Date) {
 
+    companion object {
+        /**
+         * Used for displaying work hours in h:m format.
+         */
+        fun formatTime(time : Float) : String {
+            val hours = time.toInt()
+            val minutes = ((time-hours)*60).toInt()
+
+            return String.format("%d:%d", hours, minutes)
+        }
+    }
+
     /**
      * used for display, it is assumed that the values are valid
      * (exit time greater than arrival time)
