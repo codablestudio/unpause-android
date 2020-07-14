@@ -146,6 +146,9 @@ class UserActivityFragment : BaseFragment(false) {
 
         val lineData = getLineChartDataset()
 
+        val markerView = ShiftMarkerView(requireContext())
+        markerView.chartView = line_chart
+
         line_chart.apply {
             data = lineData
             description.isEnabled = false
@@ -154,11 +157,12 @@ class UserActivityFragment : BaseFragment(false) {
             axisRight.isEnabled = false
             extraBottomOffset = 3f
             animateY(600)
-            marker = ShiftMarkerView(requireContext(), R.layout.shift_marker_view_layout)
+            marker = markerView
             setPinchZoom(false)
             isNestedScrollingEnabled = false
             isHorizontalScrollBarEnabled = false
             isDoubleTapToZoomEnabled = false
+            legend.isEnabled = false
         }
     }
 

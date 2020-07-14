@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@color/primary_dark"
+    android:background="@drawable/marker_view_background"
     android:padding="10dp">
 
     <TextView
@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:text=""
         android:textStyle="bold"
-        tools:text="13.07.2020." />
+        tools:text="Fri 13.07.2020." />
 
     <TextView
         android:id="@+id/lbl_working_hours"
@@ -29,6 +29,7 @@
         android:layout_marginStart="5dp"
         android:layout_toEndOf="@id/lbl_working_hours"
         android:text=""
-        tools:text="12.34" />
+        android:textColor="@color/primary"
+        tools:text="12:34" />
 
 </RelativeLayout>

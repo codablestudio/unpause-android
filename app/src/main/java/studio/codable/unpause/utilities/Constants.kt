@@ -32,8 +32,8 @@ object Constants {
     }
 
     object Chart {
-        val xAxisLabels = arrayListOf("Mon","Tue","Wed","Thu","Fri","Sat","Sun")
-        const val MAX_ALLOWED_CHART_TIME_RANGE = 2678400000L //31*24*3600*1000
+        val dayLabels = arrayListOf("Mon","Tue","Wed","Thu","Fri","Sat","Sun")
+        const val MAX_ALLOWED_CHART_TIME_RANGE = 2678400000L //31*24*3600*1000 ms
     }
 
     object FirestoreCollections {

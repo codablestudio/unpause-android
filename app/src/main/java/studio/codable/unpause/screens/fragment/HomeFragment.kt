@@ -19,7 +19,7 @@ import studio.codable.unpause.R
 import studio.codable.unpause.base.fragment.BaseFragment
 import studio.codable.unpause.model.Shift
 import studio.codable.unpause.screens.UserViewModel
-import studio.codable.unpause.utilities.Constants.Chart.xAxisLabels
+import studio.codable.unpause.utilities.Constants.Chart.dayLabels
 import studio.codable.unpause.utilities.helperFunctions.date
 import studio.codable.unpause.utilities.helperFunctions.dayOfWeek
 import studio.codable.unpause.utilities.helperFunctions.getCurrentWeek
@@ -113,7 +113,7 @@ class HomeFragment : BaseFragment(false) {
 
         val xAxisFormatter: ValueFormatter = object : ValueFormatter() {
             override fun getFormattedValue(value: Float): String {
-                return xAxisLabels[value.toInt()]
+                return dayLabels[value.toInt()]
             }
         }
         chart.xAxis.apply {

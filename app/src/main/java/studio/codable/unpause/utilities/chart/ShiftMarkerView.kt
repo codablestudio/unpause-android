@@ -7,6 +7,8 @@ import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.utils.MPPointF
 import kotlinx.android.synthetic.main.shift_marker_view_layout.view.*
 import studio.codable.unpause.R
+import studio.codable.unpause.utilities.Constants.Chart.dayLabels
+import studio.codable.unpause.utilities.helperFunctions.dayOfWeek
 import studio.codable.unpause.utilities.helperFunctions.toPattern
 import studio.codable.unpause.utilities.manager.TimeManager
 import java.util.*
@@ -17,7 +19,8 @@ class ShiftMarkerView(context: Context, layoutResource: Int = R.layout.shift_mar
     // callbacks every time the MarkerView is redrawn, can be used to update the content (UI)
     override fun refreshContent(e: Entry?, highlight: Highlight?) {
         val date = e?.data as Date
-        text_arrival_time.text = date.toPattern("dd.MM.yyyy")
+        text_arrival_time.text =
+            String.format("%s %s", dayLabels[date.dayOfWeek()], date.toPattern("dd.MM.yyyy"))
         text_working_hours.text = TimeManager.formatTime(e.y)
         super.refreshContent(e, highlight)
     }
