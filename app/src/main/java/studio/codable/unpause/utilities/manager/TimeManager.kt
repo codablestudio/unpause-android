@@ -19,6 +19,23 @@ class TimeManager(var arrivalTime: Date, var exitTime: Date) {
 
             return String.format("%d:%d", hours, minutes)
         }
+
+        /**
+         * Returns all dates between two dates as a list
+         */
+        fun getDatesBetween(from : Date, to : Date) : List<Date>{
+            val dates = mutableListOf<Date>()
+
+            val calendarFrom = Calendar.getInstance().apply { time = from }
+            val calendarTo = Calendar.getInstance().apply { time = to }
+
+            while (calendarFrom.compareTo(calendarTo) != 0) {
+                dates.add(calendarFrom.time)
+                calendarFrom.add(Calendar.DATE, 1)
+            }
+
+            return dates.apply { dates.add(calendarFrom.time) }
+        }
     }
 
     /**

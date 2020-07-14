@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.util.rangeTo
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -166,22 +167,31 @@ class UserActivityFragment : BaseFragment(false) {
     }
 
     private fun getChartData(): MutableList<Entry> {
-        var index = 0
         val returnList: MutableList<Entry> = mutableListOf()
-                filterActivity()
+                val workingTimes = filterActivity()
             .groupBy({ shift -> shift.arrivalTime.date() })
                     .toSortedMap()
-                    .forEach{
+                    .mapValues{
                         var sum = 0.000
                         it.value.forEach {
                             if (it.exitTime != null) {
                                 sum += TimeManager(it.arrivalTime!!, it.exitTime!!).getWorkingHoursDecimal()
                             }
                         }
-                        returnList.add(Entry((index++).toFloat(), sum.toFloat()).apply {
-                            data = it.value
-                        })
+                        sum
                     }
+        var index = 0
+        TimeManager.getDatesBetween(timeManager.arrivalTime.date(),timeManager.exitTime.date()).forEach {
+            if (workingTimes.containsKey(it)) {
+                returnList.add(Entry((index++).toFloat(), workingTimes[it]!!.toFloat()).apply {
+                    data = it
+                })
+                } else {
+                returnList.add(Entry((index++).toFloat(), 0f).apply {
+                    data = it
+                })
+            }
+        }
         return returnList
     }
 

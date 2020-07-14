@@ -10,14 +10,15 @@ import studio.codable.unpause.R
 import studio.codable.unpause.model.Shift
 import studio.codable.unpause.utilities.helperFunctions.toPattern
 import studio.codable.unpause.utilities.manager.TimeManager
+import java.util.*
 
 class ShiftMarkerView(context: Context, layoutResource: Int = R.layout.shift_marker_view_layout) :
     MarkerView(context, layoutResource) {
 
     // callbacks every time the MarkerView is redrawn, can be used to update the content (UI)
     override fun refreshContent(e: Entry?, highlight: Highlight?) {
-        val shift = e?.data as List<Shift>
-        text_arrival_time.text = shift[0].arrivalTime.toPattern("dd.MM.yyyy")
+        val date = e?.data as Date
+        text_arrival_time.text = date.toPattern("dd.MM.yyyy")
         text_working_hours.text = TimeManager.formatTime(e.y)
         super.refreshContent(e, highlight)
     }
