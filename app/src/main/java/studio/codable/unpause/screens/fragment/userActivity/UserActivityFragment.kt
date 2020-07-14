@@ -8,15 +8,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.util.rangeTo
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.data.*
-import com.github.mikephil.charting.formatter.ValueFormatter
-import kotlinx.android.synthetic.main.fragment_home.*
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
 import kotlinx.android.synthetic.main.fragment_user_activity.*
 import studio.codable.unpause.R
 import studio.codable.unpause.base.activity.BaseActivity
@@ -25,16 +24,17 @@ import studio.codable.unpause.model.Shift
 import studio.codable.unpause.model.User
 import studio.codable.unpause.screens.UserViewModel
 import studio.codable.unpause.screens.fragment.workingTimeWarning.WorkingTimeWarningFragment
-import studio.codable.unpause.utilities.Constants
 import studio.codable.unpause.utilities.Constants.Chart.MAX_ALLOWED_CHART_TIME_RANGE
 import studio.codable.unpause.utilities.adapter.userActivityRecyclerViewAdapter.UserActivityRecyclerViewAdapter
 import studio.codable.unpause.utilities.chart.ShiftMarkerView
-import studio.codable.unpause.utilities.helperFunctions.*
+import studio.codable.unpause.utilities.helperFunctions.date
+import studio.codable.unpause.utilities.helperFunctions.day
+import studio.codable.unpause.utilities.helperFunctions.month
+import studio.codable.unpause.utilities.helperFunctions.year
 import studio.codable.unpause.utilities.manager.CsvManager
 import studio.codable.unpause.utilities.manager.DialogManager
 import studio.codable.unpause.utilities.manager.TimeManager
 import studio.codable.unpause.utils.adapters.userActivityRecyclerViewAdapter.SwipeActionCallback
-import timber.log.Timber
 import java.util.*
 
 class UserActivityFragment : BaseFragment(false) {
@@ -73,13 +73,27 @@ class UserActivityFragment : BaseFragment(false) {
             to_date_text_view.text = timeManager.exitToArray()[1]
 
             selected_date.setOnClickListener {
-                mDialogManager.openDateRangePickerDialog{ selection ->
+                mDialogManager.openDateRangePickerDialog(
+                    Calendar.getInstance().apply {
+                        time = timeManager.arrivalTime
+                        add(Calendar.DATE, 1)
+                    }.timeInMillis,
+                    Calendar.getInstance().apply { time = timeManager.exitTime }.timeInMillis
+                ) { selection ->
                     val calendar1 = Calendar.getInstance()
                     calendar1.timeInMillis = selection.first!!
                     val calendar2 = Calendar.getInstance()
                     calendar2.timeInMillis = selection.second!!
-                    timeManager.changeArrivalDate(calendar1.time.year(), calendar1.time.month(),calendar1.time.day())
-                    timeManager.changeExitDate(calendar2.time.year(), calendar2.time.month(),calendar2.time.day())
+                    timeManager.changeArrivalDate(
+                        calendar1.time.year(),
+                        calendar1.time.month(),
+                        calendar1.time.day()
+                    )
+                    timeManager.changeExitDate(
+                        calendar2.time.year(),
+                        calendar2.time.month(),
+                        calendar2.time.day()
+                    )
                     //update UI
                     updateFromDate(timeManager.arrivalToArray()[1])
                     updateToDate(timeManager.exitToArray()[1])
@@ -168,30 +182,31 @@ class UserActivityFragment : BaseFragment(false) {
 
     private fun getChartData(): MutableList<Entry> {
         val returnList: MutableList<Entry> = mutableListOf()
-                val workingTimes = filterActivity()
+        val workingTimes = filterActivity()
             .groupBy({ shift -> shift.arrivalTime.date() })
-                    .toSortedMap()
-                    .mapValues{
-                        var sum = 0.000
-                        it.value.forEach {
-                            if (it.exitTime != null) {
-                                sum += TimeManager(it.arrivalTime!!, it.exitTime!!).getWorkingHoursDecimal()
-                            }
-                        }
-                        sum
+            .toSortedMap()
+            .mapValues {
+                var sum = 0.000
+                it.value.forEach {
+                    if (it.exitTime != null) {
+                        sum += TimeManager(it.arrivalTime!!, it.exitTime!!).getWorkingHoursDecimal()
                     }
-        var index = 0
-        TimeManager.getDatesBetween(timeManager.arrivalTime.date(),timeManager.exitTime.date()).forEach {
-            if (workingTimes.containsKey(it)) {
-                returnList.add(Entry((index++).toFloat(), workingTimes[it]!!.toFloat()).apply {
-                    data = it
-                })
-                } else {
-                returnList.add(Entry((index++).toFloat(), 0f).apply {
-                    data = it
-                })
+                }
+                sum
             }
-        }
+        var index = 0
+        TimeManager.getDatesBetween(timeManager.arrivalTime.date(), timeManager.exitTime.date())
+            .forEach {
+                if (workingTimes.containsKey(it)) {
+                    returnList.add(Entry((index++).toFloat(), workingTimes[it]!!.toFloat()).apply {
+                        data = it
+                    })
+                } else {
+                    returnList.add(Entry((index++).toFloat(), 0f).apply {
+                        data = it
+                    })
+                }
+            }
         return returnList
     }
 
@@ -362,12 +377,12 @@ class UserActivityFragment : BaseFragment(false) {
     }
 
     private fun updateChart() {
-        val timeRange = timeManager.exitTime.time-timeManager.arrivalTime.time
+        val timeRange = timeManager.exitTime.time - timeManager.arrivalTime.time
         if (timeRange > MAX_ALLOWED_CHART_TIME_RANGE) {
             line_chart.visibility = View.GONE
             total_working_hours.visibility = View.VISIBLE
             var sum = 0f
-            getChartData().forEach{ sum += it.y }
+            getChartData().forEach { sum += it.y }
             text_total_working_hours.text = TimeManager.formatTime(sum)
         } else {
             line_chart.visibility = View.VISIBLE
@@ -378,7 +393,7 @@ class UserActivityFragment : BaseFragment(false) {
         }
     }
 
-    private fun filterActivity() : List<Shift> = user.getUserActivity(
+    private fun filterActivity(): List<Shift> = user.getUserActivity(
         timeManager.arrivalTime,
         timeManager.exitTime
     )

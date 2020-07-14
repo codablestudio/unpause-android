@@ -23,7 +23,6 @@ class DialogManager(private val context: BaseActivity) {
     private val datePickerFragment: DatePickerFragment by lazy { DatePickerFragment() }
     private lateinit var timePickerFragment: TimePickerFragment
     private val confirmDialogFragment: ConfirmDialogFragment by lazy { ConfirmDialogFragment() }
-//    private var shiftSchedulerDialog: ShiftSchedulerDialog? = null
 
     fun openDescriptionDialog(desctiption: String?, dialogListenerOnSave: LambdaStringToUnit, dialogListenerOnCancel: LambdaNoArgumentsUnit) {
         descriptionDialogFragment = DescriptionDialogFragment(desctiption).apply {
@@ -63,53 +62,19 @@ class DialogManager(private val context: BaseActivity) {
         confirmDialogFragment?.show(context.supportFragmentManager, "Confirm dialog fragment")
     }
 
-    fun openDateRangePickerDialog(listener: (Pair<Long, Long>) -> Unit) {
+    fun openDateRangePickerDialog(
+        from: Long? = Calendar.getInstance().timeInMillis,
+        to: Long? = Calendar.getInstance().timeInMillis,
+        listener: (Pair<Long, Long>) -> Unit
+    ) {
         val builder = MaterialDatePicker.Builder.dateRangePicker()
-        val now = Calendar.getInstance()
-        builder.setSelection(Pair(now.timeInMillis, now.timeInMillis))
+        builder.setSelection(Pair(from, to))
         builder.build().apply {
             addOnPositiveButtonClickListener { listener.invoke(it) }
             addOnNegativeButtonClickListener { dismiss() }
             addOnCancelListener { dismiss() }
         }.show(context.supportFragmentManager, "Date range picker fragment")
     }
-
-//    fun openShiftScheduleDialog(
-//        startHour: Int,
-//        startMinute: Int,
-//        endHour: Int,
-//        endMinute: Int,
-//        dialogManager: DialogManager,
-//        shiftSchedulerListener: ShiftSchedulerDialog.DialogListener
-//    ) {
-//        shiftSchedulerDialog = ShiftSchedulerDialog(startHour, startMinute, endHour, endMinute, dialogManager)
-//        shiftSchedulerDialog?.addListener(shiftSchedulerListener)
-//        shiftSchedulerDialog?.show(context.supportFragmentManager, "ShiftScheduler dialog fragment")
-//    }
-//
-//    fun openOptionPickerDialog(option1: String, option2: String, optionPickerListener: OptionPickerListener) {
-//        val dialog = Dialog(context)
-//        dialog.setContentView(R.layout.option_picker)
-//
-//        dialog.option1TextView.text = option1
-//        dialog.option2TextView.text = option2
-//
-//        dialog.option1Button.setOnClickListener {
-//            optionPickerListener.onOption1()
-//            dialog.dismiss()
-//        }
-//
-//        dialog.option2Button.setOnClickListener {
-//            optionPickerListener.onOption2()
-//            dialog.dismiss()
-//        }
-//        dialog.show()
-//    }
-//
-//    interface OptionPickerListener {
-//        fun onOption1()
-//        fun onOption2()
-//    }
 
     private fun showFullscreenDialog(dialogFragment: DialogFragment) {
         val transaction = context.supportFragmentManager.beginTransaction()

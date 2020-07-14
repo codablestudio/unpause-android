@@ -13,9 +13,9 @@ class TimeManager(var arrivalTime: Date, var exitTime: Date) {
         /**
          * Used for displaying work hours in h:m format.
          */
-        fun formatTime(time : Float) : String {
+        fun formatTime(time: Float): String {
             val hours = time.toInt()
-            val minutes = ((time-hours)*60).toInt()
+            val minutes = ((time - hours) * 60).toInt()
 
             return String.format("%d:%d", hours, minutes)
         }
@@ -23,7 +23,7 @@ class TimeManager(var arrivalTime: Date, var exitTime: Date) {
         /**
          * Returns all dates between two dates as a list
          */
-        fun getDatesBetween(from : Date, to : Date) : List<Date>{
+        fun getDatesBetween(from: Date, to: Date): List<Date> {
             val dates = mutableListOf<Date>()
 
             val calendarFrom = Calendar.getInstance().apply { time = from }

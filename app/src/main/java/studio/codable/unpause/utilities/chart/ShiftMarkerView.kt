@@ -7,7 +7,6 @@ import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.utils.MPPointF
 import kotlinx.android.synthetic.main.shift_marker_view_layout.view.*
 import studio.codable.unpause.R
-import studio.codable.unpause.model.Shift
 import studio.codable.unpause.utilities.helperFunctions.toPattern
 import studio.codable.unpause.utilities.manager.TimeManager
 import java.util.*
