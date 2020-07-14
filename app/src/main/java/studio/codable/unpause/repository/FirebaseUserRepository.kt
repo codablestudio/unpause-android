@@ -19,9 +19,12 @@ class FirebaseUserRepository @Inject constructor(
         fun extractFirestoreUser(documentSnapshot: DocumentSnapshot): FirestoreUser {
             return documentSnapshot.toObject(FirestoreUser::class.java)!!
         }
+
+        private const val COMPANY_REFERENCE_FIELD = "companyReference"
     }
 
     private val usersCol = firestore.collection(Constants.FirestoreCollections.USERS)
+    private val companiesCol = firestore.collection(Constants.FirestoreCollections.COMPANIES)
 
     override suspend fun getUser(): Result<User> {
         return callFirebase(usersCol.document(sessionManager.userId).get()) {
@@ -53,6 +56,13 @@ class FirebaseUserRepository @Inject constructor(
 
     override suspend fun updateLastName(userId : String, lastName : String) : Result<Unit> {
         return callFirebase(usersCol.document(userId).update(FirestoreUser.LAST_NAME, lastName)) {
+            Unit
+        }
+    }
+
+    override suspend fun updateCompany(userId : String, companyId: String) : Result<Unit> {
+        val companyReference = companiesCol.document(companyId)
+        return callFirebase(usersCol.document(userId).update(COMPANY_REFERENCE_FIELD, companyReference)) {
             Unit
         }
     }

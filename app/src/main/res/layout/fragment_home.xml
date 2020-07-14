@@ -100,8 +100,8 @@
         <ToggleButton
             android:id="@+id/btn_check_in_out"
             style="@style/Button.Round"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:layout_below="@id/t_company"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="100dp"

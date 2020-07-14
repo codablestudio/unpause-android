@@ -16,6 +16,7 @@ import studio.codable.unpause.R
 import studio.codable.unpause.app.App
 import studio.codable.unpause.screens.SharedViewModel
 import studio.codable.unpause.screens.fragment.HomeFragment
+import studio.codable.unpause.utilities.Event
 import studio.codable.unpause.utilities.navigation.NavCommand
 import timber.log.Timber
 
@@ -115,6 +116,16 @@ abstract class BaseFragment(private val hasDefaultToolbar: Boolean) : Fragment()
     open fun hideLoading() {
         if (::loadingDialog.isInitialized) {
             loadingDialog.dismiss()
+        }
+    }
+
+    open fun defaultHandleLoading(shouldShowLoading: Event<Boolean>) {
+        shouldShowLoading.getContentIfNotHandled()?.let {
+            if (it) {
+                showLoading()
+            } else {
+                hideLoading()
+            }
         }
     }
 }

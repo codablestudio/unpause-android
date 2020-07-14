@@ -16,4 +16,6 @@ interface IUserRepository {
     suspend fun updateFirstName(userId : String, firstName : String) : Result<Unit>
 
     suspend fun updateLastName(userId : String, lastName : String) : Result<Unit>
+
+    suspend fun updateCompany(userId : String, companyId: String) : Result<Unit>
 }

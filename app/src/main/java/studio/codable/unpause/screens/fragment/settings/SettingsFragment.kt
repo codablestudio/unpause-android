@@ -47,6 +47,10 @@ class SettingsFragment : BaseFragment(false) {
                 svm.navigate(SettingsFragmentDirections.actionSettingsFragmentToChangeUserPasswordFragment())
             }
 
+            change_company_button.setOnClickListener {
+                svm.navigate(SettingsFragmentDirections.actionSettingsFragmentToChangeCompanyFragment())
+            }
+
             log_out_button.setOnClickListener {
                 dialogManager.openConfirmDialog {
                     userVm.signOut()
