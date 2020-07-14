@@ -1,6 +1,5 @@
 package studio.codable.unpause.repository
 
-import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import studio.codable.unpause.model.Company
@@ -41,9 +40,5 @@ class FirebaseCompanyRepository @Inject constructor(
         return callFirebase(companiesCol.whereEqualTo(PASSCODE_FIELD, passcode).get()) {
                 extractFirestoreCompany(it.documents[0]).documentId
         }
-    }
-
-    override fun getCompanyReference(companyId: String): DocumentReference {
-        return companiesCol.document(companyId)
     }
 }

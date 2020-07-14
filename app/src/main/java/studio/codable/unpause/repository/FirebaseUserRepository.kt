@@ -1,6 +1,5 @@
 package studio.codable.unpause.repository
 
-import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import studio.codable.unpause.model.User
@@ -25,6 +24,7 @@ class FirebaseUserRepository @Inject constructor(
     }
 
     private val usersCol = firestore.collection(Constants.FirestoreCollections.USERS)
+    private val companiesCol = firestore.collection(Constants.FirestoreCollections.COMPANIES)
 
     override suspend fun getUser(): Result<User> {
         return callFirebase(usersCol.document(sessionManager.userId).get()) {
@@ -60,7 +60,8 @@ class FirebaseUserRepository @Inject constructor(
         }
     }
 
-    override suspend fun updateCompany(userId : String, companyReference: DocumentReference) : Result<Unit> {
+    override suspend fun updateCompany(userId : String, companyId: String) : Result<Unit> {
+        val companyReference = companiesCol.document(companyId)
         return callFirebase(usersCol.document(userId).update(COMPANY_REFERENCE_FIELD, companyReference)) {
             Unit
         }

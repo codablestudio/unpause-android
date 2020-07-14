@@ -25,17 +25,12 @@ class RegisterViewModel @Inject constructor(
 ) : BaseViewModel(), CoroutineScope {
 
     //used to navigate to HomeActivity
-    private val _registrationFinished = MutableLiveData<Boolean>()
-    val registrationFinished: LiveData<Boolean> = _registrationFinished
+    private val _registrationFinished = MutableLiveData<Unit>()
+    val registrationFinished: LiveData<Unit> = _registrationFinished
 
     //used to navigate to ConnectCompanyFragment
-    private val _registrationComplete = MutableLiveData<Boolean>()
-    val registrationComplete: LiveData<Boolean> = _registrationComplete
-
-    init {
-        _registrationFinished.value = false
-        _registrationComplete.value = false
-    }
+    private val _registrationComplete = MutableLiveData<Unit>()
+    val registrationComplete: LiveData<Unit> = _registrationComplete
 
     fun register(email: String, password: String, firstName: String?, lastName: String?) {
         _loading.value = Event(true)
@@ -43,7 +38,7 @@ class RegisterViewModel @Inject constructor(
             process(loginRepository.register(email, password, firstName, lastName)) {
                 saveUserId(it)
                 process(loginRepository.login(email, password)) {
-                    _registrationComplete.value = true
+                    _registrationComplete.value = null
                 }
             }
         }
@@ -52,7 +47,7 @@ class RegisterViewModel @Inject constructor(
     fun connectCompany(passcode : String) {
         viewModelScope.launch {
             process(companyRepository.getCompanyId(passcode)) {
-                process(userRepository.updateCompany(sessionManager.userId, companyRepository.getCompanyReference(it))) {
+                process(userRepository.updateCompany(sessionManager.userId, it)) {
                     finishRegistration()
                 }
             }
@@ -60,7 +55,7 @@ class RegisterViewModel @Inject constructor(
     }
 
     fun finishRegistration() {
-        _registrationFinished.value = true
+        _registrationFinished.value = null
     }
 
     fun getUserID() : String = sessionManager.userId

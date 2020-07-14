@@ -45,10 +45,8 @@ class RegisterActivity : BaseActivity() {
         })
 
         registerVm.registrationFinished.observe(this, Observer {
-            if (it) {
                 startActivity(HomeActivity.getIntent(this, registerVm.getUserID()))
                 finish()
-            }
         })
     }
 }

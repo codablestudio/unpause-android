@@ -46,14 +46,12 @@ class RegisterFragment : BaseFragment(false) {
         }
 
         registerVm.registrationComplete.observe(viewLifecycleOwner, Observer {
-            if (it) {
                 hideLoading()
                 svm.navigate(RegisterFragmentDirections.actionRegisterFragmentToConnectCompanyFragment())
-            }
         })
 
-        registerVm.errors.observe(viewLifecycleOwner, Observer {
-            hideLoading()
+        registerVm.loading.observe(viewLifecycleOwner, Observer {
+            defaultHandleLoading(it)
         })
     }
     private fun checkFields(): Boolean {

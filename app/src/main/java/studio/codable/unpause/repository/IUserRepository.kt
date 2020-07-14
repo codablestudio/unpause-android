@@ -1,6 +1,5 @@
 package studio.codable.unpause.repository
 
-import com.google.firebase.firestore.DocumentReference
 import studio.codable.unpause.model.User
 import studio.codable.unpause.utilities.networking.Result
 
@@ -18,5 +17,5 @@ interface IUserRepository {
 
     suspend fun updateLastName(userId : String, lastName : String) : Result<Unit>
 
-    suspend fun updateCompany(userId : String, companyReference: DocumentReference) : Result<Unit>
+    suspend fun updateCompany(userId : String, companyId: String) : Result<Unit>
 }
