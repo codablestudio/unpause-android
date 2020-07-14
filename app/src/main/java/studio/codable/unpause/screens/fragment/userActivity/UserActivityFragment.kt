@@ -384,13 +384,13 @@ class UserActivityFragment : BaseFragment(false) {
         val timeRange = timeManager.exitTime.time - timeManager.arrivalTime.time
         if (timeRange > MAX_ALLOWED_CHART_TIME_RANGE) {
             line_chart.visibility = View.GONE
-            total_working_hours.visibility = View.VISIBLE
+            total_hours_group.visibility = View.VISIBLE
             var sum = 0f
             getChartData().forEach { sum += it.y }
             text_total_working_hours.text = TimeManager.formatTime(sum)
         } else {
             line_chart.visibility = View.VISIBLE
-            total_working_hours.visibility = View.GONE
+            total_hours_group.visibility = View.GONE
             line_chart.data = getLineChartDataset()
             line_chart.notifyDataSetChanged()
             line_chart.invalidate()
