@@ -70,7 +70,7 @@ class DialogManager(private val context: BaseActivity) {
         val builder = MaterialDatePicker.Builder.dateRangePicker()
         builder.setSelection(Pair(from, to))
         builder.build().apply {
-            addOnPositiveButtonClickListener { listener.invoke(it) }
+            addOnPositiveButtonClickListener { listener(it) }
             addOnNegativeButtonClickListener { dismiss() }
             addOnCancelListener { dismiss() }
         }.show(context.supportFragmentManager, "Date range picker fragment")

@@ -83,12 +83,10 @@ fun Date?.year(): Int {
 /**
  * Returns the same date but at 00:00 (useful for date comparison)
  */
-fun Date?.date() : Date {
+fun Date.date(): Date {
     val cal = Calendar.getInstance()
-    if (this != null) {
-        cal.clear()
-        cal.time = this
-    }
+    cal.clear()
+    cal.time = this
     cal.set(Calendar.HOUR_OF_DAY, 0)
     cal.set(Calendar.MINUTE, 0)
     cal.set(Calendar.SECOND, 0)
@@ -99,8 +97,8 @@ fun Date?.date() : Date {
 /**
  * Returns day of a week as a number
  */
-fun Date?.dayOfWeek() : Int {
-    if (this == null) return -1
+fun Date?.dayOfWeek() : Int? {
+    if (this == null) return null
     val cal = Calendar.getInstance()
     cal.clear()
     cal.time = this

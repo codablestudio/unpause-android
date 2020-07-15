@@ -19,8 +19,11 @@ class ShiftMarkerView(context: Context, layoutResource: Int = R.layout.shift_mar
     // callbacks every time the MarkerView is redrawn, can be used to update the content (UI)
     override fun refreshContent(e: Entry?, highlight: Highlight?) {
         val date = e?.data as Date
-        text_arrival_time.text =
-            String.format("%s %s", dayLabels[date.dayOfWeek()], date.toPattern("dd.MM.yyyy"))
+        text_arrival_time.text = resources.getString(
+            R.string.two_separated_strings,
+            dayLabels[date.dayOfWeek()!!],
+            date.toPattern("dd.MM.yyyy")
+        )
         text_working_hours.text = TimeManager.formatTime(e.y)
         super.refreshContent(e, highlight)
     }

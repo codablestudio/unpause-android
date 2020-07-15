@@ -1,8 +1,6 @@
 package studio.codable.unpause.screens.fragment.userActivity
 
-import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,10 +10,6 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.data.Entry
-import com.github.mikephil.charting.data.LineData
-import com.github.mikephil.charting.data.LineDataSet
 import kotlinx.android.synthetic.main.fragment_user_activity.*
 import studio.codable.unpause.R
 import studio.codable.unpause.base.activity.BaseActivity
@@ -31,6 +25,9 @@ import studio.codable.unpause.utilities.helperFunctions.date
 import studio.codable.unpause.utilities.helperFunctions.day
 import studio.codable.unpause.utilities.helperFunctions.month
 import studio.codable.unpause.utilities.helperFunctions.year
+import studio.codable.unpause.utilities.manager.ChartManager
+import studio.codable.unpause.utilities.manager.ChartManager.Companion.getLineChartData
+import studio.codable.unpause.utilities.manager.ChartManager.Companion.getLineChartDataset
 import studio.codable.unpause.utilities.manager.CsvManager
 import studio.codable.unpause.utilities.manager.DialogManager
 import studio.codable.unpause.utilities.manager.TimeManager
@@ -144,74 +141,17 @@ class UserActivityFragment : BaseFragment(false) {
 
     private fun initLineChart() {
 
-        val lineData = getLineChartDataset()
+        val lineData = getLineChartDataset(
+            filterActivity(),
+            timeManager.arrivalTime.date(),
+            timeManager.exitTime.date(),
+            requireContext()
+        )
 
         val markerView = ShiftMarkerView(requireContext())
         markerView.chartView = line_chart
 
-        line_chart.apply {
-            data = lineData
-            description.isEnabled = false
-            setDrawGridBackground(false)
-            axisLeft.isEnabled = false
-            axisRight.isEnabled = false
-            extraBottomOffset = 3f
-            animateY(600)
-            marker = markerView
-            setPinchZoom(false)
-            isNestedScrollingEnabled = false
-            isHorizontalScrollBarEnabled = false
-            isDoubleTapToZoomEnabled = false
-            legend.isEnabled = false
-        }
-    }
-
-    @SuppressLint("ResourceType")
-    private fun getLineChartDataset(): LineData {
-        val lineDataSet = LineDataSet(getChartData(), getString(R.string.working_hours)).apply {
-            color = Color.parseColor(getString(R.color.primary))
-            setDrawFilled(true)
-            setDrawCircleHole(false)
-            setDrawHighlightIndicators(false)
-        }
-
-        val lineData = LineData().apply { addDataSet(lineDataSet) }
-        line_chart.xAxis.apply {
-            position = XAxis.XAxisPosition.BOTTOM
-            setDrawGridLines(false)
-            setDrawLabels(false)
-        }
-        return lineData
-    }
-
-    private fun getChartData(): MutableList<Entry> {
-        val returnList: MutableList<Entry> = mutableListOf()
-        val workingTimes = filterActivity()
-            .groupBy({ shift -> shift.arrivalTime.date() })
-            .toSortedMap()
-            .mapValues {
-                var sum = 0.000
-                it.value.forEach {
-                    if (it.exitTime != null) {
-                        sum += TimeManager(it.arrivalTime!!, it.exitTime!!).getWorkingHoursDecimal()
-                    }
-                }
-                sum
-            }
-        var index = 0
-        TimeManager.getDatesBetween(timeManager.arrivalTime.date(), timeManager.exitTime.date())
-            .forEach {
-                if (workingTimes.containsKey(it)) {
-                    returnList.add(Entry((index++).toFloat(), workingTimes[it]!!.toFloat()).apply {
-                        data = it
-                    })
-                } else {
-                    returnList.add(Entry((index++).toFloat(), 0f).apply {
-                        data = it
-                    })
-                }
-            }
-        return returnList
+        ChartManager.initLineChart(line_chart, lineData, markerView)
     }
 
     private fun sendCSV() {
@@ -386,12 +326,21 @@ class UserActivityFragment : BaseFragment(false) {
             line_chart.visibility = View.GONE
             total_hours_group.visibility = View.VISIBLE
             var sum = 0f
-            getChartData().forEach { sum += it.y }
+            getLineChartData(
+                filterActivity(),
+                timeManager.arrivalTime.date(),
+                timeManager.exitTime.date()
+            ).forEach { sum += it.y }
             text_total_working_hours.text = TimeManager.formatTime(sum)
         } else {
             line_chart.visibility = View.VISIBLE
             total_hours_group.visibility = View.GONE
-            line_chart.data = getLineChartDataset()
+            line_chart.data = getLineChartDataset(
+                filterActivity(),
+                timeManager.arrivalTime.date(),
+                timeManager.exitTime.date(),
+                requireContext()
+            )
             line_chart.notifyDataSetChanged()
             line_chart.invalidate()
         }

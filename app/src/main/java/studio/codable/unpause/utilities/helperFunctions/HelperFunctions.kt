@@ -13,7 +13,7 @@ fun areDatesEqual(first: Date?, second: Date?): Boolean {
 /**
  * Returns week as a range of two dates (Monday and Sunday)
  */
-fun getCurrentWeek() : Week {
+fun getCurrentWeek() : DateRange {
     val calendar = Calendar.getInstance()
     val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
     val firstDayOfWeek: Date
@@ -37,11 +37,11 @@ fun getCurrentWeek() : Week {
         lastDayOfWeek = calendar.time;
     }
 
-    return Week(firstDayOfWeek,lastDayOfWeek)
+    return DateRange(firstDayOfWeek,lastDayOfWeek)
 }
 
 /**
- * Used to define a week by its first and last day,
+ * Used to define a date range by its first and last day,
  * represented by dates
  */
-data class Week(val firstDay : Date, val lastDay : Date)
+data class DateRange(val firstDay : Date, val lastDay : Date)
