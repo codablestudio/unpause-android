@@ -122,4 +122,7 @@ dependencies {
 
     //CSV
     implementation "com.opencsv:opencsv:$openCsv_version"
+
+    //Charts
+    implementation "com.github.PhilJay:MPAndroidChart:$MPAndroidChart_version"
 }

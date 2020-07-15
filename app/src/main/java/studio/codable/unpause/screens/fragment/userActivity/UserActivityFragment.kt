@@ -18,7 +18,16 @@ import studio.codable.unpause.model.Shift
 import studio.codable.unpause.model.User
 import studio.codable.unpause.screens.UserViewModel
 import studio.codable.unpause.screens.fragment.workingTimeWarning.WorkingTimeWarningFragment
+import studio.codable.unpause.utilities.Constants.Chart.MAX_ALLOWED_CHART_TIME_RANGE
 import studio.codable.unpause.utilities.adapter.userActivityRecyclerViewAdapter.UserActivityRecyclerViewAdapter
+import studio.codable.unpause.utilities.chart.ShiftMarkerView
+import studio.codable.unpause.utilities.helperFunctions.date
+import studio.codable.unpause.utilities.helperFunctions.day
+import studio.codable.unpause.utilities.helperFunctions.month
+import studio.codable.unpause.utilities.helperFunctions.year
+import studio.codable.unpause.utilities.manager.ChartManager
+import studio.codable.unpause.utilities.manager.ChartManager.Companion.getLineChartData
+import studio.codable.unpause.utilities.manager.ChartManager.Companion.getLineChartDataset
 import studio.codable.unpause.utilities.manager.CsvManager
 import studio.codable.unpause.utilities.manager.DialogManager
 import studio.codable.unpause.utilities.manager.TimeManager
@@ -60,25 +69,40 @@ class UserActivityFragment : BaseFragment(false) {
             from_date_text_view.text = timeManager.arrivalToArray()[1]
             to_date_text_view.text = timeManager.exitToArray()[1]
 
-            edit_from_img.setOnClickListener {
-                mDialogManager?.openDatePickerDialog { year, month, dayOfMonth ->
-                    timeManager.changeArrivalDate(year, month, dayOfMonth)
+            selected_date.setOnClickListener {
+                mDialogManager.openDateRangePickerDialog(
+                    Calendar.getInstance().apply {
+                        time = timeManager.arrivalTime
+                        add(Calendar.DATE, 1)
+                    }.timeInMillis,
+                    Calendar.getInstance().apply { time = timeManager.exitTime }.timeInMillis
+                ) { selection ->
+                    val calendar1 = Calendar.getInstance()
+                    calendar1.timeInMillis = selection.first!!
+                    val calendar2 = Calendar.getInstance()
+                    calendar2.timeInMillis = selection.second!!
+                    timeManager.changeArrivalDate(
+                        calendar1.time.year(),
+                        calendar1.time.month(),
+                        calendar1.time.day()
+                    )
+                    timeManager.changeExitDate(
+                        calendar2.time.year(),
+                        calendar2.time.month(),
+                        calendar2.time.day()
+                    )
+                    //update UI
                     updateFromDate(timeManager.arrivalToArray()[1])
-                    updateRecyclerView()
-                }
-            }
-
-            edit_to_img.setOnClickListener {
-                mDialogManager?.openDatePickerDialog { year, month, dayOfMonth ->
-                    timeManager.changeExitDate(year, month, dayOfMonth)
                     updateToDate(timeManager.exitToArray()[1])
-                    updateRecyclerView()
+                    updateUI()
                 }
             }
 
         }
 
+        initLineChart()
         initRecyclerView(requireActivity())
+
     }
 
     private fun initRecyclerView(activity: FragmentActivity) {
@@ -97,10 +121,10 @@ class UserActivityFragment : BaseFragment(false) {
 
         //update UI every time there are shift changes
         userVm.user.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            updateRecyclerView()
+            updateUI()
         })
         userVm.shifts.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            updateRecyclerView()
+            updateUI()
         })
 
         updateRecyclerView()
@@ -115,23 +139,29 @@ class UserActivityFragment : BaseFragment(false) {
         itemTouchHelper.attachToRecyclerView(user_activity_recycler_view)
     }
 
-    private fun sendCSV() {
+    private fun initLineChart() {
 
-//        if (userVm.user.value?.company == null) {
-//            val intent = Intent(context, BossInfoActivity::class.java)
-//            startActivityForResult(intent, 1234)
-//        } else {
+        val lineData = getLineChartDataset(
+            filterActivity(),
+            timeManager.arrivalTime.date(),
+            timeManager.exitTime.date(),
+            requireContext()
+        )
+
+        val markerView = ShiftMarkerView(requireContext())
+        markerView.chartView = line_chart
+
+        ChartManager.initLineChart(line_chart, lineData, markerView)
+    }
+
+    private fun sendCSV() {
         val fileUri =  CsvManager.getCsvFileUri(
                 requireContext(),
-                user.getUserActivity(
-                        timeManager.arrivalTime,
-                        timeManager.exitTime
-                ),
+                filterActivity(),
                 getString(R.string.csv_file_name, user.firstName, user.lastName)
         )
         val emailIntent = prepareEmail(fileUri)
         startActivity(Intent.createChooser(emailIntent, getString(R.string.send_email)))
-//        }
     }
 
     private fun prepareEmail(fileUri: Uri): Intent {
@@ -279,27 +309,46 @@ class UserActivityFragment : BaseFragment(false) {
                 })
     }
 
+    private fun updateUI() {
+        updateChart()
+        updateRecyclerView()
+    }
+
     private fun updateRecyclerView() {
         (user_activity_recycler_view?.adapter as UserActivityRecyclerViewAdapter)
-            .updateContent(
-                user.getUserActivity(
-                    timeManager.arrivalTime,
-                    timeManager.exitTime
-                )
-            )
+            .updateContent(filterActivity())
         user_activity_recycler_view?.adapter?.notifyDataSetChanged()
     }
 
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, data)
-//
-//        if (data == null) return
-//
-//        if (requestCode == 1234 && resultCode == 1) {
-//            user?.boss = data.getSerializableExtra(BOSS_PARAM) as Boss
-//            mViewModel?.updateUserInDatabase(user!!)
-//            sendCSV()
-//        }
-//    }
+    private fun updateChart() {
+        val timeRange = timeManager.exitTime.time - timeManager.arrivalTime.time
+        if (timeRange > MAX_ALLOWED_CHART_TIME_RANGE) {
+            line_chart.visibility = View.GONE
+            total_hours_group.visibility = View.VISIBLE
+            var sum = 0f
+            getLineChartData(
+                filterActivity(),
+                timeManager.arrivalTime.date(),
+                timeManager.exitTime.date()
+            ).forEach { sum += it.y }
+            text_total_working_hours.text = TimeManager.formatTime(sum)
+        } else {
+            line_chart.visibility = View.VISIBLE
+            total_hours_group.visibility = View.GONE
+            line_chart.data = getLineChartDataset(
+                filterActivity(),
+                timeManager.arrivalTime.date(),
+                timeManager.exitTime.date(),
+                requireContext()
+            )
+            line_chart.notifyDataSetChanged()
+            line_chart.invalidate()
+        }
+    }
+
+    private fun filterActivity(): List<Shift> = user.getUserActivity(
+        timeManager.arrivalTime,
+        timeManager.exitTime
+    )
 
 }

@@ -31,6 +31,11 @@ object Constants {
         const val GEOFENCING_ACTION = "geofence_broadcast"
     }
 
+    object Chart {
+        val dayLabels = arrayListOf("Mon","Tue","Wed","Thu","Fri","Sat","Sun")
+        const val MAX_ALLOWED_CHART_TIME_RANGE = 2678400000L //31*24*3600*1000 ms
+    }
+
     object FirestoreCollections {
         const val COMPANIES = "companies"
         const val USERS = "users"

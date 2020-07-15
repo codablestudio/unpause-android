@@ -79,3 +79,40 @@ fun Date?.year(): Int {
     cal.time = this
     return cal.get(Calendar.YEAR)
 }
+
+/**
+ * Returns the same date but at 00:00 (useful for date comparison)
+ */
+fun Date.date(): Date {
+    val cal = Calendar.getInstance()
+    cal.clear()
+    cal.time = this
+    cal.set(Calendar.HOUR_OF_DAY, 0)
+    cal.set(Calendar.MINUTE, 0)
+    cal.set(Calendar.SECOND, 0)
+    cal.set(Calendar.MILLISECOND, 0)
+    return cal.time
+}
+
+/**
+ * Returns day of a week as a number
+ */
+fun Date?.dayOfWeek() : Int? {
+    if (this == null) return null
+    val cal = Calendar.getInstance()
+    cal.clear()
+    cal.time = this
+    val day = cal.get(Calendar.DAY_OF_WEEK)-2
+    return if (day<0) 6 else day
+}
+
+/**
+ * Returns day of a month as a number (starting with 1)
+ */
+fun Date?.dayOfMonth() : Int? {
+    if (this == null) return null
+    val cal = Calendar.getInstance()
+    cal.clear()
+    cal.time = this
+    return cal.get(Calendar.DAY_OF_MONTH)
+}
