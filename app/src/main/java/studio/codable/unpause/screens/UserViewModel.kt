@@ -13,10 +13,7 @@ import studio.codable.unpause.base.viewModel.BaseViewModel
 import studio.codable.unpause.model.Company
 import studio.codable.unpause.model.Shift
 import studio.codable.unpause.model.User
-import studio.codable.unpause.repository.ICompanyRepository
-import studio.codable.unpause.repository.ILoginRepository
-import studio.codable.unpause.repository.IShiftRepository
-import studio.codable.unpause.repository.IUserRepository
+import studio.codable.unpause.repository.*
 import studio.codable.unpause.utilities.extensions.active
 import studio.codable.unpause.utilities.geofencing.GeofenceModel
 import studio.codable.unpause.utilities.manager.SessionManager
@@ -159,6 +156,7 @@ class UserViewModel @Inject constructor(
     }
 
     fun signOut() {
+        sessionManager.userId = ""
         loginRepository.signOut()
     }
 
@@ -182,6 +180,16 @@ class UserViewModel @Inject constructor(
         viewModelScope.launch {
             process(loginRepository.login(_user.value!!.email,oldPassword)) {
                 process(loginRepository.updatePassword(newPassword)) {}
+            }
+        }
+    }
+
+    fun updateCompany(passcode: String) {
+        viewModelScope.launch {
+            process(companyRepository.getCompanyId(passcode)) {
+                process(userRepository.updateCompany(_user.value!!.id, it)) {
+                    getUser()
+                }
             }
         }
     }

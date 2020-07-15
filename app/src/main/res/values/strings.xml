@@ -102,6 +102,11 @@
     <string name="working_hours_dd">Working hours: </string>
     <string name="firstName_lastName">%1$s %2$s</string>
     <string name="day_date">%1$s %2$s</string>
-
-
+    <string name="connect_company">Connect company</string>
+    <string name="change_company">Change company</string>
+    <string name="enter_company_passcode">Enter company passcode</string>
+    <string name="connect_company_help">Please ask your manager for your company passcode or contact us at info@codable.studio for help.</string>
+    <string name="company_updated">Company updated.</string>
+    <string name="skip">Skip</string>
+    <string name="or">or</string>
 </resources>

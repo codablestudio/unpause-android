@@ -10,4 +10,6 @@ interface ICompanyRepository {
 
     suspend fun getGeofences(companyId: String): Result<List<GeofenceModel>>
 
+    suspend fun getCompanyId(passcode : String) : Result<String>
+
 }
