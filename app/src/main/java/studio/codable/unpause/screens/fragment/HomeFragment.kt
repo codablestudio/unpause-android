@@ -71,7 +71,7 @@ class HomeFragment : BaseFragment(false) {
 
         userVm.user.observe(viewLifecycleOwner, Observer {
             with(it) {
-                text_name.text = getString(R.string.two_separated_strings, firstName.orEmpty(), lastName.orEmpty())
+                text_name.text = getString(R.string.firstName_lastName, firstName.orEmpty(), lastName.orEmpty())
                 text_company.text = company?.name.orEmpty()
             }
         })
@@ -96,7 +96,7 @@ class HomeFragment : BaseFragment(false) {
     private fun initGraph() {
 
         val range = getCurrentWeek()
-        val workingHours = filterActivity(userVm.shifts.value!!, range.firstDay, range.lastDay)
+        val workingHours = filterActivity(userVm.shifts.value!!, range.firstDate, range.lastDate)
 
         initBarChart(chart, getBarChartDataset(workingHours, requireContext()))
     }

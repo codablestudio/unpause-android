@@ -20,7 +20,7 @@ class ShiftMarkerView(context: Context, layoutResource: Int = R.layout.shift_mar
     override fun refreshContent(e: Entry?, highlight: Highlight?) {
         val date = e?.data as Date
         text_arrival_time.text = resources.getString(
-            R.string.two_separated_strings,
+            R.string.day_date,
             dayLabels[date.dayOfWeek()!!],
             date.toPattern("dd.MM.yyyy")
         )

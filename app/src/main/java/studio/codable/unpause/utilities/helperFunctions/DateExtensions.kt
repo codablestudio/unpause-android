@@ -109,8 +109,8 @@ fun Date?.dayOfWeek() : Int? {
 /**
  * Returns day of a month as a number (starting with 1)
  */
-fun Date?.dayOfMonth() : Int {
-    if (this == null) return -1
+fun Date?.dayOfMonth() : Int? {
+    if (this == null) return null
     val cal = Calendar.getInstance()
     cal.clear()
     cal.time = this

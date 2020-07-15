@@ -100,7 +100,8 @@
     <string name="updated_password">Updated password</string>
     <string name="password_cannot_be_blank">Password cannot be blank</string>
     <string name="working_hours_dd">Working hours: </string>
-    <string name="two_separated_strings">%1$s %2$s</string>
+    <string name="firstName_lastName">%1$s %2$s</string>
+    <string name="day_date">%1$s %2$s</string>
 
 
 </resources>

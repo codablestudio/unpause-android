@@ -44,4 +44,4 @@ fun getCurrentWeek() : DateRange {
  * Used to define a date range by its first and last day,
  * represented by dates
  */
-data class DateRange(val firstDay : Date, val lastDay : Date)
+data class DateRange(val firstDate : Date, val lastDate : Date)
