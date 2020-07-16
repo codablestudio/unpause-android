@@ -109,4 +109,6 @@
     <string name="company_updated">Company updated.</string>
     <string name="skip">Skip</string>
     <string name="or">or</string>
+    <string name="user_activity_filter_date_format">%1$s, %2$s</string>
+    <string name="dash">—</string>
 </resources>

@@ -18,13 +18,11 @@ import studio.codable.unpause.model.Shift
 import studio.codable.unpause.model.User
 import studio.codable.unpause.screens.UserViewModel
 import studio.codable.unpause.screens.fragment.workingTimeWarning.WorkingTimeWarningFragment
+import studio.codable.unpause.utilities.Constants
 import studio.codable.unpause.utilities.Constants.Chart.MAX_ALLOWED_CHART_TIME_RANGE
 import studio.codable.unpause.utilities.adapter.userActivityRecyclerViewAdapter.UserActivityRecyclerViewAdapter
 import studio.codable.unpause.utilities.chart.ShiftMarkerView
-import studio.codable.unpause.utilities.helperFunctions.date
-import studio.codable.unpause.utilities.helperFunctions.day
-import studio.codable.unpause.utilities.helperFunctions.month
-import studio.codable.unpause.utilities.helperFunctions.year
+import studio.codable.unpause.utilities.helperFunctions.*
 import studio.codable.unpause.utilities.manager.ChartManager
 import studio.codable.unpause.utilities.manager.ChartManager.Companion.getLineChartData
 import studio.codable.unpause.utilities.manager.ChartManager.Companion.getLineChartDataset
@@ -66,8 +64,8 @@ class UserActivityFragment : BaseFragment(false) {
 
             initSpeedDialView()
 
-            from_date_text_view.text = timeManager.arrivalToArray()[1]
-            to_date_text_view.text = timeManager.exitToArray()[1]
+            from_date_text_view.text = formatFilterDate(timeManager.arrivalTime)
+            to_date_text_view.text = formatFilterDate(timeManager.exitTime)
 
             selected_date.setOnClickListener {
                 mDialogManager.openDateRangePickerDialog(
@@ -92,8 +90,8 @@ class UserActivityFragment : BaseFragment(false) {
                         calendar2.time.day()
                     )
                     //update UI
-                    updateFromDate(timeManager.arrivalToArray()[1])
-                    updateToDate(timeManager.exitToArray()[1])
+                    updateFromDate(formatFilterDate(timeManager.arrivalTime))
+                    updateToDate(formatFilterDate(timeManager.exitTime))
                     updateUI()
                 }
             }
@@ -350,5 +348,11 @@ class UserActivityFragment : BaseFragment(false) {
         timeManager.arrivalTime,
         timeManager.exitTime
     )
+
+    private fun formatFilterDate(date : Date) : String {
+        return getString(R.string.user_activity_filter_date_format,
+            Constants.Chart.dayLabels[date.dayOfWeek()!!],
+            date.date().toPattern("dd.MM."))
+    }
 
 }
