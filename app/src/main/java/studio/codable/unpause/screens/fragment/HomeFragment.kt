@@ -9,12 +9,14 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.fragment_home.*
 import studio.codable.unpause.R
+import studio.codable.unpause.base.activity.BaseActivity
 import studio.codable.unpause.base.fragment.BaseFragment
 import studio.codable.unpause.model.Shift
 import studio.codable.unpause.screens.UserViewModel
 import studio.codable.unpause.utilities.helperFunctions.getCurrentWeek
 import studio.codable.unpause.utilities.manager.ChartManager.Companion.getBarChartDataset
 import studio.codable.unpause.utilities.manager.ChartManager.Companion.initBarChart
+import studio.codable.unpause.utilities.manager.DialogManager
 import studio.codable.unpause.utilities.manager.GeofencingManager
 import studio.codable.unpause.utilities.manager.PermissionManager
 import timber.log.Timber
@@ -32,6 +34,8 @@ class HomeFragment : BaseFragment(false) {
     @Inject
     lateinit var permissionManager : PermissionManager
 
+    private val dialogManager: DialogManager by lazy { DialogManager(activity as BaseActivity) }
+
     /**
      * isChecked -> user is checked in = state ON
      */
@@ -40,8 +44,12 @@ class HomeFragment : BaseFragment(false) {
             userVm.checkIn()
             Timber.d("checked in")
         } else {
-            userVm.checkOut("test description")
-            Timber.d("checked out")
+            dialogManager.openDescriptionDialog(null, {
+                userVm.checkOut(it)
+                Timber.d("checked out")
+            }, null)
+//            userVm.checkOut("test description")
+//            Timber.d("checked out")
         }
     }
 

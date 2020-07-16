@@ -24,10 +24,12 @@ class DialogManager(private val context: BaseActivity) {
     private lateinit var timePickerFragment: TimePickerFragment
     private val confirmDialogFragment: ConfirmDialogFragment by lazy { ConfirmDialogFragment() }
 
-    fun openDescriptionDialog(desctiption: String?, dialogListenerOnSave: LambdaStringToUnit, dialogListenerOnCancel: LambdaNoArgumentsUnit) {
-        descriptionDialogFragment = DescriptionDialogFragment(desctiption).apply {
+    fun openDescriptionDialog(description: String?, dialogListenerOnSave: LambdaStringToUnit, dialogListenerOnCancel: LambdaNoArgumentsUnit?) {
+        descriptionDialogFragment = DescriptionDialogFragment(description).apply {
             setOnSaveListener(dialogListenerOnSave)
-            setOnCancelListener(dialogListenerOnCancel)
+            if (dialogListenerOnCancel != null) {
+                setOnCancelListener(dialogListenerOnCancel)
+            }
             setStyle(DialogFragment.STYLE_NO_TITLE, R.style.full_screen_dialog)
         }
         showFullscreenDialog(descriptionDialogFragment)

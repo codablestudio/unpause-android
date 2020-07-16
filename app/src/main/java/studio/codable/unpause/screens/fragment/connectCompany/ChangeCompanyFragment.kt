@@ -25,6 +25,7 @@ class ChangeCompanyFragment : BaseCompanyFragment() {
 
     private fun initListeners() {
         connect_company_button.setOnClickListener {
+            showSoftwareKeyboard(false)
             userVm.updateCompany(edit_text_passcode.text.toString())
             showMessage(getString(R.string.company_updated))
             svm.navigateUp()

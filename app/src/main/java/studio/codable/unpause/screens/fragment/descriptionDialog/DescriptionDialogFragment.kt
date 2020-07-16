@@ -1,14 +1,18 @@
 package studio.codable.unpause.screens.fragment.descriptionDialog
 
+import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.DialogFragment
 import kotlinx.android.synthetic.main.save_dialog.*
 import studio.codable.unpause.R
 import studio.codable.unpause.utilities.LambdaNoArgumentsUnit
 import studio.codable.unpause.utilities.LambdaStringToUnit
+
 
 class DescriptionDialogFragment(private val description: String?) : DialogFragment() {
 
@@ -26,12 +30,18 @@ class DescriptionDialogFragment(private val description: String?) : DialogFragme
 
         saveDescriptionButton.setOnClickListener {
             dialogListenerOnSave?.invoke(descriptionEditText.text.toString())
+            hideKeyboard()
             dismiss()
         }
 
-        cancelSaveDialogButton.setOnClickListener {
-            dialogListenerOnCancel?.invoke()
-            dismiss()
+        if (dialogListenerOnCancel == null) {
+            cancelSaveDialogButton.visibility = View.GONE
+            guideline_save_dialog.setGuidelinePercent(0f)
+        } else {
+            cancelSaveDialogButton.setOnClickListener {
+                dialogListenerOnCancel?.invoke()
+                dismiss()
+            }
         }
     }
 
@@ -41,5 +51,14 @@ class DescriptionDialogFragment(private val description: String?) : DialogFragme
 
     fun setOnCancelListener(dialogListenerOnCancel: LambdaNoArgumentsUnit) {
         this.dialogListenerOnCancel = dialogListenerOnCancel
+    }
+
+    private fun hideKeyboard() {
+        val inputManager: InputMethodManager =
+            requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputManager.hideSoftInputFromWindow(
+            requireActivity().currentFocus?.windowToken,
+            InputMethodManager.HIDE_NOT_ALWAYS
+        )
     }
 }
