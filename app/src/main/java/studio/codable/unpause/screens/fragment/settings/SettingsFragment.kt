@@ -12,6 +12,7 @@ import studio.codable.unpause.base.activity.BaseActivity
 import studio.codable.unpause.base.fragment.BaseFragment
 import studio.codable.unpause.screens.UserViewModel
 import studio.codable.unpause.screens.activity.login.LoginActivity
+import studio.codable.unpause.screens.activity.map.MapActivity
 import studio.codable.unpause.utilities.manager.DialogManager
 import studio.codable.unpause.utilities.manager.GeofencingManager
 import studio.codable.unpause.utilities.manager.SessionManager
@@ -49,6 +50,10 @@ class SettingsFragment : BaseFragment(false) {
 
             change_company_button.setOnClickListener {
                 svm.navigate(SettingsFragmentDirections.actionSettingsFragmentToChangeCompanyFragment())
+            }
+
+            add_location_button.setOnClickListener {
+                startActivity(MapActivity.getIntent(requireContext()))
             }
 
             log_out_button.setOnClickListener {

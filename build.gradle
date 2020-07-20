@@ -30,6 +30,7 @@ buildscript {
 
         googleServicesAuth_version = '17.0.0'
         googleServicesLocation_version = '17.0.0'
+        googleServicesMaps_version = '17.0.0'
 
         lottie_version = '3.0.7'
 

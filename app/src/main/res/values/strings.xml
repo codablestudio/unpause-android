@@ -111,4 +111,5 @@
     <string name="or">or</string>
     <string name="user_activity_filter_date_format">%1$s, %2$s</string>
     <string name="dash">—</string>
+    <string name="add_location">Add location</string>
 </resources>
