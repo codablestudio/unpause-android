@@ -14,7 +14,7 @@ import studio.codable.unpause.utilities.LambdaNoArgumentsUnit
 import studio.codable.unpause.utilities.LambdaStringToUnit
 
 
-class DescriptionDialogFragment(private val description: String?) : DialogFragment() {
+class DescriptionDialogFragment(private val title: String?, private val description: String?) : DialogFragment() {
 
     private var dialogListenerOnSave: LambdaStringToUnit? = null
     private var dialogListenerOnCancel: LambdaNoArgumentsUnit? = null
@@ -26,6 +26,7 @@ class DescriptionDialogFragment(private val description: String?) : DialogFragme
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        if (title!=null) textView.text = title
         descriptionEditText.setText(description.orEmpty())
 
         saveDescriptionButton.setOnClickListener {

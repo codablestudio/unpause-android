@@ -22,17 +22,22 @@ class DialogManager(private val context: BaseActivity) {
     private lateinit var workingTimeWarningFragment: WorkingTimeWarningFragment
     private val datePickerFragment: DatePickerFragment by lazy { DatePickerFragment() }
     private lateinit var timePickerFragment: TimePickerFragment
-    private val confirmDialogFragment: ConfirmDialogFragment by lazy { ConfirmDialogFragment() }
+    private lateinit var confirmDialogFragment: ConfirmDialogFragment
 
-    fun openDescriptionDialog(description: String?, dialogListenerOnSave: LambdaStringToUnit, dialogListenerOnCancel: LambdaNoArgumentsUnit?) {
-        descriptionDialogFragment = DescriptionDialogFragment(description).apply {
+    fun openDescriptionDialog(title: String?, description: String?, isFullscreen: Boolean, dialogListenerOnSave: LambdaStringToUnit, dialogListenerOnCancel: LambdaNoArgumentsUnit?) {
+        descriptionDialogFragment = DescriptionDialogFragment(title,description).apply {
             setOnSaveListener(dialogListenerOnSave)
             if (dialogListenerOnCancel != null) {
                 setOnCancelListener(dialogListenerOnCancel)
             }
             setStyle(DialogFragment.STYLE_NO_TITLE, R.style.full_screen_dialog)
         }
-        showFullscreenDialog(descriptionDialogFragment)
+        if (isFullscreen) {
+            showFullscreenDialog(descriptionDialogFragment)
+        } else {
+            descriptionDialogFragment.show(context.supportFragmentManager, "Edit dialog fragment")
+        }
+
     }
 
     fun openWorkingTimeDialog(
@@ -59,9 +64,10 @@ class DialogManager(private val context: BaseActivity) {
         timePickerFragment.show(context.supportFragmentManager, "Time picker fragment")
     }
 
-    fun openConfirmDialog(confirmDialogListener: LambdaNoArgumentsUnit) {
-        confirmDialogFragment?.addListener(confirmDialogListener)
-        confirmDialogFragment?.show(context.supportFragmentManager, "Confirm dialog fragment")
+    fun openConfirmDialog(message : String, confirmDialogListener: LambdaNoArgumentsUnit) {
+        confirmDialogFragment = ConfirmDialogFragment(message)
+        confirmDialogFragment.addListener(confirmDialogListener)
+        confirmDialogFragment.show(context.supportFragmentManager, "Confirm dialog fragment")
     }
 
     fun openDateRangePickerDialog(

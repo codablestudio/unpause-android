@@ -24,7 +24,7 @@ import kotlinx.android.synthetic.main.activity_map.*
 import studio.codable.unpause.R
 import studio.codable.unpause.base.activity.BaseActivity
 import studio.codable.unpause.base.fragment.BaseFragment
-import studio.codable.unpause.screens.activity.home.HomeActivity
+import studio.codable.unpause.utilities.manager.DialogManager
 import studio.codable.unpause.utilities.manager.PermissionManager
 import java.io.IOException
 import java.util.*
@@ -36,6 +36,8 @@ class MapActivity : BaseActivity(), OnMapReadyCallback, GoogleMap.OnMarkerDragLi
 
     @Inject
     lateinit var permissionManager : PermissionManager
+
+    private val dialogManager: DialogManager by lazy { DialogManager(this) }
 
     private lateinit var googleMap: GoogleMap
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
@@ -57,14 +59,40 @@ class MapActivity : BaseActivity(), OnMapReadyCallback, GoogleMap.OnMarkerDragLi
     }
 
     override fun onMapReady(map: GoogleMap?) {
-        googleMap = map?: return
-        if (permissionManager.checkFineLocationPermission()){
+        googleMap = map ?: return
+        if (permissionManager.checkFineLocationPermission()) {
             googleMap.isMyLocationEnabled = true
             googleMap.uiSettings.isMyLocationButtonEnabled = true
             googleMap.uiSettings.isZoomControlsEnabled = true
             getCurrentLocation()
-            googleMap.setOnMapClickListener {
-                map.addMarker(MarkerOptions().position(it).title("Location"))
+            googleMap.setOnMapClickListener { position ->
+                dialogManager.openDescriptionDialog(
+                    getString(R.string.enter_location_name),
+                    null,
+                    false,
+                    {
+                        //add new marker
+                        map.addMarker(MarkerOptions().position(position).title(it).draggable(true))
+                    },
+                    {})
+            }
+            googleMap.setOnInfoWindowClickListener { marker ->
+                dialogManager.openDescriptionDialog(
+                    getString(R.string.edit_location_name),
+                    marker.title,
+                    false,
+                    {
+                        marker.title = it
+                        marker.showInfoWindow() //refresh info window
+                        //TODO: change on backend
+                    },
+                    {})
+            }
+            googleMap.setOnInfoWindowLongClickListener {
+                dialogManager.openConfirmDialog(getString(R.string.are_you_sure_you_want_to_delete_location)) {
+                    it.remove()
+                    //TODO: remove from backend
+                }
             }
         } else {
             permissionManager.requestFineLocationPermission(location_chooser as BaseFragment)
@@ -125,7 +153,7 @@ class MapActivity : BaseActivity(), OnMapReadyCallback, GoogleMap.OnMarkerDragLi
             MarkerOptions()
                 .position(LatLng(lat, lng))
                 .title("Selected Location")
-                .snippet(address)
+//                .snippet(address)
                 .draggable(true)
         )
         val cameraPosition = CameraPosition.Builder()
@@ -136,6 +164,7 @@ class MapActivity : BaseActivity(), OnMapReadyCallback, GoogleMap.OnMarkerDragLi
     }
 
     override fun onMarkerDragEnd(p0: Marker?) {
+        //TODO: update position on backend
         p0?.position?.let {
 
             val geocoder = Geocoder(this, Locale.getDefault())

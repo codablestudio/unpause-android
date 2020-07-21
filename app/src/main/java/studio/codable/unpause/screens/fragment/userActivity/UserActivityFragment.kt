@@ -230,7 +230,7 @@ class UserActivityFragment : BaseFragment(false) {
                                     exitTime: Date
                                 ) {
                                     mDialogManager?.openDescriptionDialog(
-                                        null, { description ->
+                                        null, null, true, { description ->
                                             val newShift =
                                                 Shift(
                                                     arrivalTime,
@@ -291,7 +291,7 @@ class UserActivityFragment : BaseFragment(false) {
                 object : WorkingTimeWarningFragment.DialogListener {
                     override fun onContinue(arrivalTime: Date, exitTime: Date) {
                         mDialogManager.openDescriptionDialog(
-                                shift.description, { description: String ->
+                                null, shift.description, true, { description: String ->
 
                             val newShift = Shift(arrivalTime, exitTime, description)
                             userVm.editShift(newShift)

@@ -7,14 +7,14 @@ import androidx.fragment.app.DialogFragment
 import studio.codable.unpause.R
 import studio.codable.unpause.utilities.LambdaNoArgumentsUnit
 
-class ConfirmDialogFragment : DialogFragment() {
+class ConfirmDialogFragment(private val message : String) : DialogFragment() {
 
     private lateinit var dialogListenerOnYes: LambdaNoArgumentsUnit
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
             val builder = AlertDialog.Builder(it)
-            builder.setMessage(R.string.are_you_sure)
+            builder.setMessage(message)
                 .setPositiveButton(R.string.yes
                 ) { _, _ ->
                     dialogListenerOnYes.invoke()
