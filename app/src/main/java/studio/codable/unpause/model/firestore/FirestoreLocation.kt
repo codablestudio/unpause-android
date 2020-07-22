@@ -13,9 +13,8 @@ var geopoint: GeoPoint? = null,
 var name: String = ""
 ) {
     companion object {
-        const val GEOPOINT = "geopoint"
-        const val NAME = "name"
-
+        const val GEOPOINT_FIELD = "geopoint"
+        const val NAME_FIELD = "name"
     }
 
     constructor(location: Location) : this() {
@@ -29,8 +28,8 @@ var name: String = ""
 
     fun asHashMap(): HashMap<String, Any?> {
         return hashMapOf(
-            GEOPOINT to geopoint,
-            NAME to name
+            GEOPOINT_FIELD to geopoint,
+            NAME_FIELD to name
         )
     }
 }

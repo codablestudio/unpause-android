@@ -2,8 +2,6 @@ package studio.codable.unpause.screens.activity.map
 
 import android.content.Context
 import android.content.Intent
-import android.location.Address
-import android.location.Geocoder
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.lifecycle.ViewModelProvider
@@ -28,10 +26,9 @@ import studio.codable.unpause.base.activity.BaseActivity
 import studio.codable.unpause.base.fragment.BaseFragment
 import studio.codable.unpause.model.Location
 import studio.codable.unpause.screens.UserViewModel
+import studio.codable.unpause.utilities.extensions.toLocation
 import studio.codable.unpause.utilities.manager.DialogManager
 import studio.codable.unpause.utilities.manager.PermissionManager
-import java.io.IOException
-import java.util.*
 import javax.inject.Inject
 
 class MapActivity : BaseActivity(), OnMapReadyCallback, GoogleMap.OnMarkerDragListener {
@@ -49,7 +46,7 @@ class MapActivity : BaseActivity(), OnMapReadyCallback, GoogleMap.OnMarkerDragLi
 
     private lateinit var googleMap: GoogleMap
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-    private lateinit var marker: Marker
+    private lateinit var markers: MutableList<Marker>
 
     companion object {
         fun getIntent(context: Context): Intent {
@@ -65,7 +62,11 @@ class MapActivity : BaseActivity(), OnMapReadyCallback, GoogleMap.OnMarkerDragLi
         mapFragment!!.getMapAsync(this)
         fusedLocationProviderClient = FusedLocationProviderClient(this)
 
-        userVm.getLocations()
+        userVm.locations.observe(this, androidx.lifecycle.Observer {
+            //refresh markers
+            googleMap.clear()
+            markers = createMarkersFromLocations(it) as MutableList<Marker>
+        })
     }
 
     override fun onMapReady(map: GoogleMap?) {
@@ -75,14 +76,13 @@ class MapActivity : BaseActivity(), OnMapReadyCallback, GoogleMap.OnMarkerDragLi
             googleMap.uiSettings.isMyLocationButtonEnabled = true
             googleMap.uiSettings.isZoomControlsEnabled = true
             getCurrentLocation()
+            userVm.getLocations()
             googleMap.setOnMapClickListener { position ->
                 dialogManager.openDescriptionDialog(
                     getString(R.string.enter_location_name),
                     null,
                     false,
                     {
-                        //add new marker
-                        map.addMarker(MarkerOptions().position(position).title(it).draggable(true))
                         userVm.addLocation(Location(position, it))
                     },
                     {})
@@ -93,16 +93,13 @@ class MapActivity : BaseActivity(), OnMapReadyCallback, GoogleMap.OnMarkerDragLi
                     marker.title,
                     false,
                     {
-                        marker.title = it
-                        marker.showInfoWindow() //refresh info window
-                        //TODO: change on backend
+                        updateLocation(marker.toLocation(), Location(marker.position,it))
                     },
                     {})
             }
             googleMap.setOnInfoWindowLongClickListener {
                 dialogManager.openConfirmDialog(getString(R.string.are_you_sure_you_want_to_delete_location)) {
-                    it.remove()
-                    //TODO: remove from backend
+                    userVm.deleteLocation(it.toLocation())
                 }
             }
         } else {
@@ -111,6 +108,9 @@ class MapActivity : BaseActivity(), OnMapReadyCallback, GoogleMap.OnMarkerDragLi
         googleMap.setOnMarkerDragListener(this)
     }
 
+    /**
+     * Sends request to find out user location
+     */
     private fun getCurrentLocation() {
         val locationRequest = LocationRequest()
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
@@ -127,46 +127,30 @@ class MapActivity : BaseActivity(), OnMapReadyCallback, GoogleMap.OnMarkerDragLi
                     getLastLocation()
                 }
             } catch (exception: ApiException) {
-                showMessage("Error")
+                showMessage("Error: " + exception.localizedMessage)
             }
         }
     }
 
+    /**
+     * Retrieves last known user location
+     */
     private fun getLastLocation() {
         fusedLocationProviderClient.lastLocation
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful && task.result != null) {
                     val mLastLocation = task.result
-                    setStartLocation(mLastLocation!!.latitude, mLastLocation.longitude, "")
+                    setStartLocation(mLastLocation!!.latitude, mLastLocation.longitude)
                 } else {
                     showMessage("No current location found")
                 }
             }
     }
-    //Set the user’s starting point and add marker to it.
-    private fun setStartLocation(lat: Double, lng: Double, addr: String){
-        var address = "Current address"
-        if (addr.isEmpty()){
-            val gcd = Geocoder(this, Locale.getDefault())
-            val addresses: List<Address>
-            try {
-                addresses = gcd.getFromLocation(lat, lng, 1)
-                if (addresses.isNotEmpty()) {
-                    address = addresses[0].getAddressLine(0)
-                }
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-        } else {
-            address = addr
-        }
-        marker = googleMap.addMarker(
-            MarkerOptions()
-                .position(LatLng(lat, lng))
-                .title("Selected Location")
-//                .snippet(address)
-                .draggable(true)
-        )
+
+    /**
+     * Sets camera to the location
+     */
+    private fun setStartLocation(lat: Double, lng: Double){
         val cameraPosition = CameraPosition.Builder()
             .target(LatLng(lat, lng))
             .zoom(17f)
@@ -175,18 +159,13 @@ class MapActivity : BaseActivity(), OnMapReadyCallback, GoogleMap.OnMarkerDragLi
     }
 
     override fun onMarkerDragEnd(p0: Marker?) {
-        //TODO: update position on backend
-        p0?.position?.let {
-
-            val geocoder = Geocoder(this, Locale.getDefault())
-            try {
-                val address =
-                    geocoder.getFromLocation(it.latitude, it.longitude, 1)[0]
-                showMessage(address.toString())
-            } catch (e: IOException) {
-                e.printStackTrace()
+        //after marker is dragged, update location
+        p0?.let {marker ->
+            //find old location
+            val oldLocation = markers.find {
+                it.title == marker.title
             }
-
+            updateLocation(oldLocation!!.toLocation(), p0.toLocation())
         }
     }
 
@@ -196,5 +175,15 @@ class MapActivity : BaseActivity(), OnMapReadyCallback, GoogleMap.OnMarkerDragLi
     override fun onMarkerDrag(p0: Marker?) {
     }
 
+    private fun createMarkersFromLocations(locations: List<Location>) : List<Marker> {
+        return locations.map {
+            googleMap.addMarker(MarkerOptions().position(it.position!!).title(it.name).draggable(true))
+        }
+    }
+
+    private fun updateLocation(old: Location, new: Location) {
+        userVm.deleteLocation(old)
+        userVm.addLocation(new)
+    }
 
 }

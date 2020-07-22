@@ -9,4 +9,6 @@ interface ILocationRepository {
 
     suspend fun addLocation(location: Location): Result<Unit>
 
+    suspend fun deleteLocation(location: Location): Result<Unit>
+
 }

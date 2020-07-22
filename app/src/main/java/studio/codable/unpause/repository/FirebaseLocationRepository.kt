@@ -4,11 +4,13 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import studio.codable.unpause.model.Location
 import studio.codable.unpause.model.firestore.FirestoreLocation
+import studio.codable.unpause.model.firestore.FirestoreLocation.Companion.NAME_FIELD
 import studio.codable.unpause.utilities.Constants
 import studio.codable.unpause.utilities.Constants.FirestoreCollections.LOCATIONS
 import studio.codable.unpause.utilities.manager.SessionManager
 import studio.codable.unpause.utilities.networking.Result
 import studio.codable.unpause.utilities.networking.callFirebase
+import studio.codable.unpause.utilities.networking.callFirebaseRawResult
 import javax.inject.Inject
 
 class FirebaseLocationRepository @Inject constructor(
@@ -38,4 +40,11 @@ class FirebaseLocationRepository @Inject constructor(
         }
     }
 
+    override suspend fun deleteLocation(location: Location): Result<Unit> {
+            return callFirebase(locationsCol.whereEqualTo(NAME_FIELD, location.name).get()) {
+                val id = extractFirestoreLocation(it.documents[0]).documentId
+                callFirebaseRawResult(locationsCol.document(id).delete()) {
+                }
+            }
+    }
 }

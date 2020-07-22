@@ -1,9 +1,5 @@
 package studio.codable.unpause.screens
 
-import android.Manifest
-import android.content.pm.PackageManager
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
@@ -48,6 +44,9 @@ class UserViewModel @Inject constructor(
 
     private val _geofences = MediatorLiveData<List<GeofenceModel>>()
     val geofences: LiveData<List<GeofenceModel>> = _geofences
+
+    private val _locations = MutableLiveData<List<Location>>()
+    val locations: LiveData<List<Location>> = _locations
 
     init {
         getUser()
@@ -200,7 +199,7 @@ class UserViewModel @Inject constructor(
     fun getLocations() {
         viewModelScope.launch {
             process(locationRepository.getAll()) {
-                Timber.i(it.toString())
+                _locations.value = it
             }
         }
     }
@@ -209,6 +208,16 @@ class UserViewModel @Inject constructor(
         viewModelScope.launch {
             process(locationRepository.addLocation(location)) {
                 Timber.i("Successfully added new location %s", location.toString())
+                getLocations()
+            }
+        }
+    }
+
+    fun deleteLocation(location: Location) {
+        viewModelScope.launch {
+            process(locationRepository.deleteLocation(location)) {
+                Timber.i("Successfully deleted location %s", location.toString())
+                getLocations()
             }
         }
     }
