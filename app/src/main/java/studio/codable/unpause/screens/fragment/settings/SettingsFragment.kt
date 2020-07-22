@@ -48,10 +48,13 @@ class SettingsFragment : BaseFragment(false) {
                 svm.navigate(SettingsFragmentDirections.actionSettingsFragmentToChangeUserPasswordFragment())
             }
 
+            change_company_button.text = getTitleForCompanyButton()
             change_company_button.setOnClickListener {
                 svm.navigate(SettingsFragmentDirections.actionSettingsFragmentToChangeCompanyFragment())
             }
 
+            //location managing is for users that don't have company
+            add_location_button.visibility = if (userVm.userHasConnectedCompany()) View.GONE else View.VISIBLE
             add_location_button.setOnClickListener {
                 startActivity(MapActivity.getIntent(requireContext()))
             }
@@ -88,5 +91,11 @@ class SettingsFragment : BaseFragment(false) {
         sessionManager.locationServiceStatus = false
         val geofencingManager = GeofencingManager(requireContext())
         geofencingManager.disableAllGeofences()
+    }
+
+    private fun getTitleForCompanyButton(): String = if (userVm.userHasConnectedCompany()) {
+        getString(R.string.connect_company)
+    } else {
+        getString(R.string.add_company)
     }
 }

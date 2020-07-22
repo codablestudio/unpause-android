@@ -48,8 +48,6 @@ class HomeFragment : BaseFragment(false) {
                 userVm.checkOut(it)
                 Timber.d("checked out")
             }, null)
-//            userVm.checkOut("test description")
-//            Timber.d("checked out")
         }
     }
 

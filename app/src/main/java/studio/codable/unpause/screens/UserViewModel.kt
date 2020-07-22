@@ -61,7 +61,12 @@ class UserViewModel @Inject constructor(
         getShifts()
 
         _geofences.addSource(_company) {
-                getGeofences(_company.value!!.id)
+            getGeofences(_company.value!!.id)
+            _geofences.removeSource(_locations)
+        }
+        _geofences.addSource(_locations) {
+            getGeofencesFromLocations()
+            _geofences.removeSource(_company)
         }
 
     }
@@ -87,7 +92,13 @@ class UserViewModel @Inject constructor(
         viewModelScope.launch {
             process(userRepository.getUser()) {
                 _user.value = it
-                it.companyId?.let { id -> getCompany(id) }
+                //if the user is connected to company get company, otherwise
+                //get locations if there are any
+                if (it.companyId!=null) {
+                    getCompany(it.companyId)
+                } else {
+                    getLocations()
+                }
             }
         }
     }
@@ -113,6 +124,12 @@ class UserViewModel @Inject constructor(
             process(companyRepository.getGeofences(company.value!!.id)) {
                 _geofences.value = it
             }
+        }
+    }
+
+    private fun getGeofencesFromLocations() {
+        _geofences.value = _locations.value?.map {
+            it.toGeofence()
         }
     }
 
@@ -220,5 +237,9 @@ class UserViewModel @Inject constructor(
                 getLocations()
             }
         }
+    }
+
+    fun userHasConnectedCompany() : Boolean {
+        return _company.value!=null
     }
 }
