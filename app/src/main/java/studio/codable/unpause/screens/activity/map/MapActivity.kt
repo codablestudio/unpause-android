@@ -5,6 +5,8 @@ import android.content.Intent
 import android.location.Address
 import android.location.Geocoder
 import android.os.Bundle
+import androidx.activity.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import com.google.android.gms.common.api.ApiException
@@ -24,6 +26,8 @@ import kotlinx.android.synthetic.main.activity_map.*
 import studio.codable.unpause.R
 import studio.codable.unpause.base.activity.BaseActivity
 import studio.codable.unpause.base.fragment.BaseFragment
+import studio.codable.unpause.model.Location
+import studio.codable.unpause.screens.UserViewModel
 import studio.codable.unpause.utilities.manager.DialogManager
 import studio.codable.unpause.utilities.manager.PermissionManager
 import java.io.IOException
@@ -36,6 +40,10 @@ class MapActivity : BaseActivity(), OnMapReadyCallback, GoogleMap.OnMarkerDragLi
 
     @Inject
     lateinit var permissionManager : PermissionManager
+
+    @Inject
+    lateinit var vmFactory: ViewModelProvider.Factory
+    private val userVm: UserViewModel by viewModels { vmFactory }
 
     private val dialogManager: DialogManager by lazy { DialogManager(this) }
 
@@ -56,6 +64,8 @@ class MapActivity : BaseActivity(), OnMapReadyCallback, GoogleMap.OnMarkerDragLi
         val mapFragment = supportFragmentManager.findFragmentById(R.id.location_chooser) as SupportMapFragment?
         mapFragment!!.getMapAsync(this)
         fusedLocationProviderClient = FusedLocationProviderClient(this)
+
+        userVm.getLocations()
     }
 
     override fun onMapReady(map: GoogleMap?) {
@@ -73,6 +83,7 @@ class MapActivity : BaseActivity(), OnMapReadyCallback, GoogleMap.OnMarkerDragLi
                     {
                         //add new marker
                         map.addMarker(MarkerOptions().position(position).title(it).draggable(true))
+                        userVm.addLocation(Location(position, it))
                     },
                     {})
             }

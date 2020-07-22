@@ -11,6 +11,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import studio.codable.unpause.base.viewModel.BaseViewModel
 import studio.codable.unpause.model.Company
+import studio.codable.unpause.model.Location
 import studio.codable.unpause.model.Shift
 import studio.codable.unpause.model.User
 import studio.codable.unpause.repository.*
@@ -31,6 +32,8 @@ class UserViewModel @Inject constructor(
     private val companyRepository: ICompanyRepository,
     @Named("firebaseLoginRepository")
     private val loginRepository: ILoginRepository,
+    @Named("firebaseLocationRepository")
+    private val locationRepository: ILocationRepository,
     private val sessionManager: SessionManager
 ) : BaseViewModel() {
 
@@ -190,6 +193,22 @@ class UserViewModel @Inject constructor(
                 process(userRepository.updateCompany(_user.value!!.id, it)) {
                     getUser()
                 }
+            }
+        }
+    }
+
+    fun getLocations() {
+        viewModelScope.launch {
+            process(locationRepository.getAll()) {
+                Timber.i(it.toString())
+            }
+        }
+    }
+
+    fun addLocation(location: Location) {
+        viewModelScope.launch {
+            process(locationRepository.addLocation(location)) {
+                Timber.i("Successfully added new location %s", location.toString())
             }
         }
     }

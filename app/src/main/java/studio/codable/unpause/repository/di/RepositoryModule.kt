@@ -23,4 +23,8 @@ abstract class RepositoryModule {
     @Binds
     @Named("firebaseCompanyRepository")
     internal abstract fun bindFirebaseCompanyRepository(firebaseCompanyRepository: FirebaseCompanyRepository): ICompanyRepository
+
+    @Binds
+    @Named("firebaseLocationRepository")
+    internal abstract fun bindFirebaseLocationRepository(firebaseLocationRepository: FirebaseLocationRepository): ILocationRepository
 }
