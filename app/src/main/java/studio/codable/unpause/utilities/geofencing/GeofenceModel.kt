@@ -1,5 +1,7 @@
 package studio.codable.unpause.utilities.geofencing
 
+import studio.codable.unpause.model.Location
+import studio.codable.unpause.utilities.Constants.Geofencing.DEFAULT_RADIUS
 import java.io.Serializable
 
 /**
@@ -10,4 +12,11 @@ data class GeofenceModel(
     val lat: Double,
     val long: Double,
     val radius: Float
-) : Serializable
+) : Serializable {
+    constructor(location: Location) : this(
+        location.name!!,
+        location.position.latitude,
+        location.position.longitude,
+        DEFAULT_RADIUS
+    )
+}

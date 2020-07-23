@@ -127,7 +127,7 @@ class UserViewModel @Inject constructor(
 
     private fun getGeofencesFromLocations() {
         _geofences.value = _locations.value?.map {
-            it.toGeofence()
+            GeofenceModel(it)
         }
     }
 

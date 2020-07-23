@@ -9,9 +9,5 @@ data class Location(
     var position: LatLng,
     var name: String? = null
 ) {
-
     constructor(marker: Marker) : this(marker.position, marker.title)
-
-    fun toGeofence() : GeofenceModel =
-        GeofenceModel(name!!, position!!.latitude, position!!.longitude, DEFAULT_RADIUS)
 }
