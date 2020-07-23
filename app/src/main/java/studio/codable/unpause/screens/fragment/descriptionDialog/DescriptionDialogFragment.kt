@@ -1,7 +1,6 @@
 package studio.codable.unpause.screens.fragment.descriptionDialog
 
 import android.content.Context
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,10 +13,12 @@ import studio.codable.unpause.utilities.LambdaNoArgumentsUnit
 import studio.codable.unpause.utilities.LambdaStringToUnit
 
 
-class DescriptionDialogFragment(private val title: String?, private val description: String?) : DialogFragment() {
+class DescriptionDialogFragment : DialogFragment() {
 
     private var dialogListenerOnSave: LambdaStringToUnit? = null
     private var dialogListenerOnCancel: LambdaNoArgumentsUnit? = null
+    private var title : String? = null
+    private var description : String? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.save_dialog, container, false)
@@ -26,8 +27,8 @@ class DescriptionDialogFragment(private val title: String?, private val descript
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (title!=null) textView.text = title
-        descriptionEditText.setText(description.orEmpty())
+        title?.let { titleText.text = it }
+        descriptionEditText.setText(description)
 
         saveDescriptionButton.setOnClickListener {
             dialogListenerOnSave?.invoke(descriptionEditText.text.toString())
@@ -52,6 +53,14 @@ class DescriptionDialogFragment(private val title: String?, private val descript
 
     fun setOnCancelListener(dialogListenerOnCancel: LambdaNoArgumentsUnit) {
         this.dialogListenerOnCancel = dialogListenerOnCancel
+    }
+
+    fun setTitle(title: String) {
+        this.title = title
+    }
+
+    fun setDescription(description: String) {
+        this.description = description
     }
 
     private fun hideKeyboard() {

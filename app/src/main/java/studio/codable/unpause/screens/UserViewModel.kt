@@ -94,11 +94,9 @@ class UserViewModel @Inject constructor(
                 _user.value = it
                 //if the user is connected to company get company, otherwise
                 //get locations if there are any
-                if (it.companyId!=null) {
-                    getCompany(it.companyId)
-                } else {
-                    getLocations()
-                }
+                it.companyId?.let{id ->
+                    getCompany(id)
+                }?: getLocations()
             }
         }
     }
@@ -224,7 +222,7 @@ class UserViewModel @Inject constructor(
     fun addLocation(location: Location) {
         viewModelScope.launch {
             process(locationRepository.addLocation(location)) {
-                Timber.i("Successfully added new location %s", location.toString())
+                Timber.i("Successfully added new location: '$location'")
                 getLocations()
             }
         }
@@ -233,7 +231,7 @@ class UserViewModel @Inject constructor(
     fun deleteLocation(location: Location) {
         viewModelScope.launch {
             process(locationRepository.deleteLocation(location)) {
-                Timber.i("Successfully deleted location %s", location.toString())
+                Timber.i("Successfully deleted location: '$location'")
                 getLocations()
             }
         }

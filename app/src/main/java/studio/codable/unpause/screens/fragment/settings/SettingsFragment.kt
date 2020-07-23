@@ -60,7 +60,7 @@ class SettingsFragment : BaseFragment(false) {
             }
 
             log_out_button.setOnClickListener {
-                dialogManager.openConfirmDialog(getString(R.string.are_you_sure)) {
+                dialogManager.openConfirmDialog(R.string.are_you_sure) {
                     userVm.signOut()
                     showMessage(getString(R.string.signed_out))
                     val intent = Intent(context, LoginActivity::class.java)

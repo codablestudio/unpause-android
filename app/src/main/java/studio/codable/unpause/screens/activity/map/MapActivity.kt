@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -26,7 +27,6 @@ import studio.codable.unpause.base.activity.BaseActivity
 import studio.codable.unpause.base.fragment.BaseFragment
 import studio.codable.unpause.model.Location
 import studio.codable.unpause.screens.UserViewModel
-import studio.codable.unpause.utilities.extensions.toLocation
 import studio.codable.unpause.utilities.manager.DialogManager
 import studio.codable.unpause.utilities.manager.PermissionManager
 import javax.inject.Inject
@@ -62,7 +62,7 @@ class MapActivity : BaseActivity(), OnMapReadyCallback, GoogleMap.OnMarkerDragLi
         mapFragment!!.getMapAsync(this)
         fusedLocationProviderClient = FusedLocationProviderClient(this)
 
-        userVm.locations.observe(this, androidx.lifecycle.Observer {
+        userVm.locations.observe(this, Observer {
             //refresh markers
             googleMap.clear()
             markers = createMarkersFromLocations(it) as MutableList<Marker>
@@ -79,7 +79,7 @@ class MapActivity : BaseActivity(), OnMapReadyCallback, GoogleMap.OnMarkerDragLi
             userVm.getLocations()
             googleMap.setOnMapClickListener { position ->
                 dialogManager.openDescriptionDialog(
-                    getString(R.string.enter_location_name),
+                    R.string.enter_location_name,
                     null,
                     false,
                     {
@@ -93,13 +93,13 @@ class MapActivity : BaseActivity(), OnMapReadyCallback, GoogleMap.OnMarkerDragLi
                     marker.title,
                     false,
                     {
-                        updateLocation(marker.toLocation(), Location(marker.position,it))
+                        updateLocation(Location(marker), Location(marker.position,it))
                     },
                     {})
             }
             googleMap.setOnInfoWindowLongClickListener {
-                dialogManager.openConfirmDialog(getString(R.string.are_you_sure_you_want_to_delete_location)) {
-                    userVm.deleteLocation(it.toLocation())
+                dialogManager.openConfirmDialog(R.string.are_you_sure_you_want_to_delete_location) {
+                    userVm.deleteLocation(Location(it))
                 }
             }
         } else {
@@ -116,14 +116,14 @@ class MapActivity : BaseActivity(), OnMapReadyCallback, GoogleMap.OnMarkerDragLi
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         locationRequest.interval = (10 * 1000).toLong()
         locationRequest.fastestInterval = 2000
-        val builder = LocationSettingsRequest.Builder()
-        builder.addLocationRequest(locationRequest)
-        val locationSettingsRequest = builder.build()
-        val result = LocationServices.getSettingsClient(this).checkLocationSettings(locationSettingsRequest)
+        val locationSettingsRequest =
+            LocationSettingsRequest.Builder().addLocationRequest(locationRequest).build()
+        val result =
+            LocationServices.getSettingsClient(this).checkLocationSettings(locationSettingsRequest)
         result.addOnCompleteListener { task ->
             try {
                 val response = task.getResult(ApiException::class.java)
-                if (response!!.locationSettingsStates.isLocationPresent){
+                if (response!!.locationSettingsStates.isLocationPresent) {
                     getLastLocation()
                 }
             } catch (exception: ApiException) {
@@ -165,7 +165,7 @@ class MapActivity : BaseActivity(), OnMapReadyCallback, GoogleMap.OnMarkerDragLi
             val oldLocation = markers.find {
                 it.title == marker.title
             }
-            updateLocation(oldLocation!!.toLocation(), p0.toLocation())
+            updateLocation(Location(oldLocation!!), Location(p0))
         }
     }
 

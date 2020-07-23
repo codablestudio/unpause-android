@@ -1,5 +1,6 @@
 package studio.codable.unpause.utilities.manager
 
+import androidx.annotation.StringRes
 import androidx.core.util.Pair
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentTransaction
@@ -24,8 +25,30 @@ class DialogManager(private val context: BaseActivity) {
     private lateinit var timePickerFragment: TimePickerFragment
     private lateinit var confirmDialogFragment: ConfirmDialogFragment
 
-    fun openDescriptionDialog(title: String?, description: String?, isFullscreen: Boolean, dialogListenerOnSave: LambdaStringToUnit, dialogListenerOnCancel: LambdaNoArgumentsUnit?) {
-        descriptionDialogFragment = DescriptionDialogFragment(title,description).apply {
+    fun openDescriptionDialog(
+        @StringRes title: Int,
+        @StringRes description: Int?,
+        isFullscreen: Boolean,
+        dialogListenerOnSave: LambdaStringToUnit,
+        dialogListenerOnCancel: LambdaNoArgumentsUnit?
+    ) {
+        openDescriptionDialog(
+            context.getString(title),
+            description?.let { context.getString(it) },
+            isFullscreen, dialogListenerOnSave, dialogListenerOnCancel
+        )
+    }
+
+    fun openDescriptionDialog(
+        title: String,
+        description: String?,
+        isFullscreen: Boolean,
+        dialogListenerOnSave: LambdaStringToUnit,
+        dialogListenerOnCancel: LambdaNoArgumentsUnit?
+    ) {
+        descriptionDialogFragment = DescriptionDialogFragment().apply {
+            setTitle(title)
+            description?.let { setDescription(description) }
             setOnSaveListener(dialogListenerOnSave)
             if (dialogListenerOnCancel != null) {
                 setOnCancelListener(dialogListenerOnCancel)
@@ -37,7 +60,6 @@ class DialogManager(private val context: BaseActivity) {
         } else {
             descriptionDialogFragment.show(context.supportFragmentManager, "Edit dialog fragment")
         }
-
     }
 
     fun openWorkingTimeDialog(
@@ -64,8 +86,8 @@ class DialogManager(private val context: BaseActivity) {
         timePickerFragment.show(context.supportFragmentManager, "Time picker fragment")
     }
 
-    fun openConfirmDialog(message : String, confirmDialogListener: LambdaNoArgumentsUnit) {
-        confirmDialogFragment = ConfirmDialogFragment(message)
+    fun openConfirmDialog(@StringRes message : Int, confirmDialogListener: LambdaNoArgumentsUnit) {
+        confirmDialogFragment = ConfirmDialogFragment(context.getString(message))
         confirmDialogFragment.addListener(confirmDialogListener)
         confirmDialogFragment.show(context.supportFragmentManager, "Confirm dialog fragment")
     }
