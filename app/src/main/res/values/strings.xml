@@ -111,4 +111,9 @@
     <string name="or">or</string>
     <string name="user_activity_filter_date_format">%1$s, %2$s</string>
     <string name="dash">—</string>
+    <string name="add_location">Add location</string>
+    <string name="are_you_sure_you_want_to_delete_location">Are you sure you want to delete location?</string>
+    <string name="edit_location_name">Edit location name</string>
+    <string name="enter_location_name">Enter location name</string>
+    <string name="add_company">Add company</string>
 </resources>

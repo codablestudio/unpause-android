@@ -44,12 +44,10 @@ class HomeFragment : BaseFragment(false) {
             userVm.checkIn()
             Timber.d("checked in")
         } else {
-            dialogManager.openDescriptionDialog(null, {
+            dialogManager.openDescriptionDialog(R.string.what_did_you_work_on, null, true, {
                 userVm.checkOut(it)
                 Timber.d("checked out")
             }, null)
-//            userVm.checkOut("test description")
-//            Timber.d("checked out")
         }
     }
 

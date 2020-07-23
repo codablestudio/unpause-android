@@ -215,22 +215,22 @@ class UserActivityFragment : BaseFragment(false) {
                 }
 
                 R.id.add_custom_shift_button -> {
-                    if (user.shifts?.last()?.exitTime == null) {
+                    if (user.shifts.last().exitTime == null) {
                         showError(getString(R.string.custom_shift_adding_outside_of_working_time_warning))
                         true
                     } else {
-                        mDialogManager?.openWorkingTimeDialog(
+                        mDialogManager.openWorkingTimeDialog(
                             timeManager.arrivalTime,
                             timeManager.exitTime,
                             true,
-                            mDialogManager!!,
+                            mDialogManager,
                             object : WorkingTimeWarningFragment.DialogListener {
                                 override fun onContinue(
                                     arrivalTime: Date,
                                     exitTime: Date
                                 ) {
-                                    mDialogManager?.openDescriptionDialog(
-                                        null, { description ->
+                                    mDialogManager.openDescriptionDialog(
+                                        getString(R.string.what_did_you_work_on), null, true, { description ->
                                             val newShift =
                                                 Shift(
                                                     arrivalTime,
@@ -238,7 +238,7 @@ class UserActivityFragment : BaseFragment(false) {
                                                     description
                                                 )
                                             userVm.addCustomShift(newShift)
-//                                            updateRecyclerView()
+                                            //                                            updateRecyclerView()
                                             showMessage(getString(R.string.shift_added))
                                         },
                                         {
@@ -274,24 +274,27 @@ class UserActivityFragment : BaseFragment(false) {
         timeManager = TimeManager(cal1.time, cal2.time)
     }
 
-    fun updateFromDate(activeDate: String) {
+    private fun updateFromDate(activeDate: String) {
         from_date_text_view.text = activeDate
     }
 
-    fun updateToDate(activeDate: String) {
+    private fun updateToDate(activeDate: String) {
         to_date_text_view.text = activeDate
     }
 
     fun editShift(shift: Shift) {
         mDialogManager.openWorkingTimeDialog(
-                shift.arrivalTime!!,
-                shift.exitTime!!,
-                false,
-                mDialogManager,
-                object : WorkingTimeWarningFragment.DialogListener {
-                    override fun onContinue(arrivalTime: Date, exitTime: Date) {
-                        mDialogManager.openDescriptionDialog(
-                                shift.description, { description: String ->
+            shift.arrivalTime!!,
+            shift.exitTime!!,
+            false,
+            mDialogManager,
+            object : WorkingTimeWarningFragment.DialogListener {
+                override fun onContinue(arrivalTime: Date, exitTime: Date) {
+                    mDialogManager.openDescriptionDialog(
+                        getString(R.string.what_did_you_work_on),
+                        shift.description,
+                        true,
+                        { description: String ->
 
                             val newShift = Shift(arrivalTime, exitTime, description)
                             userVm.editShift(newShift)
@@ -299,12 +302,12 @@ class UserActivityFragment : BaseFragment(false) {
                             showMessage(getString(R.string.shift_edited))
 
                         },
-                                {
-                                    //no action
-                                })
+                        {
+                            //no action
+                        })
 
-                    }
-                })
+                }
+            })
     }
 
     private fun updateUI() {

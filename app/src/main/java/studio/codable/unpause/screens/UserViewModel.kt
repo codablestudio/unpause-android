@@ -1,9 +1,5 @@
 package studio.codable.unpause.screens
 
-import android.Manifest
-import android.content.pm.PackageManager
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
@@ -11,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import studio.codable.unpause.base.viewModel.BaseViewModel
 import studio.codable.unpause.model.Company
+import studio.codable.unpause.model.Location
 import studio.codable.unpause.model.Shift
 import studio.codable.unpause.model.User
 import studio.codable.unpause.repository.*
@@ -31,6 +28,8 @@ class UserViewModel @Inject constructor(
     private val companyRepository: ICompanyRepository,
     @Named("firebaseLoginRepository")
     private val loginRepository: ILoginRepository,
+    @Named("firebaseLocationRepository")
+    private val locationRepository: ILocationRepository,
     private val sessionManager: SessionManager
 ) : BaseViewModel() {
 
@@ -46,6 +45,9 @@ class UserViewModel @Inject constructor(
     private val _geofences = MediatorLiveData<List<GeofenceModel>>()
     val geofences: LiveData<List<GeofenceModel>> = _geofences
 
+    private val _locations = MutableLiveData<List<Location>>()
+    val locations: LiveData<List<Location>> = _locations
+
     init {
         getUser()
         _user.addSource(_shifts) {
@@ -59,7 +61,12 @@ class UserViewModel @Inject constructor(
         getShifts()
 
         _geofences.addSource(_company) {
-                getGeofences(_company.value!!.id)
+            getGeofences(_company.value!!.id)
+            _geofences.removeSource(_locations)
+        }
+        _geofences.addSource(_locations) {
+            getGeofencesFromLocations()
+            _geofences.removeSource(_company)
         }
 
     }
@@ -85,7 +92,11 @@ class UserViewModel @Inject constructor(
         viewModelScope.launch {
             process(userRepository.getUser()) {
                 _user.value = it
-                it.companyId?.let { id -> getCompany(id) }
+                //if the user is connected to company get company, otherwise
+                //get locations if there are any
+                it.companyId?.let{id ->
+                    getCompany(id)
+                }?: getLocations()
             }
         }
     }
@@ -111,6 +122,12 @@ class UserViewModel @Inject constructor(
             process(companyRepository.getGeofences(company.value!!.id)) {
                 _geofences.value = it
             }
+        }
+    }
+
+    private fun getGeofencesFromLocations() {
+        _geofences.value = _locations.value?.map {
+            GeofenceModel(it)
         }
     }
 
@@ -192,5 +209,35 @@ class UserViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun getLocations() {
+        viewModelScope.launch {
+            process(locationRepository.getAll()) {
+                _locations.value = it
+            }
+        }
+    }
+
+    fun addLocation(location: Location) {
+        viewModelScope.launch {
+            process(locationRepository.addLocation(location)) {
+                Timber.i("Successfully added new location: '$location'")
+                getLocations()
+            }
+        }
+    }
+
+    fun deleteLocation(location: Location) {
+        viewModelScope.launch {
+            process(locationRepository.deleteLocation(location)) {
+                Timber.i("Successfully deleted location: '$location'")
+                getLocations()
+            }
+        }
+    }
+
+    fun userHasConnectedCompany() : Boolean {
+        return _company.value!=null
     }
 }

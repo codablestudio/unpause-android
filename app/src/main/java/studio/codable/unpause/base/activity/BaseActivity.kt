@@ -7,6 +7,7 @@ import studio.codable.unpause.app.App
 import studio.codable.unpause.screens.activity.emailVerification.EmailVerificationActivity
 import studio.codable.unpause.screens.activity.home.HomeActivity
 import studio.codable.unpause.screens.activity.login.LoginActivity
+import studio.codable.unpause.screens.activity.map.MapActivity
 import studio.codable.unpause.screens.activity.register.RegisterActivity
 import studio.codable.unpause.screens.activity.start.StartActivity
 
@@ -28,6 +29,7 @@ abstract class BaseActivity : AppCompatActivity() {
                 is RegisterActivity -> it.plusActivity().inject(this)
                 is HomeActivity -> it.plusActivity().inject(this)
                 is EmailVerificationActivity -> it.plusActivity().inject(this)
+                is MapActivity -> it.plusActivity().inject(this)
             }
         }
     }
