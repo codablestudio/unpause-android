@@ -128,4 +128,7 @@ dependencies {
 
     //Charts
     implementation "com.github.PhilJay:MPAndroidChart:$MPAndroidChart_version"
+
+    //Billing
+    implementation "com.android.billingclient:billing:$billing_version"
 }
