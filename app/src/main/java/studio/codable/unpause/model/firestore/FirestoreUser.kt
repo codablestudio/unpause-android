@@ -13,7 +13,8 @@ data class FirestoreUser(
     var firstName: String? = "",
     var lastName: String? = "",
     var shifts: List<FirestoreShift>? = null,
-    var companyReference: DocumentReference? = null
+    var companyReference: DocumentReference? = null,
+    var isPromoUser: Boolean? = null
 ) {
     companion object {
         const val FIRST_NAME = "firstName"
@@ -30,7 +31,7 @@ data class FirestoreUser(
     }
 
     fun toUser(): User {
-        return User(documentId, email, firstName, lastName,companyId = companyReference?.id)
+        return User(documentId, email, firstName, lastName,companyId = companyReference?.id, isPromoUser = isPromoUser ?: false)
     }
 
     fun extractShifts(): List<Shift> {

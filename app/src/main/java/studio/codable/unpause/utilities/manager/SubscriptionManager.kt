@@ -4,7 +4,16 @@ import android.app.Activity
 import android.content.Context
 import com.android.billingclient.api.*
 import com.android.billingclient.api.BillingClient.BillingResponseCode
+import timber.log.Timber
 
+
+/**
+ * SubscriptionManager is class which serves for handling subscriptions and granting user
+ * access to premium features.
+ *
+ * After initialization, method [connect] must be called to handle connecting to Google Play Billing
+ * API. The method [disconnect] is used to close the connection.
+ */
 class SubscriptionManager(context: Context) {
 
     private val purchaseUpdateListener =
@@ -26,12 +35,13 @@ class SubscriptionManager(context: Context) {
         .enablePendingPurchases()
         .build()
 
-
-    init {
+    fun connect() {
         billingClient.startConnection(object : BillingClientStateListener {
             override fun onBillingSetupFinished(billingResult: BillingResult) {
                 if (billingResult.responseCode == BillingResponseCode.OK) {
                     // TODO: The BillingClient is ready. You can query purchases here.
+                    val result = billingClient.queryPurchases(BillingClient.SkuType.SUBS)
+                    Timber.i(result.purchasesList.toString())
                 }
             }
 
@@ -41,7 +51,10 @@ class SubscriptionManager(context: Context) {
                 // Google Play by calling the startConnection() method.
             }
         })
+    }
 
+    fun disconnect() {
+        billingClient.endConnection()
     }
 
 //        fun querySkuDetails() {

@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.leinardi.android.speeddial.SpeedDialView
 import kotlinx.android.synthetic.main.fragment_user_activity.*
 import studio.codable.unpause.R
 import studio.codable.unpause.base.activity.BaseActivity
@@ -30,6 +31,7 @@ import studio.codable.unpause.utilities.manager.CsvManager
 import studio.codable.unpause.utilities.manager.DialogManager
 import studio.codable.unpause.utilities.manager.TimeManager
 import studio.codable.unpause.utils.adapters.userActivityRecyclerViewAdapter.SwipeActionCallback
+import timber.log.Timber
 import java.util.*
 
 class UserActivityFragment : BaseFragment(false) {
@@ -52,6 +54,7 @@ class UserActivityFragment : BaseFragment(false) {
         super.onViewCreated(view, savedInstanceState)
 
         user = userVm.user.value!!
+        Timber.i("IsPromoUser: ${user.isPromoUser}")
         initUI()
 
     }
@@ -191,6 +194,16 @@ class UserActivityFragment : BaseFragment(false) {
 
     private fun initSpeedDialView() {
         speed_dial_view?.inflate(R.menu.menu_speed_dial)
+
+        speed_dial_view?.mainFab?.setOnClickListener {
+            if (!user.isPromoUser) {
+                speed_dial_view.open()
+            } else {
+                //TODO: open subscription choices
+                speed_dial_view.close()
+                showMessage("You don't have access to the premium features! Please consider upgrading.")
+            }
+        }
 
         speed_dial_view?.setOnActionSelectedListener { speedDialActionItem ->
             when (speedDialActionItem.id) {
