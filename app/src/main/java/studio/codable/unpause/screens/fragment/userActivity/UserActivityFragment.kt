@@ -212,63 +212,73 @@ class UserActivityFragment : BaseFragment(false) {
             when (speedDialActionItem.id) {
 
                 R.id.open_csv_button -> {
-                    val fileUri = CsvManager.getCsvFileUri(
-                        requireContext(),
-                        user.getUserActivity(
-                            timeManager.arrivalTime,
-                            timeManager.exitTime
-                        ),
-                        getString(R.string.csv_file_name, user.firstName, user.lastName)
-                    )
-                    openCSV(fileUri)
-                    false
+                    handleOpenCSVTap()
                 }
 
                 R.id.send_as_email_button -> {
-
                     sendCSV()
                     false
                 }
 
                 R.id.add_custom_shift_button -> {
-                    if (user.shifts.last().exitTime == null) {
-                        showError(getString(R.string.custom_shift_adding_outside_of_working_time_warning))
-                        true
-                    } else {
-                        mDialogManager.openWorkingTimeDialog(
-                            timeManager.arrivalTime,
-                            timeManager.exitTime,
-                            true,
-                            mDialogManager,
-                            object : WorkingTimeWarningFragment.DialogListener {
-                                override fun onContinue(
-                                    arrivalTime: Date,
-                                    exitTime: Date
-                                ) {
-                                    mDialogManager.openDescriptionDialog(
-                                        getString(R.string.what_did_you_work_on), null, true, { description ->
-                                            val newShift =
-                                                Shift(
-                                                    arrivalTime,
-                                                    exitTime,
-                                                    description
-                                                )
-                                            userVm.addCustomShift(newShift)
-                                            //                                            updateRecyclerView()
-                                            showMessage(getString(R.string.shift_added))
-                                        },
-                                        {
-                                            //no action
-                                        })
-                                }
-                            })
-                        false
-                    }
+                    handleAddCustomShiftButtonTap()
                 }
                 else -> false
             }
         }
     }
+
+    private fun handleAddCustomShiftButtonTap(): Boolean {
+        return if (userHasExitTime()) {
+            showError(getString(R.string.custom_shift_adding_outside_of_working_time_warning))
+            true
+        } else {
+            mDialogManager.openWorkingTimeDialog(
+                timeManager.arrivalTime,
+                timeManager.exitTime,
+                true,
+                mDialogManager,
+                object : WorkingTimeWarningFragment.DialogListener {
+                    override fun onContinue(
+                        arrivalTime: Date,
+                        exitTime: Date
+                    ) {
+                        mDialogManager.openDescriptionDialog(
+                            getString(R.string.what_did_you_work_on), null, true, { description ->
+                                val newShift =
+                                    Shift(
+                                        arrivalTime,
+                                        exitTime,
+                                        description
+                                    )
+                                userVm.addCustomShift(newShift)
+                                //                                            updateRecyclerView()
+                                showMessage(getString(R.string.shift_added))
+                            },
+                            {
+                                //no action
+                            })
+                    }
+                })
+            false
+        }
+    }
+
+    private fun userHasExitTime() = user.shifts.last().exitTime == null
+
+    private fun handleOpenCSVTap(): Boolean {
+        val fileUri = CsvManager.getCsvFileUri(
+            requireContext(),
+            user.getUserActivity(
+                timeManager.arrivalTime,
+                timeManager.exitTime
+            ),
+            getString(R.string.csv_file_name, user.firstName, user.lastName)
+        )
+        openCSV(fileUri)
+        return false
+    }
+
 
     private fun initTimeManager() {
         val cal1 = Calendar.getInstance()
