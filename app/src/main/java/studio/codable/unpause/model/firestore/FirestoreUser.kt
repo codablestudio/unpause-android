@@ -2,6 +2,7 @@ package studio.codable.unpause.model.firestore
 
 import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.PropertyName
 import studio.codable.unpause.model.Shift
 import studio.codable.unpause.model.User
 import java.util.HashMap
@@ -14,7 +15,11 @@ data class FirestoreUser(
     var lastName: String? = "",
     var shifts: List<FirestoreShift>? = null,
     var companyReference: DocumentReference? = null,
-    var isPromoUser: Boolean? = null
+    /*custom getter/setter names Firebase expects when deserializing object, but Kotlin
+       generates other ones*/
+    @get:JvmName("getIsPromoUser")
+    @set:JvmName("setIsPromoUser")
+    var isPromoUser: Boolean = false
 ) {
     companion object {
         const val FIRST_NAME = "firstName"

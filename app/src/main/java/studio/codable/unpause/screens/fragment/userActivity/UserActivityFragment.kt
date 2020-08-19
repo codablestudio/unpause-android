@@ -195,15 +195,18 @@ class UserActivityFragment : BaseFragment(false) {
     private fun initSpeedDialView() {
         speed_dial_view?.inflate(R.menu.menu_speed_dial)
 
-        speed_dial_view?.mainFab?.setOnClickListener {
-            if (!user.isPromoUser) {
-                speed_dial_view.open()
-            } else {
-                //TODO: open subscription choices
-                speed_dial_view.close()
-                showMessage("You don't have access to the premium features! Please consider upgrading.")
+        speed_dial_view?.setOnChangeListener(object : SpeedDialView.OnChangeListener {
+            override fun onMainActionSelected(): Boolean {
+                return false // True to keep the Speed Dial open
             }
-        }
+
+            override fun onToggleChanged(isOpen: Boolean) {
+                if (isOpen && !user.isPromoUser) {
+                    speed_dial_view.close(false)
+                    showMessage("You don't have access to the premium features! Please consider upgrading.")
+                }
+            }
+        })
 
         speed_dial_view?.setOnActionSelectedListener { speedDialActionItem ->
             when (speedDialActionItem.id) {
