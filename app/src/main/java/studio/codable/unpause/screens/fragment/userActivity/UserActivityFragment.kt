@@ -54,7 +54,6 @@ class UserActivityFragment : BaseFragment(false) {
         super.onViewCreated(view, savedInstanceState)
 
         user = userVm.user.value!!
-        Timber.i("IsPromoUser: ${user.isPromoUser}")
         initUI()
 
     }
@@ -195,28 +194,40 @@ class UserActivityFragment : BaseFragment(false) {
     private fun initSpeedDialView() {
         speed_dial_view?.inflate(R.menu.menu_speed_dial)
 
-        speed_dial_view?.setOnChangeListener(object : SpeedDialView.OnChangeListener {
-            override fun onMainActionSelected(): Boolean {
-                return false // True to keep the Speed Dial open
-            }
-
-            override fun onToggleChanged(isOpen: Boolean) {
-                if (isOpen && !user.isPromoUser) {
-                    speed_dial_view.close(false)
-                    showMessage("You don't have access to the premium features! Please consider upgrading.")
-                }
-            }
-        })
+//        speed_dial_view?.setOnChangeListener(object : SpeedDialView.OnChangeListener {
+//            override fun onMainActionSelected(): Boolean {
+//                return false // True to keep the Speed Dial open
+//            }
+//
+//            override fun onToggleChanged(isOpen: Boolean) {
+//                if (isOpen && !user.isPromoUser) {
+//                    speed_dial_view.close(false)
+//                    svm.navigate(UserActivityFragmentDirections.actionUserActivityFragmentToUpgradeToPremiumFragment())
+////                    showMessage("You don't have access to the premium features! Please consider upgrading.")
+//                }
+//            }
+//        })
 
         speed_dial_view?.setOnActionSelectedListener { speedDialActionItem ->
             when (speedDialActionItem.id) {
 
                 R.id.open_csv_button -> {
-                    handleOpenCSVTap()
+                    if (userIsPremium()) {
+                        handleOpenCSVTap()
+                    } else {
+                        //TODO: dialog manager should handle this
+                        svm.navigate(UserActivityFragmentDirections.actionUserActivityFragmentToUpgradeToPremiumFragment())
+                        false
+                    }
                 }
 
                 R.id.send_as_email_button -> {
-                    sendCSV()
+                    if (userIsPremium()) {
+                        sendCSV()
+                    } else {
+                        //TODO: dialog manager should handle this
+                        svm.navigate(UserActivityFragmentDirections.actionUserActivityFragmentToUpgradeToPremiumFragment())
+                    }
                     false
                 }
 
@@ -228,6 +239,10 @@ class UserActivityFragment : BaseFragment(false) {
         }
     }
 
+    private fun userIsPremium() : Boolean {
+        //TODO: add logic for premium subscription
+        return !user.isPromoUser
+    }
     private fun handleAddCustomShiftButtonTap(): Boolean {
         return if (userHasExitTime()) {
             showError(getString(R.string.custom_shift_adding_outside_of_working_time_warning))
