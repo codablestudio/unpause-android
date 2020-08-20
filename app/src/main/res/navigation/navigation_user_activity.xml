@@ -9,14 +9,5 @@
         android:id="@+id/userActivityFragment"
         android:name="studio.codable.unpause.screens.fragment.userActivity.UserActivityFragment"
         android:label="fragment_user_activity"
-        tools:layout="@layout/fragment_user_activity" >
-        <action
-            android:id="@+id/action_userActivityFragment_to_upgradeToPremiumFragment"
-            app:destination="@id/upgradeToPremiumFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/upgradeToPremiumFragment"
-        android:name="studio.codable.unpause.screens.fragment.upgradeToPremium.UpgradeToPremiumFragment"
-        android:label="fragment_upgrade_to_premium"
-        tools:layout="@layout/fragment_upgrade_to_premium" />
+        tools:layout="@layout/fragment_user_activity" />
 </navigation>

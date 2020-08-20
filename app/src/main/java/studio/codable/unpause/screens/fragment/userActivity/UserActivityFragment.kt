@@ -24,12 +24,9 @@ import studio.codable.unpause.utilities.Constants.Chart.MAX_ALLOWED_CHART_TIME_R
 import studio.codable.unpause.utilities.adapter.userActivityRecyclerViewAdapter.UserActivityRecyclerViewAdapter
 import studio.codable.unpause.utilities.chart.ShiftMarkerView
 import studio.codable.unpause.utilities.helperFunctions.*
-import studio.codable.unpause.utilities.manager.ChartManager
+import studio.codable.unpause.utilities.manager.*
 import studio.codable.unpause.utilities.manager.ChartManager.Companion.getLineChartData
 import studio.codable.unpause.utilities.manager.ChartManager.Companion.getLineChartDataset
-import studio.codable.unpause.utilities.manager.CsvManager
-import studio.codable.unpause.utilities.manager.DialogManager
-import studio.codable.unpause.utilities.manager.TimeManager
 import studio.codable.unpause.utils.adapters.userActivityRecyclerViewAdapter.SwipeActionCallback
 import timber.log.Timber
 import java.util.*
@@ -41,6 +38,7 @@ class UserActivityFragment : BaseFragment(false) {
     private val mDialogManager: DialogManager by lazy { DialogManager(activity as BaseActivity) }
     private lateinit var timeManager: TimeManager
     private lateinit var user : User
+    private val subscriptionManager by lazy { SubscriptionManager(requireContext()) }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -56,6 +54,7 @@ class UserActivityFragment : BaseFragment(false) {
         user = userVm.user.value!!
         initUI()
 
+        subscriptionManager.connect()
     }
 
     private fun initUI() {
@@ -216,7 +215,10 @@ class UserActivityFragment : BaseFragment(false) {
                         handleOpenCSVTap()
                     } else {
                         //TODO: dialog manager should handle this
-                        svm.navigate(UserActivityFragmentDirections.actionUserActivityFragmentToUpgradeToPremiumFragment())
+//                        svm.navigate(UserActivityFragmentDirections.actionUserActivityFragmentToUpgradeToPremiumFragment())
+                        mDialogManager.openUpgradeToPremiumDialog({
+                            subscriptionManager.querySkuDetails()
+                        },{})
                         false
                     }
                 }
@@ -226,7 +228,8 @@ class UserActivityFragment : BaseFragment(false) {
                         sendCSV()
                     } else {
                         //TODO: dialog manager should handle this
-                        svm.navigate(UserActivityFragmentDirections.actionUserActivityFragmentToUpgradeToPremiumFragment())
+//                        svm.navigate(UserActivityFragmentDirections.actionUserActivityFragmentToUpgradeToPremiumFragment())
+                        mDialogManager.openUpgradeToPremiumDialog({},{})
                     }
                     false
                 }
@@ -399,4 +402,8 @@ class UserActivityFragment : BaseFragment(false) {
             date.date().toPattern("dd.MM."))
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        subscriptionManager.disconnect()
+    }
 }

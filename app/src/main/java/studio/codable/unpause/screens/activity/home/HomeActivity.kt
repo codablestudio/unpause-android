@@ -27,7 +27,6 @@ class HomeActivity : BaseActivity() {
     private val userVm: UserViewModel by viewModels { vmFactory }
     override val navController: NavController by lazy { findNavController(R.id.nav_host_home_activity) }
     private val svm: SharedViewModel by viewModels { vmFactory }
-    private val subscriptionManager by lazy { SubscriptionManager(this) }
 
     companion object {
         private const val USER_ID = "userId"
@@ -49,7 +48,6 @@ class HomeActivity : BaseActivity() {
         svm // instantiated to become available to all BaseFragment instances
         userVm
         NotificationManagerUnpause.createNotificationChannel(this, LOCATION_NOTIFICATION_CHANNEL_ID)
-        subscriptionManager.connect()
 
     }
 
@@ -69,10 +67,5 @@ class HomeActivity : BaseActivity() {
         })
 
         currentNavController = controller
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        subscriptionManager.disconnect()
     }
 }

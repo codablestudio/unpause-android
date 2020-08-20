@@ -55,7 +55,7 @@
     <string name="you_arived_at">You arived at:</string>
     <string name="continue_text">Continue</string>
     <string name="you_are_leaving_at">You are leaving at:</string>
-    <string name="send_email">Send email…</string>
+    <string name="send_email">Send email</string>
     <string name="csv_file_name">%s_%s</string>
     <string name="csv_file_name_2nd_part">%s_isplata_</string>
     <string name="arrivedAt">Arrival time</string>
