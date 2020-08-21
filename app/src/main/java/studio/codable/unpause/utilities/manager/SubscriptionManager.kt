@@ -74,8 +74,8 @@ class SubscriptionManager(context: Context) : SkuDetailsResponseListener {
         skuList.add(SUBSCRIPTION_1)
         skuList.add(SUBSCRIPTION_2)
         val params = SkuDetailsParams.newBuilder()
-        params.setSkusList(skuList).setType(BillingClient.SkuType.INAPP)
-        val skuDetailsResult = GlobalScope.launch {
+        params.setSkusList(skuList).setType(BillingClient.SkuType.SUBS)
+        GlobalScope.launch {
             billingClient.querySkuDetailsAsync(params.build(), this@SubscriptionManager)
         }
     }
