@@ -38,7 +38,7 @@ class UserActivityFragment : BaseFragment(false) {
     private val mDialogManager: DialogManager by lazy { DialogManager(activity as BaseActivity) }
     private lateinit var timeManager: TimeManager
     private lateinit var user : User
-    private val subscriptionManager by lazy { SubscriptionManager(requireContext()) }
+    private val subscriptionManager by lazy { SubscriptionManager.getInstance(requireContext()) }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,13 +48,17 @@ class UserActivityFragment : BaseFragment(false) {
         return inflater.inflate(R.layout.fragment_user_activity, container, false)
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        subscriptionManager.connect()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         user = userVm.user.value!!
         initUI()
-
-        subscriptionManager.connect()
     }
 
     private fun initUI() {
