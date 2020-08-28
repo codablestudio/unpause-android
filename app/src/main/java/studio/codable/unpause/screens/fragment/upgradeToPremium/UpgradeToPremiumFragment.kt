@@ -49,6 +49,4 @@ class UpgradeToPremiumFragment : DialogFragment() {
     fun setOnBuySubscription2Listener(onBuySubscriptionListener : LambdaNoArgumentsUnit) {
         dialogListenerOnBuySubscription2 = onBuySubscriptionListener
     }
-
-    //TODO: change to fullscreen fragment dialog, add logic to the buttons
 }

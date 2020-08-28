@@ -6,10 +6,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.android.billingclient.api.*
 import com.android.billingclient.api.BillingClient.BillingResponseCode
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import studio.codable.unpause.utilities.Constants
 import studio.codable.unpause.utilities.Constants.Subscriptions.SUBSCRIPTION_1
 import studio.codable.unpause.utilities.Constants.Subscriptions.SUBSCRIPTION_2
@@ -23,7 +20,7 @@ import timber.log.Timber
  * After initialization, method [connect] must be called to handle connecting to Google Play Billing
  * API. The method [disconnect] is used to close the connection.
  */
-class SubscriptionManager private constructor(context: Context) : SkuDetailsResponseListener {
+class SubscriptionManager private constructor(private val context: Context) : SkuDetailsResponseListener {
 
     companion object {
         @Volatile
@@ -36,29 +33,6 @@ class SubscriptionManager private constructor(context: Context) : SkuDetailsResp
                         .also { INSTANCE = it }
             }
     }
-
-    /**
-    * Receives the result from [querySkuDetails].
-    *
-    * Store the SkuDetails and post them in the [skusWithSkuDetails]. This allows other parts
-    * of the app to use the [SkuDetails] to show SKU information and make purchases.
-    */
-    override fun onSkuDetailsResponse(
-        billingResult: BillingResult,
-        skuDetailsList: MutableList<SkuDetails>?) {
-        val responseCode = billingResult.responseCode
-        val debugMessage = billingResult.debugMessage
-        when (responseCode) {
-            BillingResponseCode.OK -> {
-                Timber.i( "SkuDetails query responded with success. List: $skuDetailsList")
-            }
-            else -> {
-                Timber.w( "SkuDetails query failed. Response code: $responseCode, Message: $debugMessage")
-            }
-        }
-    }
-
-    private lateinit var subscriptions: List<Purchase>
 
     private val purchaseUpdateListener =
         PurchasesUpdatedListener { billingResult, purchases ->
@@ -74,6 +48,32 @@ class SubscriptionManager private constructor(context: Context) : SkuDetailsResp
 
         }
 
+
+    /**
+    * Receives the result from [querySkuDetails].
+    *
+    * Store the SkuDetails and post them in the [availableSubscriptions]. This allows other parts
+    * of the app to use the [SkuDetails] to show SKU information and make purchases.
+    */
+    override fun onSkuDetailsResponse(
+        billingResult: BillingResult,
+        skuDetailsList: MutableList<SkuDetails>?) {
+        val responseCode = billingResult.responseCode
+        val debugMessage = billingResult.debugMessage
+        when (responseCode) {
+            BillingResponseCode.OK -> {
+                Timber.i("SkuDetails query responded with success. List: $skuDetailsList")
+                availableSubscriptions = skuDetailsList ?: arrayListOf()
+
+            }
+            else -> {
+                Timber.w("SkuDetails query failed. Response code: $responseCode, Message: $debugMessage")
+            }
+        }
+    }
+
+    private lateinit var subscriptions: List<Purchase>
+    private lateinit var availableSubscriptions: List<SkuDetails>
     private var billingClient = BillingClient.newBuilder(context)
         .setListener(purchaseUpdateListener)
         .enablePendingPurchases() // Not used for subscriptions.
@@ -83,7 +83,8 @@ class SubscriptionManager private constructor(context: Context) : SkuDetailsResp
         billingClient.startConnection(object : BillingClientStateListener {
             override fun onBillingSetupFinished(billingResult: BillingResult) {
                 if (billingResult.responseCode == BillingResponseCode.OK) {
-                    subscriptions = billingClient.queryPurchases(BillingClient.SkuType.SUBS).purchasesList!!.toMutableList()
+                    Timber.i("Connected to Google Play Billing API.")
+                    getActiveSubscriptions()
                     querySkuDetails()
                 }
             }
@@ -98,9 +99,10 @@ class SubscriptionManager private constructor(context: Context) : SkuDetailsResp
 
     fun disconnect() {
         billingClient.endConnection()
+        Timber.i("Disconnected from Google Play Billing API.")
     }
 
-    fun querySkuDetails() {
+    private fun querySkuDetails() {
         val params = SkuDetailsParams.newBuilder()
             .setType(BillingClient.SkuType.SUBS)
             .setSkusList(listOf(
@@ -118,23 +120,40 @@ class SubscriptionManager private constructor(context: Context) : SkuDetailsResp
             if (it.purchaseState == Purchase.PurchaseState.PURCHASED) {
                 if (!it.isAcknowledged) {
                     val acknowledgePurchaseParams = AcknowledgePurchaseParams.newBuilder()
-                        .setPurchaseToken(purchase.purchaseToken)
-//                    val ackPurchaseResult = withContext(Dispatchers.IO) {
-//                        billingClient.acknowledgePurchase(acknowledgePurchaseParams.build())
-//                    }
+                        .setPurchaseToken(purchase.purchaseToken).build()
+                    CoroutineScope(Dispatchers.IO).launch {
+                        billingClient.acknowledgePurchase(acknowledgePurchaseParams)
+                    }
                 }
-
+                getActiveSubscriptions()
             }
         }
     }
 
-    fun launchSubscriptionFlow(activity: Activity, params: BillingFlowParams) {
-        billingClient.launchBillingFlow(activity, params)
+    private fun getActiveSubscriptions() {
+        subscriptions =
+            billingClient.queryPurchases(BillingClient.SkuType.SUBS).purchasesList!!.toMutableList()
+        Timber.i("Currently active subscriptions: $subscriptions")
+    }
+
+    fun launchSubscriptionFlowMonthly(activity: Activity) {
+        billingClient.launchBillingFlow(activity, BillingFlowParams.newBuilder()
+            .setSkuDetails(availableSubscriptions[0])
+            .build()
+        )
+    }
+
+    fun launchSubscriptionFlowYearly(activity: Activity) {
+        billingClient.launchBillingFlow(activity, BillingFlowParams.newBuilder()
+            .setSkuDetails(availableSubscriptions[1])
+            .build()
+        )
     }
 
     fun isUserSubscribed() : Boolean {
         return subscriptions.isNotEmpty()
     }
+
 
 
 }

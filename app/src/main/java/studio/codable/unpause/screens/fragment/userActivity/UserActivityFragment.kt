@@ -218,11 +218,7 @@ class UserActivityFragment : BaseFragment(false) {
                     if (userIsPremium()) {
                         handleOpenCSVTap()
                     } else {
-                        //TODO: dialog manager should handle this
-//                        svm.navigate(UserActivityFragmentDirections.actionUserActivityFragmentToUpgradeToPremiumFragment())
-                        mDialogManager.openUpgradeToPremiumDialog({
-                            subscriptionManager.querySkuDetails()
-                        },{})
+                        launchPremiumScreen()
                         false
                     }
                 }
@@ -231,9 +227,7 @@ class UserActivityFragment : BaseFragment(false) {
                     if (userIsPremium()) {
                         sendCSV()
                     } else {
-                        //TODO: dialog manager should handle this
-//                        svm.navigate(UserActivityFragmentDirections.actionUserActivityFragmentToUpgradeToPremiumFragment())
-                        mDialogManager.openUpgradeToPremiumDialog({},{})
+                        launchPremiumScreen()
                     }
                     false
                 }
@@ -246,10 +240,18 @@ class UserActivityFragment : BaseFragment(false) {
         }
     }
 
-    private fun userIsPremium() : Boolean {
-        //TODO: add logic for premium subscription
-        return !user.isPromoUser
+    private fun launchPremiumScreen() {
+        mDialogManager.openUpgradeToPremiumDialog({
+            subscriptionManager.launchSubscriptionFlowMonthly(requireActivity())
+        }, {
+            subscriptionManager.launchSubscriptionFlowYearly(requireActivity())
+        })
     }
+
+    private fun userIsPremium() : Boolean {
+        return user.isPromoUser || subscriptionManager.isUserSubscribed()
+    }
+
     private fun handleAddCustomShiftButtonTap(): Boolean {
         return if (userHasExitTime()) {
             showError(getString(R.string.custom_shift_adding_outside_of_working_time_warning))
@@ -406,8 +408,8 @@ class UserActivityFragment : BaseFragment(false) {
             date.date().toPattern("dd.MM."))
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
+    override fun onDestroy() {
+        super.onDestroy()
         subscriptionManager.disconnect()
     }
 }
