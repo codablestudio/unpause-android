@@ -65,8 +65,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/add_location_button" />
 
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/location_based_notifications"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="text_location_based_notifications,location_switch" />
+
     <TextView
-        android:id="@+id/textView6"
+        android:id="@+id/text_location_based_notifications"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"

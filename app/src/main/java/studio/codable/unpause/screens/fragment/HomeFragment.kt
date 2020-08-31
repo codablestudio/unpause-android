@@ -5,14 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.fragment_home.*
 import studio.codable.unpause.R
 import studio.codable.unpause.base.activity.BaseActivity
-import studio.codable.unpause.base.fragment.BaseFragment
 import studio.codable.unpause.model.Shift
-import studio.codable.unpause.screens.UserViewModel
+import studio.codable.unpause.screens.fragment.premium.PremiumFeaturesFragment
 import studio.codable.unpause.utilities.helperFunctions.getCurrentWeek
 import studio.codable.unpause.utilities.manager.ChartManager.Companion.getBarChartDataset
 import studio.codable.unpause.utilities.manager.ChartManager.Companion.initBarChart
@@ -24,9 +22,7 @@ import java.util.*
 import javax.inject.Inject
 
 
-class HomeFragment : BaseFragment(false) {
-
-    private val userVm: UserViewModel by activityViewModels()
+class HomeFragment : PremiumFeaturesFragment() {
 
     @Inject
     lateinit var geofenceManager: GeofencingManager
@@ -97,6 +93,10 @@ class HomeFragment : BaseFragment(false) {
                 permissionManager.requestLocationPermission(this)
             }
         })
+
+        if (userIsPremium()) {
+            geofenceManager.disableAllGeofences()
+        }
     }
 
     private fun initGraph() {

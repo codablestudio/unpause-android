@@ -7,38 +7,34 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentActivity
-import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.leinardi.android.speeddial.SpeedDialView
 import kotlinx.android.synthetic.main.fragment_user_activity.*
 import studio.codable.unpause.R
 import studio.codable.unpause.base.activity.BaseActivity
-import studio.codable.unpause.base.fragment.BaseFragment
 import studio.codable.unpause.model.Shift
 import studio.codable.unpause.model.User
-import studio.codable.unpause.screens.UserViewModel
+import studio.codable.unpause.screens.fragment.premium.PremiumFeaturesFragment
 import studio.codable.unpause.screens.fragment.workingTimeWarning.WorkingTimeWarningFragment
 import studio.codable.unpause.utilities.Constants
 import studio.codable.unpause.utilities.Constants.Chart.MAX_ALLOWED_CHART_TIME_RANGE
 import studio.codable.unpause.utilities.adapter.userActivityRecyclerViewAdapter.UserActivityRecyclerViewAdapter
 import studio.codable.unpause.utilities.chart.ShiftMarkerView
 import studio.codable.unpause.utilities.helperFunctions.*
-import studio.codable.unpause.utilities.manager.*
+import studio.codable.unpause.utilities.manager.ChartManager
 import studio.codable.unpause.utilities.manager.ChartManager.Companion.getLineChartData
 import studio.codable.unpause.utilities.manager.ChartManager.Companion.getLineChartDataset
+import studio.codable.unpause.utilities.manager.CsvManager
+import studio.codable.unpause.utilities.manager.DialogManager
+import studio.codable.unpause.utilities.manager.TimeManager
 import studio.codable.unpause.utils.adapters.userActivityRecyclerViewAdapter.SwipeActionCallback
-import timber.log.Timber
 import java.util.*
 
-class UserActivityFragment : BaseFragment(false) {
-
-    private val userVm: UserViewModel by activityViewModels()
+class UserActivityFragment : PremiumFeaturesFragment() {
 
     private val mDialogManager: DialogManager by lazy { DialogManager(activity as BaseActivity) }
     private lateinit var timeManager: TimeManager
     private lateinit var user : User
-    private val subscriptionManager by lazy { SubscriptionManager.getInstance(requireContext()) }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,12 +42,6 @@ class UserActivityFragment : BaseFragment(false) {
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_user_activity, container, false)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        subscriptionManager.connect()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -248,10 +238,6 @@ class UserActivityFragment : BaseFragment(false) {
         })
     }
 
-    private fun userIsPremium() : Boolean {
-        return user.isPromoUser || subscriptionManager.isUserSubscribed()
-    }
-
     private fun handleAddCustomShiftButtonTap(): Boolean {
         return if (userHasExitTime()) {
             showError(getString(R.string.custom_shift_adding_outside_of_working_time_warning))
@@ -406,10 +392,5 @@ class UserActivityFragment : BaseFragment(false) {
         return getString(R.string.user_activity_filter_date_format,
             Constants.Chart.dayLabels[date.dayOfWeek()!!],
             date.date().toPattern("dd.MM."))
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        subscriptionManager.disconnect()
     }
 }

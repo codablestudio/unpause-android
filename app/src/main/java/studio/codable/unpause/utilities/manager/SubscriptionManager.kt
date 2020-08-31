@@ -2,12 +2,11 @@ package studio.codable.unpause.utilities.manager
 
 import android.app.Activity
 import android.content.Context
-import android.util.Log
-import androidx.lifecycle.MutableLiveData
 import com.android.billingclient.api.*
 import com.android.billingclient.api.BillingClient.BillingResponseCode
-import kotlinx.coroutines.*
-import studio.codable.unpause.utilities.Constants
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import studio.codable.unpause.utilities.Constants.Subscriptions.SUBSCRIPTION_1
 import studio.codable.unpause.utilities.Constants.Subscriptions.SUBSCRIPTION_2
 import timber.log.Timber
@@ -72,7 +71,7 @@ class SubscriptionManager private constructor(private val context: Context) : Sk
         }
     }
 
-    private lateinit var subscriptions: List<Purchase>
+    private var subscriptions: List<Purchase> = arrayListOf()
     private lateinit var availableSubscriptions: List<SkuDetails>
     private var billingClient = BillingClient.newBuilder(context)
         .setListener(purchaseUpdateListener)

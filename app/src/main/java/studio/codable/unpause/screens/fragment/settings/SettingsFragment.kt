@@ -5,22 +5,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.activityViewModels
 import kotlinx.android.synthetic.main.fragment_settings.*
 import studio.codable.unpause.R
 import studio.codable.unpause.base.activity.BaseActivity
-import studio.codable.unpause.base.fragment.BaseFragment
-import studio.codable.unpause.screens.UserViewModel
 import studio.codable.unpause.screens.activity.login.LoginActivity
 import studio.codable.unpause.screens.activity.map.MapActivity
+import studio.codable.unpause.screens.fragment.premium.PremiumFeaturesFragment
 import studio.codable.unpause.utilities.manager.DialogManager
 import studio.codable.unpause.utilities.manager.GeofencingManager
 import studio.codable.unpause.utilities.manager.SessionManager
 
-class SettingsFragment : BaseFragment(false) {
+class SettingsFragment : PremiumFeaturesFragment() {
 
-
-    private val userVm: UserViewModel by activityViewModels()
     private val sessionManager: SessionManager by lazy { SessionManager(requireContext()) }
     private val dialogManager: DialogManager by lazy { DialogManager(activity as BaseActivity) }
 
@@ -69,8 +65,10 @@ class SettingsFragment : BaseFragment(false) {
                 }
             }
 
-            location_switch.isChecked = sessionManager.locationServiceStatus
 
+            //don't enable geolocation for non-premium users
+            location_based_notifications.visibility = if (userIsPremium()) View.VISIBLE else View.GONE
+            location_switch.isChecked = sessionManager.locationServiceStatus
             location_switch.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
                     enableLocationService()
