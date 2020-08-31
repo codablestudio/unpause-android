@@ -94,7 +94,7 @@ class HomeFragment : PremiumFeaturesFragment() {
             }
         })
 
-        if (userIsPremium()) {
+        if (!userIsPremium) {
             geofenceManager.disableAllGeofences()
         }
     }

@@ -131,7 +131,8 @@ class SubscriptionManager private constructor(private val context: Context) : Sk
 
     private fun getActiveSubscriptions() {
         subscriptions =
-            billingClient.queryPurchases(BillingClient.SkuType.SUBS).purchasesList!!.toMutableList()
+            billingClient.queryPurchases(BillingClient.SkuType.SUBS).purchasesList?.toMutableList()
+                ?: arrayListOf()
         Timber.i("Currently active subscriptions: $subscriptions")
     }
 

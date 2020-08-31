@@ -205,7 +205,7 @@ class UserActivityFragment : PremiumFeaturesFragment() {
             when (speedDialActionItem.id) {
 
                 R.id.open_csv_button -> {
-                    if (userIsPremium()) {
+                    if (userIsPremium) {
                         handleOpenCSVTap()
                     } else {
                         launchPremiumScreen()
@@ -214,7 +214,7 @@ class UserActivityFragment : PremiumFeaturesFragment() {
                 }
 
                 R.id.send_as_email_button -> {
-                    if (userIsPremium()) {
+                    if (userIsPremium) {
                         sendCSV()
                     } else {
                         launchPremiumScreen()

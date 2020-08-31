@@ -10,8 +10,7 @@ open class PremiumFeaturesFragment : BaseFragment(false) {
     protected val userVm: UserViewModel by activityViewModels()
     protected val subscriptionManager by lazy { SubscriptionManager.getInstance(requireContext()) }
 
-    fun userIsPremium() : Boolean {
-        val userIsPromo = userVm.user.value?.isPromoUser ?: false
-        return userIsPromo || subscriptionManager.isUserSubscribed()
-    }
+    protected var userIsPremium: Boolean = false
+        get() = (userVm.user.value?.isPromoUser ?: false) || subscriptionManager.isUserSubscribed()
+        private set
 }

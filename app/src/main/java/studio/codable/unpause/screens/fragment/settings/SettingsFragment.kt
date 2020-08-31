@@ -67,7 +67,7 @@ class SettingsFragment : PremiumFeaturesFragment() {
 
 
             //don't enable geolocation for non-premium users
-            location_based_notifications.visibility = if (userIsPremium()) View.VISIBLE else View.GONE
+            location_based_notifications.visibility = if (userIsPremium) View.VISIBLE else View.GONE
             location_switch.isChecked = sessionManager.locationServiceStatus
             location_switch.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
