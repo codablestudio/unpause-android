@@ -55,7 +55,7 @@
     <string name="you_arived_at">You arived at:</string>
     <string name="continue_text">Continue</string>
     <string name="you_are_leaving_at">You are leaving at:</string>
-    <string name="send_email">Send email…</string>
+    <string name="send_email">Send email</string>
     <string name="csv_file_name">%s_%s</string>
     <string name="csv_file_name_2nd_part">%s_isplata_</string>
     <string name="arrivedAt">Arrival time</string>
@@ -116,4 +116,15 @@
     <string name="edit_location_name">Edit location name</string>
     <string name="enter_location_name">Enter location name</string>
     <string name="add_company">Add company</string>
+    <string name="unlock_them_and_make_your_professional_career_moments_easier_to_manage_and_track">Unlock them and make your professional career moments easier to manage and track.</string>
+    <string name="premium_features">Premium Features</string>
+    <string name="notifications">Notifications</string>
+    <string name="location_will_be_triggered_every_time_you_arrive_or_leave_your_job_s_area_you_can_check_in_through_notification_service">Location will be triggered every time you arrive or leave your job‘s area. You can check in through notification service.</string>
+    <string name="csv_format_export">CSV format export</string>
+    <string name="let_s_you_create_csv_file_and_export_it_from_app_your_friends_and_team_members_can_get_your_shifts_and_open_it_like_sheet">Let‘s you create CSV file and export it from app. Your friends and team members can get your shifts and open it like sheet.</string>
+    <string name="send_your_shifts_as_sheet_document_to_your_boss_or_your_team_members_everything_is_set_up_and_you_just_need_one_click">Send your shifts as sheet document to your boss or your team members. Everything is set up and you just need one click.</string>
+    <string name="one_month_subscription">One month subscription</string>
+    <string name="buy_for_0_99">Buy for $0.99</string>
+    <string name="one_year_subscription">One year subscription</string>
+    <string name="buy_for_6_99">Buy for $6.99</string>
 </resources>

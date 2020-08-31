@@ -7,16 +7,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentActivity
-import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_user_activity.*
 import studio.codable.unpause.R
 import studio.codable.unpause.base.activity.BaseActivity
-import studio.codable.unpause.base.fragment.BaseFragment
 import studio.codable.unpause.model.Shift
 import studio.codable.unpause.model.User
-import studio.codable.unpause.screens.UserViewModel
+import studio.codable.unpause.screens.fragment.premium.PremiumFeaturesFragment
 import studio.codable.unpause.screens.fragment.workingTimeWarning.WorkingTimeWarningFragment
 import studio.codable.unpause.utilities.Constants
 import studio.codable.unpause.utilities.Constants.Chart.MAX_ALLOWED_CHART_TIME_RANGE
@@ -32,9 +30,7 @@ import studio.codable.unpause.utilities.manager.TimeManager
 import studio.codable.unpause.utils.adapters.userActivityRecyclerViewAdapter.SwipeActionCallback
 import java.util.*
 
-class UserActivityFragment : BaseFragment(false) {
-
-    private val userVm: UserViewModel by activityViewModels()
+class UserActivityFragment : PremiumFeaturesFragment() {
 
     private val mDialogManager: DialogManager by lazy { DialogManager(activity as BaseActivity) }
     private lateinit var timeManager: TimeManager
@@ -53,7 +49,6 @@ class UserActivityFragment : BaseFragment(false) {
 
         user = userVm.user.value!!
         initUI()
-
     }
 
     private fun initUI() {
@@ -192,67 +187,108 @@ class UserActivityFragment : BaseFragment(false) {
     private fun initSpeedDialView() {
         speed_dial_view?.inflate(R.menu.menu_speed_dial)
 
+//        speed_dial_view?.setOnChangeListener(object : SpeedDialView.OnChangeListener {
+//            override fun onMainActionSelected(): Boolean {
+//                return false // True to keep the Speed Dial open
+//            }
+//
+//            override fun onToggleChanged(isOpen: Boolean) {
+//                if (isOpen && !user.isPromoUser) {
+//                    speed_dial_view.close(false)
+//                    svm.navigate(UserActivityFragmentDirections.actionUserActivityFragmentToUpgradeToPremiumFragment())
+////                    showMessage("You don't have access to the premium features! Please consider upgrading.")
+//                }
+//            }
+//        })
+
         speed_dial_view?.setOnActionSelectedListener { speedDialActionItem ->
             when (speedDialActionItem.id) {
 
                 R.id.open_csv_button -> {
-                    val fileUri = CsvManager.getCsvFileUri(
-                        requireContext(),
-                        user.getUserActivity(
-                            timeManager.arrivalTime,
-                            timeManager.exitTime
-                        ),
-                        getString(R.string.csv_file_name, user.firstName, user.lastName)
-                    )
-                    openCSV(fileUri)
-                    false
+                    if (userIsPremium) {
+                        handleOpenCSVTap()
+                    } else {
+                        launchPremiumScreen()
+                        false
+                    }
                 }
 
                 R.id.send_as_email_button -> {
-
-                    sendCSV()
+                    if (userIsPremium) {
+                        sendCSV()
+                    } else {
+                        launchPremiumScreen()
+                    }
                     false
                 }
 
                 R.id.add_custom_shift_button -> {
-                    if (user.shifts.last().exitTime == null) {
-                        showError(getString(R.string.custom_shift_adding_outside_of_working_time_warning))
-                        true
-                    } else {
-                        mDialogManager.openWorkingTimeDialog(
-                            timeManager.arrivalTime,
-                            timeManager.exitTime,
-                            true,
-                            mDialogManager,
-                            object : WorkingTimeWarningFragment.DialogListener {
-                                override fun onContinue(
-                                    arrivalTime: Date,
-                                    exitTime: Date
-                                ) {
-                                    mDialogManager.openDescriptionDialog(
-                                        getString(R.string.what_did_you_work_on), null, true, { description ->
-                                            val newShift =
-                                                Shift(
-                                                    arrivalTime,
-                                                    exitTime,
-                                                    description
-                                                )
-                                            userVm.addCustomShift(newShift)
-                                            //                                            updateRecyclerView()
-                                            showMessage(getString(R.string.shift_added))
-                                        },
-                                        {
-                                            //no action
-                                        })
-                                }
-                            })
-                        false
-                    }
+                    handleAddCustomShiftButtonTap()
                 }
                 else -> false
             }
         }
     }
+
+    private fun launchPremiumScreen() {
+        mDialogManager.openUpgradeToPremiumDialog({
+            subscriptionManager.launchSubscriptionFlowMonthly(requireActivity())
+        }, {
+            subscriptionManager.launchSubscriptionFlowYearly(requireActivity())
+        })
+    }
+
+    private fun handleAddCustomShiftButtonTap(): Boolean {
+        return if (userHasExitTime()) {
+            showError(getString(R.string.custom_shift_adding_outside_of_working_time_warning))
+            true
+        } else {
+            mDialogManager.openWorkingTimeDialog(
+                timeManager.arrivalTime,
+                timeManager.exitTime,
+                true,
+                mDialogManager,
+                object : WorkingTimeWarningFragment.DialogListener {
+                    override fun onContinue(
+                        arrivalTime: Date,
+                        exitTime: Date
+                    ) {
+                        mDialogManager.openDescriptionDialog(
+                            getString(R.string.what_did_you_work_on), null, true, { description ->
+                                val newShift =
+                                    Shift(
+                                        arrivalTime,
+                                        exitTime,
+                                        description
+                                    )
+                                userVm.addCustomShift(newShift)
+                                //                                            updateRecyclerView()
+                                showMessage(getString(R.string.shift_added))
+                            },
+                            {
+                                //no action
+                            })
+                    }
+                })
+            false
+        }
+    }
+
+    private fun userHasExitTime() = user.shifts.last().exitTime == null
+
+    private fun handleOpenCSVTap(): Boolean {
+        val fileUri = CsvManager.getCsvFileUri(
+            requireContext(),
+            user.getUserActivity(
+                timeManager.arrivalTime,
+                timeManager.exitTime
+            ),
+            getString(R.string.csv_file_name, user.firstName, user.lastName)
+        )
+        openCSV(fileUri)
+        return false
+    }
+
 
     private fun initTimeManager() {
         val cal1 = Calendar.getInstance()
@@ -357,5 +393,4 @@ class UserActivityFragment : BaseFragment(false) {
             Constants.Chart.dayLabels[date.dayOfWeek()!!],
             date.date().toPattern("dd.MM."))
     }
-
 }

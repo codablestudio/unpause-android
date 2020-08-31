@@ -9,7 +9,8 @@ data class User(
     val lastName: String?,
     var shifts: ArrayList<Shift> = arrayListOf(),
     var company: Company? = null,
-    val companyId : String? = null
+    val companyId : String? = null,
+    val isPromoUser: Boolean = false
 ) {
 
     fun getUserActivity(from: Date, to: Date): ArrayList<Shift> {

@@ -17,6 +17,7 @@ import studio.codable.unpause.screens.UserViewModel
 import studio.codable.unpause.utilities.Constants.Notifications.LOCATION_NOTIFICATION_CHANNEL_ID
 import studio.codable.unpause.utilities.extensions.setupWithNavController
 import studio.codable.unpause.utilities.manager.NotificationManagerUnpause
+import studio.codable.unpause.utilities.manager.SubscriptionManager
 import javax.inject.Inject
 
 class HomeActivity : BaseActivity() {
@@ -26,6 +27,7 @@ class HomeActivity : BaseActivity() {
     private val userVm: UserViewModel by viewModels { vmFactory }
     override val navController: NavController by lazy { findNavController(R.id.nav_host_home_activity) }
     private val svm: SharedViewModel by viewModels { vmFactory }
+    private val subscriptionManager: SubscriptionManager by lazy { SubscriptionManager.getInstance(this)}
 
     companion object {
         private const val USER_ID = "userId"
@@ -47,6 +49,7 @@ class HomeActivity : BaseActivity() {
         svm // instantiated to become available to all BaseFragment instances
         userVm
         NotificationManagerUnpause.createNotificationChannel(this, LOCATION_NOTIFICATION_CHANNEL_ID)
+        subscriptionManager.connect()
 
     }
 
@@ -66,5 +69,10 @@ class HomeActivity : BaseActivity() {
         })
 
         currentNavController = controller
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        subscriptionManager.disconnect()
     }
 }

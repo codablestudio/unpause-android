@@ -9,4 +9,7 @@
 
     <color name="delete_red">#FF0000</color>
     <color name="edit_yellow">#FFEB3B</color>
+
+    <color name="separator">#D1D1D1</color>
+    <color name="premium_green">#1ab858</color>
 </resources>

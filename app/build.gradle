@@ -15,12 +15,13 @@ android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
 
+
     defaultConfig {
         applicationId "studio.codable.unpause"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 1
-        versionName "0.1"
+        versionCode 4
+        versionName "0.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -57,7 +58,20 @@ android {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
+    }
+
 }
+
+
+configurations {
+    all {
+        exclude module: 'commons-logging'
+    }}
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -128,4 +142,7 @@ dependencies {
 
     //Charts
     implementation "com.github.PhilJay:MPAndroidChart:$MPAndroidChart_version"
+
+    //Billing
+    implementation "com.android.billingclient:billing:$billing_version"
 }

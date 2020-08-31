@@ -16,6 +16,7 @@ import studio.codable.unpause.utilities.LambdaDoubleIntToUnit
 import studio.codable.unpause.utilities.LambdaNoArgumentsUnit
 import studio.codable.unpause.utilities.LambdaStringToUnit
 import studio.codable.unpause.screens.fragment.timePicker.TimePickerFragment
+import studio.codable.unpause.screens.fragment.upgradeToPremium.UpgradeToPremiumFragment
 import java.util.*
 
 class DialogManager(private val context: BaseActivity) {
@@ -24,6 +25,7 @@ class DialogManager(private val context: BaseActivity) {
     private val datePickerFragment: DatePickerFragment by lazy { DatePickerFragment() }
     private lateinit var timePickerFragment: TimePickerFragment
     private lateinit var confirmDialogFragment: ConfirmDialogFragment
+    private val upgradeToPremiumFragment: UpgradeToPremiumFragment by lazy { UpgradeToPremiumFragment() }
 
     fun openDescriptionDialog(
         @StringRes title: Int,
@@ -104,6 +106,12 @@ class DialogManager(private val context: BaseActivity) {
             addOnNegativeButtonClickListener { dismiss() }
             addOnCancelListener { dismiss() }
         }.show(context.supportFragmentManager, "Date range picker fragment")
+    }
+
+    fun openUpgradeToPremiumDialog(onBuySubscription1Listener : LambdaNoArgumentsUnit, onBuySubscription2Listener : LambdaNoArgumentsUnit) {
+        upgradeToPremiumFragment.setOnBuySubscription1Listener(onBuySubscription1Listener)
+        upgradeToPremiumFragment.setOnBuySubscription2Listener(onBuySubscription2Listener)
+        showFullscreenDialog(upgradeToPremiumFragment)
     }
 
     private fun showFullscreenDialog(dialogFragment: DialogFragment) {

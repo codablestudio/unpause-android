@@ -41,4 +41,9 @@ object Constants {
         const val USERS = "users"
         const val LOCATIONS = "locations"
     }
+
+    object Subscriptions {
+        const val SUBSCRIPTION_1 = "subscription_montly"
+        const val SUBSCRIPTION_2 = "subscription_yearly"
+    }
 }

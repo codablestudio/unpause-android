@@ -25,7 +25,7 @@ class SessionManager @Inject constructor(context: Context) {
         set(value) = preferences.edit().putBoolean(CHECK_IN_STATE, value).apply()
 
     var locationServiceStatus: Boolean
-        get() = preferences.getBoolean(LOCATION_SERVICE_STATUS, true)
+        get() = preferences.getBoolean(LOCATION_SERVICE_STATUS, false)
         set(value) {
             preferences.edit().putBoolean(LOCATION_SERVICE_STATUS, value).apply()
         }
