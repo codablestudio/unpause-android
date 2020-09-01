@@ -7,7 +7,7 @@ interface IShiftRepository {
 
     suspend fun getAll(): Result<List<Shift>>
     suspend fun getCurrent(): Result<Shift?>
-    suspend fun update(shift: Shift): Result<Unit>
+    suspend fun update(oldShift: Shift, newShift: Shift): Result<Unit>
     suspend fun addNew(newShift: Shift): Result<Unit>
     suspend fun delete(shift: Shift): Result<Unit>
 }

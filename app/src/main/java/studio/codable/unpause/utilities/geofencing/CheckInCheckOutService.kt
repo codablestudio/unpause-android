@@ -114,7 +114,7 @@ class CheckInCheckOutService : IntentService("CheckInCheckOutService"), Coroutin
                         .addExit(Date(), description ?: "description")
                     Timber.d("Shift updated")
                     launch {
-                        process(shiftRepository.update(updatedShift)) {
+                        process(shiftRepository.update(shift, updatedShift)) {
                             // for remoteInput notifications you have update
                             // the current notification to let the user know everything is ok
                             notificationManager.updateCheckOutNotification()

@@ -11,6 +11,7 @@ import studio.codable.unpause.model.Location
 import studio.codable.unpause.model.Shift
 import studio.codable.unpause.model.User
 import studio.codable.unpause.repository.*
+import studio.codable.unpause.utilities.Event
 import studio.codable.unpause.utilities.extensions.active
 import studio.codable.unpause.utilities.geofencing.GeofenceModel
 import studio.codable.unpause.utilities.manager.SessionManager
@@ -90,6 +91,7 @@ class UserViewModel @Inject constructor(
 
     private fun getUser() {
         viewModelScope.launch {
+            _loading.value = Event(true)
             process(userRepository.getUser()) {
                 _user.value = it
                 //if the user is connected to company get company, otherwise
@@ -144,7 +146,7 @@ class UserViewModel @Inject constructor(
             shifts.value.active().let { active ->
                 active?.let {
                     val updated = active.copy().addExit(exitTime, description)
-                    process(shiftRepository.update(updated)) {
+                    process(shiftRepository.update(active, updated)) {
                         getShifts()
                     }
                 }
@@ -160,9 +162,9 @@ class UserViewModel @Inject constructor(
         }
     }
 
-    fun editShift(shift: Shift) {
+    fun editShift(oldShift: Shift,newShift: Shift) {
         viewModelScope.launch {
-            process(shiftRepository.update(shift)) {
+            process(shiftRepository.update(oldShift, newShift)) {
                 getShifts()
             }
         }

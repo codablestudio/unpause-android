@@ -32,15 +32,14 @@ class FirebaseShiftRepository @Inject constructor(
     }
 
     @ExperimentalStdlibApi
-    override suspend fun update(shift: Shift): Result<Unit> {
+    override suspend fun update(oldShift: Shift, newShift: Shift): Result<Unit> {
         return callFirebase(usersCol.document(sessionManager.userId).get()) {
             val shifts =
                 FirebaseUserRepository.extractFirestoreUser(it).extractShifts() as ArrayList
             Timber.d("Old shifts: $shifts")
 
-            val s = shifts.find { s -> s.arrivalTime == shift.arrivalTime }
-            shifts.remove(s)
-            shifts.add(shift)
+            shifts.remove(oldShift)
+            shifts.add(newShift)
 
             Timber.d("Updated shifts: $shifts")
 

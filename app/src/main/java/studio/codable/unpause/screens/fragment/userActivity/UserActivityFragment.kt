@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_user_activity.*
@@ -35,6 +36,7 @@ class UserActivityFragment : PremiumFeaturesFragment() {
     private val mDialogManager: DialogManager by lazy { DialogManager(activity as BaseActivity) }
     private lateinit var timeManager: TimeManager
     private lateinit var user : User
+    private var safeToRefreshUI = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,7 +50,29 @@ class UserActivityFragment : PremiumFeaturesFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         user = userVm.user.value!!
+
         initUI()
+        initObservers()
+    }
+
+    private fun initObservers() {
+        userVm.loading.observe(viewLifecycleOwner, Observer {
+            it.getContentIfNotHandled()?.let { shouldShowLoading ->
+                if (shouldShowLoading)
+                    showLoading()
+                else
+                    hideLoading()
+            }
+        })
+
+        //update UI every time there are shift changes
+        userVm.user.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            updateUI()
+        })
+        userVm.shifts.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            safeToRefreshUI = true
+            updateUI()
+        })
     }
 
     private fun initUI() {
@@ -112,16 +136,6 @@ class UserActivityFragment : PremiumFeaturesFragment() {
             adapter = recyclerViewAdapter
         }
 
-        //update UI every time there are shift changes
-        userVm.user.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            updateUI()
-        })
-        userVm.shifts.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            updateUI()
-        })
-
-        updateRecyclerView()
-
         val itemTouchHelper =
             ItemTouchHelper(
                 SwipeActionCallback(
@@ -135,7 +149,7 @@ class UserActivityFragment : PremiumFeaturesFragment() {
     private fun initLineChart() {
 
         val lineData = getLineChartDataset(
-            filterActivity(),
+            arrayListOf(),
             timeManager.arrivalTime.date(),
             timeManager.exitTime.date(),
             requireContext()
@@ -319,8 +333,7 @@ class UserActivityFragment : PremiumFeaturesFragment() {
                         { description: String ->
 
                             val newShift = Shift(arrivalTime, exitTime, description)
-                            userVm.editShift(newShift)
-                            //                            updateRecyclerView()
+                            userVm.editShift(shift, newShift)
                             showMessage(getString(R.string.shift_edited))
 
                         },
@@ -378,5 +391,10 @@ class UserActivityFragment : PremiumFeaturesFragment() {
         return getString(R.string.user_activity_filter_date_format,
             Constants.Chart.dayLabels[date.dayOfWeek()!!],
             date.date().toPattern("dd.MM."))
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (safeToRefreshUI) updateUI()
     }
 }
