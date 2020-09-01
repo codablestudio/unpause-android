@@ -92,8 +92,8 @@ class SettingsFragment : PremiumFeaturesFragment() {
     }
 
     private fun getTitleForCompanyButton(): String = if (userVm.userHasConnectedCompany()) {
-        getString(R.string.connect_company)
+        getString(R.string.change_company)
     } else {
-        getString(R.string.add_company)
+        getString(R.string.connect_company)
     }
 }

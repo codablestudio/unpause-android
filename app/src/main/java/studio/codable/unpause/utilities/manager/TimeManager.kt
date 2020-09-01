@@ -11,13 +11,13 @@ class TimeManager(var arrivalTime: Date, var exitTime: Date) {
 
     companion object {
         /**
-         * Used for displaying work hours in h:m format.
+         * Used for displaying work hours in hh:mm format.
          */
         fun formatTime(time: Float): String {
             val hours = time.toInt()
             val minutes = ((time - hours) * 60).toInt()
 
-            return String.format("%d:%d", hours, minutes)
+            return String.format("%02d:%02d", hours, minutes)
         }
 
         /**

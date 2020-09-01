@@ -121,7 +121,9 @@ class SubscriptionManager private constructor(private val context: Context) : Sk
                     val acknowledgePurchaseParams = AcknowledgePurchaseParams.newBuilder()
                         .setPurchaseToken(purchase.purchaseToken).build()
                     CoroutineScope(Dispatchers.IO).launch {
-                        billingClient.acknowledgePurchase(acknowledgePurchaseParams)
+                        billingClient.acknowledgePurchase(acknowledgePurchaseParams) {
+                            //do nothing
+                        }
                     }
                 }
                 getActiveSubscriptions()

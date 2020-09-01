@@ -4,16 +4,19 @@
     <item
         android:id="@id/nav_graph_home"
         android:orderInCategory="1"
-        android:title="@string/home" />
+        android:title="@string/home"
+        android:icon="@drawable/ic_home_black_24dp" />
 
     <item
         android:id="@id/nav_graph_user_activity"
         android:orderInCategory="2"
-        android:title="@string/activity" />
+        android:title="@string/activity"
+        android:icon="@drawable/ic_event_note_black_24dp" />
 
     <item
         android:id="@id/nav_graph_settings"
         android:orderInCategory="3"
-        android:title="@string/setting" />
+        android:title="@string/settings"
+        android:icon="@drawable/ic_settings_black_24dp"/>
 
 </menu>
