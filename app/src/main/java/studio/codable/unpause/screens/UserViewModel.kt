@@ -162,7 +162,7 @@ class UserViewModel @Inject constructor(
         }
     }
 
-    fun editShift(oldShift: Shift,newShift: Shift) {
+    fun editShift(oldShift: Shift, newShift: Shift) {
         viewModelScope.launch {
             process(shiftRepository.update(oldShift, newShift)) {
                 getShifts()

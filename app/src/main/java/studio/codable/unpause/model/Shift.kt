@@ -17,4 +17,11 @@ data class Shift(
     fun isCheckedOut(): Boolean {
         return exitTime != null
     }
+
+    fun isOverlapping(enterTime : Date?, exitTime: Date?) : Boolean {
+        if (arrivalTime != null && this.exitTime != null && enterTime!= null && exitTime!=null) {
+            return arrivalTime!! <= enterTime && this.exitTime!! >= exitTime
+        }
+        return false
+    }
 }

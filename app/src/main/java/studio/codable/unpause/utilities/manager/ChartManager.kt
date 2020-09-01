@@ -25,6 +25,12 @@ class ChartManager() {
             exitDate: Date,
             context: Context
         ): LineData {
+            val xAxisFormatter: ValueFormatter = object : ValueFormatter() {
+                override fun getFormattedValue(value: Float): String {
+                    return if (value==0f) "0" else String.format("%.1f",value)
+                }
+            }
+
             val lineDataSet = LineDataSet(
                 getLineChartData(shifts, arrivalDate, exitDate),
                 context.getString(R.string.working_hours)
@@ -33,6 +39,7 @@ class ChartManager() {
                 setDrawFilled(true)
                 setDrawCircleHole(false)
                 setDrawHighlightIndicators(false)
+                valueFormatter = xAxisFormatter
             }
 
             return LineData().apply { addDataSet(lineDataSet) }

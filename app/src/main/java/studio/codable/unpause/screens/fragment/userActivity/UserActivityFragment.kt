@@ -36,7 +36,6 @@ class UserActivityFragment : PremiumFeaturesFragment() {
     private val mDialogManager: DialogManager by lazy { DialogManager(activity as BaseActivity) }
     private lateinit var timeManager: TimeManager
     private lateinit var user : User
-    private var safeToRefreshUI = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -70,7 +69,6 @@ class UserActivityFragment : PremiumFeaturesFragment() {
             updateUI()
         })
         userVm.shifts.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            safeToRefreshUI = true
             updateUI()
         })
     }
@@ -244,8 +242,18 @@ class UserActivityFragment : PremiumFeaturesFragment() {
             true
         } else {
             mDialogManager.openWorkingTimeDialog(
-                timeManager.arrivalTime,
-                timeManager.exitTime,
+                Calendar.getInstance().apply {
+                    time = Date()
+                    set(Calendar.HOUR_OF_DAY, 0)
+                    set(Calendar.MINUTE, 0)
+                    set(Calendar.SECOND, 0)
+                }.time,
+                Calendar.getInstance().apply {
+                    time = Date()
+                    set(Calendar.HOUR_OF_DAY, 23)
+                    set(Calendar.MINUTE, 59)
+                    set(Calendar.SECOND, 59)
+                }.time,
                 true,
                 mDialogManager,
                 object : WorkingTimeWarningFragment.DialogListener {
@@ -261,9 +269,12 @@ class UserActivityFragment : PremiumFeaturesFragment() {
                                         exitTime,
                                         description
                                     )
-                                userVm.addCustomShift(newShift)
-                                //                                            updateRecyclerView()
-                                showMessage(getString(R.string.shift_added))
+                                if (shiftIsOverlapping(newShift)) {
+                                    showMessage(getString(R.string.error_cannot_add_new_shift_the_entered_shift_is_overlapping_with_already_existing_shift))
+                                } else {
+                                    userVm.addCustomShift(newShift)
+                                    showMessage(getString(R.string.shift_added))
+                                }
                             },
                             {
                                 //no action
@@ -333,8 +344,13 @@ class UserActivityFragment : PremiumFeaturesFragment() {
                         { description: String ->
 
                             val newShift = Shift(arrivalTime, exitTime, description)
-                            userVm.editShift(shift, newShift)
-                            showMessage(getString(R.string.shift_edited))
+
+                            if (shiftIsOverlapping(newShift)) {
+                                showMessage(getString(R.string.error_cannot_edit_shift_the_edited_shift_is_overlapping_with_already_existing_shift))
+                            } else {
+                                userVm.editShift(shift, newShift)
+                                showMessage(getString(R.string.shift_edited))
+                            }
 
                         },
                         {
@@ -395,6 +411,16 @@ class UserActivityFragment : PremiumFeaturesFragment() {
 
     override fun onResume() {
         super.onResume()
-        if (safeToRefreshUI) updateUI()
+        user.shifts?.let {
+            updateUI()
+        }
+    }
+
+    private fun shiftIsOverlapping(shift: Shift) : Boolean {
+        for (s in user.shifts) {
+            if (s.isOverlapping(shift.arrivalTime, shift.exitTime))
+                return true
+        }
+        return false
     }
 }
