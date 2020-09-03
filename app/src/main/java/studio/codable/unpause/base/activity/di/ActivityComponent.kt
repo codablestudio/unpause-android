@@ -7,7 +7,6 @@ import studio.codable.unpause.repository.di.RepositoryModule
 import studio.codable.unpause.screens.activity.emailVerification.EmailVerificationActivity
 import studio.codable.unpause.screens.activity.home.HomeActivity
 import studio.codable.unpause.screens.activity.login.LoginActivity
-import studio.codable.unpause.screens.activity.map.MapActivity
 import studio.codable.unpause.screens.activity.register.RegisterActivity
 import studio.codable.unpause.screens.activity.start.StartActivity
 
@@ -20,5 +19,4 @@ interface ActivityComponent {
     fun inject(registerActivity: RegisterActivity)
     fun inject(homeActivity: HomeActivity)
     fun inject(emailVerificationActivity: EmailVerificationActivity)
-    fun inject(mapActivity: MapActivity)
 }

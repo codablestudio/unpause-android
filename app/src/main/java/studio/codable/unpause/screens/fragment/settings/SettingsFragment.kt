@@ -9,7 +9,6 @@ import kotlinx.android.synthetic.main.fragment_settings.*
 import studio.codable.unpause.R
 import studio.codable.unpause.base.activity.BaseActivity
 import studio.codable.unpause.screens.activity.login.LoginActivity
-import studio.codable.unpause.screens.activity.map.MapActivity
 import studio.codable.unpause.screens.fragment.premium.PremiumFeaturesFragment
 import studio.codable.unpause.utilities.manager.DialogManager
 import studio.codable.unpause.utilities.manager.GeofencingManager
@@ -52,7 +51,9 @@ class SettingsFragment : PremiumFeaturesFragment() {
             //location managing is for users that don't have company
             add_location_button.visibility = if (userVm.userHasConnectedCompany()) View.GONE else View.VISIBLE
             add_location_button.setOnClickListener {
-                startActivity(MapActivity.getIntent(requireContext()))
+//                startActivity(MapActivity.getIntent(requireContext()))
+                svm.navigate(SettingsFragmentDirections.actionSettingsFragmentToLocationsListFragment())
+
             }
 
             log_out_button.setOnClickListener {

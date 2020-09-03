@@ -74,8 +74,16 @@ class HomeFragment : PremiumFeaturesFragment() {
         userVm.user.observe(viewLifecycleOwner, Observer {
             with(it) {
                 text_name.text = getString(R.string.firstName_lastName, firstName.orEmpty(), lastName.orEmpty())
-                text_company.text = company?.name ?: getString(R.string.no_company_connected)
+                text_company.text = getString(R.string.loading_dots)
             }
+        })
+
+        userVm.company.observe(viewLifecycleOwner, Observer {
+            text_company.text = it.name
+        })
+
+        userVm.locations.observe(viewLifecycleOwner, Observer {
+            text_company.text = getString(R.string.no_company_connected)
         })
 
         userVm.shifts.observe(viewLifecycleOwner, Observer {

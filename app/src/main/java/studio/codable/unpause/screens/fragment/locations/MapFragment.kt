@@ -1,13 +1,10 @@
-package studio.codable.unpause.screens.activity.map
+package studio.codable.unpause.screens.fragment.locations
 
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
-import androidx.activity.viewModels
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest
@@ -21,52 +18,41 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import kotlinx.android.synthetic.main.activity_map.*
+import kotlinx.android.synthetic.main.fragment_map.*
 import studio.codable.unpause.R
 import studio.codable.unpause.base.activity.BaseActivity
 import studio.codable.unpause.base.fragment.BaseFragment
 import studio.codable.unpause.model.Location
-import studio.codable.unpause.screens.UserViewModel
+import studio.codable.unpause.screens.fragment.premium.PremiumFeaturesFragment
 import studio.codable.unpause.utilities.manager.DialogManager
 import studio.codable.unpause.utilities.manager.PermissionManager
 import javax.inject.Inject
 
-class MapActivity : BaseActivity(), OnMapReadyCallback, GoogleMap.OnMarkerDragListener {
-
-    override val navController: NavController by lazy { findNavController(R.id.navigation_map_activity) }
+class MapFragment : PremiumFeaturesFragment(), OnMapReadyCallback, GoogleMap.OnMarkerDragListener {
 
     @Inject
     lateinit var permissionManager : PermissionManager
 
-    @Inject
-    lateinit var vmFactory: ViewModelProvider.Factory
-    private val userVm: UserViewModel by viewModels { vmFactory }
-
-    private val dialogManager: DialogManager by lazy { DialogManager(this) }
+    private val dialogManager: DialogManager by lazy { DialogManager(activity as BaseActivity) }
 
     private lateinit var googleMap: GoogleMap
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var markers: MutableList<Marker>
 
-    companion object {
-        fun getIntent(context: Context): Intent {
-            return Intent(context, MapActivity::class.java)
-        }
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_map, container, false)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_map)
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
 
-        val mapFragment = supportFragmentManager.findFragmentById(R.id.location_chooser) as SupportMapFragment?
-        mapFragment!!.getMapAsync(this)
-        fusedLocationProviderClient = FusedLocationProviderClient(this)
-
-        userVm.locations.observe(this, Observer {
-            //refresh markers
-            googleMap.clear()
-            markers = createMarkersFromLocations(it) as MutableList<Marker>
-        })
+        val mapFragment = childFragmentManager.findFragmentById(R.id.location_chooser) as SupportMapFragment
+        mapFragment.getMapAsync(this)
+        fusedLocationProviderClient = FusedLocationProviderClient(requireActivity())
     }
 
     override fun onMapReady(map: GoogleMap?) {
@@ -106,6 +92,12 @@ class MapActivity : BaseActivity(), OnMapReadyCallback, GoogleMap.OnMarkerDragLi
             permissionManager.requestFineLocationPermission(location_chooser as BaseFragment)
         }
         googleMap.setOnMarkerDragListener(this)
+
+        userVm.locations.observe(viewLifecycleOwner, Observer {
+            //refresh markers
+            googleMap.clear()
+            markers = createMarkersFromLocations(it) as MutableList<Marker>
+        })
     }
 
     /**
@@ -119,7 +111,7 @@ class MapActivity : BaseActivity(), OnMapReadyCallback, GoogleMap.OnMarkerDragLi
         val locationSettingsRequest =
             LocationSettingsRequest.Builder().addLocationRequest(locationRequest).build()
         val result =
-            LocationServices.getSettingsClient(this).checkLocationSettings(locationSettingsRequest)
+            LocationServices.getSettingsClient(requireActivity()).checkLocationSettings(locationSettingsRequest)
         result.addOnCompleteListener { task ->
             try {
                 val response = task.getResult(ApiException::class.java)
@@ -137,7 +129,7 @@ class MapActivity : BaseActivity(), OnMapReadyCallback, GoogleMap.OnMarkerDragLi
      */
     private fun getLastLocation() {
         fusedLocationProviderClient.lastLocation
-            .addOnCompleteListener(this) { task ->
+            .addOnCompleteListener(requireActivity()) { task ->
                 if (task.isSuccessful && task.result != null) {
                     val mLastLocation = task.result
                     setStartLocation(mLastLocation!!.latitude, mLastLocation.longitude)
@@ -185,5 +177,4 @@ class MapActivity : BaseActivity(), OnMapReadyCallback, GoogleMap.OnMarkerDragLi
         userVm.deleteLocation(old)
         userVm.addLocation(new)
     }
-
 }

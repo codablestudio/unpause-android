@@ -130,4 +130,9 @@
     <string name="no_company_connected">No company connected</string>
     <string name="error_cannot_add_new_shift_the_entered_shift_is_overlapping_with_already_existing_shift">ERROR: cannot add new shift. The entered shift is overlapping with already existing shift.</string>
     <string name="error_cannot_edit_shift_the_edited_shift_is_overlapping_with_already_existing_shift">ERROR: cannot edit shift. The edited shift is overlapping with already existing shift.</string>
+    <string name="loading_dots">loading...</string>
+    <string name="locations">Locations:</string>
+    <string name="add_a_new_location">Add a new location</string>
+    <string name="manage_locations_on_map">Manage locations on map</string>
+    <string name="lat_long_format">%1$.3f° N %2$.3f° W</string>
 </resources>

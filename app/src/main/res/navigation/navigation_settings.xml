@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_settingsFragment_to_changeCompanyFragment"
             app:destination="@id/changeCompanyFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_locationsListFragment"
+            app:destination="@id/locationsListFragment" />
     </fragment>
     <fragment
         android:id="@+id/changePersonalInfoFragment"
@@ -34,4 +37,18 @@
         android:id="@+id/changeCompanyFragment"
         android:name="studio.codable.unpause.screens.fragment.connectCompany.ChangeCompanyFragment"
         android:label="ChangeCompanyFragment" />
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="studio.codable.unpause.screens.fragment.locations.MapFragment"
+        android:label="fragment_map"
+        tools:layout="@layout/fragment_map" />
+    <fragment
+        android:id="@+id/locationsListFragment"
+        android:name="studio.codable.unpause.screens.fragment.locations.LocationsListFragment"
+        android:label="fragment_locations_list"
+        tools:layout="@layout/fragment_locations_list" >
+        <action
+            android:id="@+id/action_locationsListFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
+    </fragment>
 </navigation>
