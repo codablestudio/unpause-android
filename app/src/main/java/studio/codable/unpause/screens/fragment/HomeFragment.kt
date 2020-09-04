@@ -31,16 +31,18 @@ class HomeFragment : PremiumFeaturesFragment() {
     /**
      * isChecked -> user is checked in = state ON
      */
-    private val checkInButtonListener: (CompoundButton, Boolean) -> Unit = { _, isChecked ->
-        if (isChecked) {
-            userVm.checkIn()
-            Timber.d("checked in")
-        } else {
-            dialogManager.openDescriptionDialog(R.string.what_did_you_work_on, null, true, {
-                userVm.checkOut(it)
-                Timber.d("checked out")
-            }, null)
-        }
+    private val checkInButtonListener: (CompoundButton, Boolean) -> Unit = { button, isChecked ->
+       if (button.isPressed) {
+           if (isChecked) {
+               userVm.checkIn()
+               Timber.d("checked in")
+           } else {
+               dialogManager.openDescriptionDialog(R.string.what_did_you_work_on, null, true, {
+                   userVm.checkOut(it)
+                   Timber.d("checked out")
+               }, null)
+           }
+       }
     }
 
     override fun onCreateView(
@@ -59,6 +61,7 @@ class HomeFragment : PremiumFeaturesFragment() {
     }
 
     private fun initUI() {
+        btn_check_in_out.isChecked = userVm.isCheckedIn.value ?: false
         btn_check_in_out.setOnCheckedChangeListener(checkInButtonListener)
     }
 
@@ -85,6 +88,10 @@ class HomeFragment : PremiumFeaturesFragment() {
         userVm.shifts.observe(viewLifecycleOwner, Observer {
             Timber.d("Shifts: $it")
             initGraph()
+        })
+
+        userVm.isCheckedIn.observe(viewLifecycleOwner, Observer {
+            btn_check_in_out.isChecked = it
         })
 
         userVm.geofences.observe(viewLifecycleOwner, Observer { geofences ->

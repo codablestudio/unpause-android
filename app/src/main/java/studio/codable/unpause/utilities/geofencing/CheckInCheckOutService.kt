@@ -100,6 +100,7 @@ class CheckInCheckOutService : IntentService("CheckInCheckOutService"), Coroutin
                     }
                 } else {
                     Timber.i("You are already checked in.")
+                    notificationManager.updateCheckInNotification(getString(R.string.you_are_already_checked_in))
                 }
             }
         }
@@ -117,11 +118,12 @@ class CheckInCheckOutService : IntentService("CheckInCheckOutService"), Coroutin
                         process(shiftRepository.update(shift, updatedShift)) {
                             // for remoteInput notifications you have update
                             // the current notification to let the user know everything is ok
-                            notificationManager.updateCheckOutNotification()
+                            notificationManager.updateCheckOutNotification(this@CheckInCheckOutService.getString(R.string.check_out_successful))
                         }
                     }
                 } else {
                     Timber.i("You need to check in before you check out.")
+                    notificationManager.updateCheckOutNotification(getString(R.string.you_need_to_check_in_before_you_can_check_out))
                 }
             }
         }

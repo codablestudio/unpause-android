@@ -136,7 +136,7 @@ class NotificationManagerUnpause private constructor(
         sendNotification(title, content, checkOutIntent, Constants.Notifications.CHECK_OUT_TAG)
     }
 
-    fun updateCheckOutNotification() {
+    fun updateCheckOutNotification(content: String) {
         // Build a new notification, which informs the user that the system
         // handled their interaction with the previous notification.
         val builder = NotificationCompat.Builder(
@@ -144,13 +144,33 @@ class NotificationManagerUnpause private constructor(
             notificationChannelId
         )
             .setSmallIcon(R.drawable.ic_app_icon)
-            .setContentText(context.getString(R.string.check_out_successful))
+            .setContentText(content)
             .setContentIntent(startActivityIntent)
             .setAutoCancel(true)
 
         // Issue the new notification.
         NotificationManagerCompat.from(context).notify(
             Constants.Notifications.CHECK_OUT_TAG,
+            Constants.Notifications.CHECK_IN_CHECK_OUT_ID,
+            builder.build()
+        )
+    }
+
+    fun updateCheckInNotification(content: String) {
+        // Build a new notification, which informs the user that the system
+        // handled their interaction with the previous notification.
+        val builder = NotificationCompat.Builder(
+            context,
+            notificationChannelId
+        )
+            .setSmallIcon(R.drawable.ic_app_icon)
+            .setContentText(content)
+            .setContentIntent(startActivityIntent)
+            .setAutoCancel(true)
+
+        // Issue the new notification.
+        NotificationManagerCompat.from(context).notify(
+            Constants.Notifications.CHECK_IN_TAG,
             Constants.Notifications.CHECK_IN_CHECK_OUT_ID,
             builder.build()
         )

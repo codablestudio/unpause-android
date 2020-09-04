@@ -49,7 +49,15 @@ class UserViewModel @Inject constructor(
     private val _locations = MutableLiveData<List<Location>>()
     val locations: LiveData<List<Location>> = _locations
 
+    private val _isCheckedIn = MediatorLiveData<Boolean>()
+    val isCheckedIn: LiveData<Boolean> = _isCheckedIn
+
     init {
+
+        _isCheckedIn.addSource(_shifts) {
+            _isCheckedIn.value = existsShiftWithNoExitTime(it)
+        }
+
         getUser()
         _user.addSource(_shifts) {
             _user.value?.shifts = it as ArrayList<Shift>
@@ -72,21 +80,15 @@ class UserViewModel @Inject constructor(
 
     }
 
-    var isCheckedIn: Boolean
-        get() = sessionManager.isCheckedIn
-        private set(value) {
-            sessionManager.isCheckedIn = value
-        }
-
     fun checkIn() {
         val newShift = Shift(arrivalTime = Date())
         addShift(newShift)
-        isCheckedIn = true
+        _isCheckedIn.value = true
     }
 
     fun checkOut(description: String) {
         addExit(Date(), description)
-        isCheckedIn = false
+        _isCheckedIn.value = false
     }
 
     private fun getUser() {
@@ -241,5 +243,13 @@ class UserViewModel @Inject constructor(
 
     fun userHasConnectedCompany() : Boolean {
         return _company.value!=null
+    }
+
+    private fun existsShiftWithNoExitTime(shifts : List<Shift>) : Boolean {
+        for (shift in shifts) {
+            if (shift.exitTime == null)
+                return true
+        }
+        return false
     }
 }

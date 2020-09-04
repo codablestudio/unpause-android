@@ -136,4 +136,6 @@
     <string name="manage_locations_on_map">Manage locations on map</string>
     <string name="lat_long_format">%1$.3f° N %2$.3f° W</string>
     <string name="unnamed_location">Unnamed location</string>
+    <string name="you_need_to_check_in_before_you_can_check_out">You need to check in before you can check out.</string>
+    <string name="you_are_already_checked_in">You are already checked in.</string>
 </resources>
