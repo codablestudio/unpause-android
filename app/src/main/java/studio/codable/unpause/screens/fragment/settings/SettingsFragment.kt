@@ -7,17 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_settings.*
 import studio.codable.unpause.R
-import studio.codable.unpause.base.activity.BaseActivity
 import studio.codable.unpause.screens.activity.login.LoginActivity
 import studio.codable.unpause.screens.fragment.premium.PremiumFeaturesFragment
-import studio.codable.unpause.utilities.manager.DialogManager
 import studio.codable.unpause.utilities.manager.GeofencingManager
 import studio.codable.unpause.utilities.manager.SessionManager
 
 class SettingsFragment : PremiumFeaturesFragment() {
 
     private val sessionManager: SessionManager by lazy { SessionManager(requireContext()) }
-    private val dialogManager: DialogManager by lazy { DialogManager(activity as BaseActivity) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -51,8 +48,11 @@ class SettingsFragment : PremiumFeaturesFragment() {
             //location managing is for users that don't have company
             add_location_button.visibility = if (userVm.userHasConnectedCompany()) View.GONE else View.VISIBLE
             add_location_button.setOnClickListener {
-//                startActivity(MapActivity.getIntent(requireContext()))
-                svm.navigate(SettingsFragmentDirections.actionSettingsFragmentToLocationsListFragment())
+                if (userIsPremium) {
+                    svm.navigate(SettingsFragmentDirections.actionSettingsFragmentToLocationsListFragment())
+                } else {
+                    launchPremiumScreen()
+                }
 
             }
 

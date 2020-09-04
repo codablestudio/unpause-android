@@ -62,6 +62,5 @@ class LocationsListFragment : BaseFragment(false) {
     override fun onResume() {
         super.onResume()
         userVm.getLocations()
-//        userVm.locations.value?.let { refreshRecyclerView(it) }
     }
 }

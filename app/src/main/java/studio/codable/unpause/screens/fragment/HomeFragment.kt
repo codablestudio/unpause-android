@@ -8,13 +8,11 @@ import android.widget.CompoundButton
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.fragment_home.*
 import studio.codable.unpause.R
-import studio.codable.unpause.base.activity.BaseActivity
 import studio.codable.unpause.model.Shift
 import studio.codable.unpause.screens.fragment.premium.PremiumFeaturesFragment
 import studio.codable.unpause.utilities.helperFunctions.getCurrentWeek
 import studio.codable.unpause.utilities.manager.ChartManager.Companion.getBarChartDataset
 import studio.codable.unpause.utilities.manager.ChartManager.Companion.initBarChart
-import studio.codable.unpause.utilities.manager.DialogManager
 import studio.codable.unpause.utilities.manager.GeofencingManager
 import studio.codable.unpause.utilities.manager.PermissionManager
 import timber.log.Timber
@@ -29,8 +27,6 @@ class HomeFragment : PremiumFeaturesFragment() {
 
     @Inject
     lateinit var permissionManager : PermissionManager
-
-    private val dialogManager: DialogManager by lazy { DialogManager(activity as BaseActivity) }
 
     /**
      * isChecked -> user is checked in = state ON

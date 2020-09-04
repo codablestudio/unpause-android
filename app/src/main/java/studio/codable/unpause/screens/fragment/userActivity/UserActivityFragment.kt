@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_user_activity.*
 import studio.codable.unpause.R
-import studio.codable.unpause.base.activity.BaseActivity
 import studio.codable.unpause.model.Shift
 import studio.codable.unpause.model.User
 import studio.codable.unpause.screens.fragment.premium.PremiumFeaturesFragment
@@ -26,14 +25,12 @@ import studio.codable.unpause.utilities.manager.ChartManager
 import studio.codable.unpause.utilities.manager.ChartManager.Companion.getLineChartData
 import studio.codable.unpause.utilities.manager.ChartManager.Companion.getLineChartDataset
 import studio.codable.unpause.utilities.manager.CsvManager
-import studio.codable.unpause.utilities.manager.DialogManager
 import studio.codable.unpause.utilities.manager.TimeManager
 import studio.codable.unpause.utils.adapters.userActivityRecyclerViewAdapter.SwipeActionCallback
 import java.util.*
 
 class UserActivityFragment : PremiumFeaturesFragment() {
 
-    private val mDialogManager: DialogManager by lazy { DialogManager(activity as BaseActivity) }
     private lateinit var timeManager: TimeManager
     private lateinit var user : User
 
@@ -85,7 +82,7 @@ class UserActivityFragment : PremiumFeaturesFragment() {
             to_date_text_view.text = formatFilterDate(timeManager.exitTime)
 
             selected_date.setOnClickListener {
-                mDialogManager.openDateRangePickerDialog(
+                dialogManager.openDateRangePickerDialog(
                     Calendar.getInstance().apply {
                         time = timeManager.arrivalTime
                         add(Calendar.DATE, 1)
@@ -228,20 +225,12 @@ class UserActivityFragment : PremiumFeaturesFragment() {
         }
     }
 
-    private fun launchPremiumScreen() {
-        mDialogManager.openUpgradeToPremiumDialog({
-            subscriptionManager.launchSubscriptionFlowMonthly(requireActivity())
-        }, {
-            subscriptionManager.launchSubscriptionFlowYearly(requireActivity())
-        })
-    }
-
     private fun handleAddCustomShiftButtonTap(): Boolean {
         return if (userHasExitTime()) {
             showError(getString(R.string.custom_shift_adding_outside_of_working_time_warning))
             true
         } else {
-            mDialogManager.openWorkingTimeDialog(
+            dialogManager.openWorkingTimeDialog(
                 Calendar.getInstance().apply {
                     time = Date()
                     set(Calendar.HOUR_OF_DAY, 0)
@@ -255,13 +244,13 @@ class UserActivityFragment : PremiumFeaturesFragment() {
                     set(Calendar.SECOND, 59)
                 }.time,
                 true,
-                mDialogManager,
+                dialogManager,
                 object : WorkingTimeWarningFragment.DialogListener {
                     override fun onContinue(
                         arrivalTime: Date,
                         exitTime: Date
                     ) {
-                        mDialogManager.openDescriptionDialog(
+                        dialogManager.openDescriptionDialog(
                             getString(R.string.what_did_you_work_on), null, true, { description ->
                                 val newShift =
                                     Shift(
@@ -330,14 +319,14 @@ class UserActivityFragment : PremiumFeaturesFragment() {
     }
 
     fun editShift(shift: Shift) {
-        mDialogManager.openWorkingTimeDialog(
+        dialogManager.openWorkingTimeDialog(
             shift.arrivalTime!!,
             shift.exitTime!!,
             false,
-            mDialogManager,
+            dialogManager,
             object : WorkingTimeWarningFragment.DialogListener {
                 override fun onContinue(arrivalTime: Date, exitTime: Date) {
-                    mDialogManager.openDescriptionDialog(
+                    dialogManager.openDescriptionDialog(
                         getString(R.string.what_did_you_work_on),
                         shift.description,
                         true,

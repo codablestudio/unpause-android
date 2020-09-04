@@ -21,7 +21,7 @@ class LocationsRecyclerViewAdapter(private val locations: ArrayList<Location>) :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.itemView.apply {
-            text_location_name.text = locations[position].name ?: "Unnamed location"
+            text_location_name.text = locations[position].name ?: resources.getString(R.string.unnamed_location)
             text_location_coordinates.text = resources.getString(
                 R.string.lat_long_format,
                 locations[position].position.latitude,

@@ -20,11 +20,9 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.fragment_map.*
 import studio.codable.unpause.R
-import studio.codable.unpause.base.activity.BaseActivity
 import studio.codable.unpause.base.fragment.BaseFragment
 import studio.codable.unpause.model.Location
 import studio.codable.unpause.screens.fragment.premium.PremiumFeaturesFragment
-import studio.codable.unpause.utilities.manager.DialogManager
 import studio.codable.unpause.utilities.manager.PermissionManager
 import javax.inject.Inject
 
@@ -32,8 +30,6 @@ class MapFragment : PremiumFeaturesFragment(), OnMapReadyCallback, GoogleMap.OnM
 
     @Inject
     lateinit var permissionManager : PermissionManager
-
-    private val dialogManager: DialogManager by lazy { DialogManager(activity as BaseActivity) }
 
     private lateinit var googleMap: GoogleMap
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient

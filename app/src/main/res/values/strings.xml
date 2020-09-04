@@ -135,4 +135,5 @@
     <string name="add_a_new_location">Add a new location</string>
     <string name="manage_locations_on_map">Manage locations on map</string>
     <string name="lat_long_format">%1$.3f° N %2$.3f° W</string>
+    <string name="unnamed_location">Unnamed location</string>
 </resources>
