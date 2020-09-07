@@ -27,6 +27,7 @@ import studio.codable.unpause.utilities.manager.ChartManager.Companion.getLineCh
 import studio.codable.unpause.utilities.manager.CsvManager
 import studio.codable.unpause.utilities.manager.TimeManager
 import studio.codable.unpause.utils.adapters.userActivityRecyclerViewAdapter.SwipeActionCallback
+import timber.log.Timber
 import java.util.*
 
 class UserActivityFragment : PremiumFeaturesFragment() {
@@ -108,6 +109,11 @@ class UserActivityFragment : PremiumFeaturesFragment() {
                     updateToDate(formatFilterDate(timeManager.exitTime))
                     updateUI()
                 }
+            }
+
+            swipe_to_refresh_recycler_view.setOnRefreshListener {
+                Timber.i("onRefresh called from SwipeRefreshLayout")
+                userVm.getShifts()
             }
 
         }
@@ -351,8 +357,14 @@ class UserActivityFragment : PremiumFeaturesFragment() {
     }
 
     private fun updateUI() {
+        stopSwipeRefreshAnimation()
         updateChart()
         updateRecyclerView()
+    }
+
+    private fun stopSwipeRefreshAnimation() {
+        if (swipe_to_refresh_recycler_view.isRefreshing)
+            swipe_to_refresh_recycler_view.isRefreshing = false
     }
 
     private fun updateRecyclerView() {
