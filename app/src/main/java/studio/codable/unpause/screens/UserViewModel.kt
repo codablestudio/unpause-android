@@ -93,7 +93,6 @@ class UserViewModel @Inject constructor(
 
     private fun getUser() {
         viewModelScope.launch {
-            _loading.value = Event(true)
             process(userRepository.getUser()) {
                 _user.value = it
                 //if the user is connected to company get company, otherwise
@@ -105,7 +104,7 @@ class UserViewModel @Inject constructor(
         }
     }
 
-    private fun getShifts() {
+    fun getShifts() {
         viewModelScope.launch {
             process(shiftRepository.getAll()) {
                 _shifts.value = it

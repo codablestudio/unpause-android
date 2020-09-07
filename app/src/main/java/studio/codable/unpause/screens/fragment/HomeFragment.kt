@@ -127,4 +127,9 @@ class HomeFragment : PremiumFeaturesFragment() {
         }
         return returnList
     }
+
+    override fun onResume() {
+        super.onResume()
+        userVm.getShifts()
+    }
 }
