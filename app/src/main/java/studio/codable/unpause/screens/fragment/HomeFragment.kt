@@ -63,6 +63,8 @@ class HomeFragment : PremiumFeaturesFragment() {
     private fun initUI() {
         btn_check_in_out.isChecked = userVm.isCheckedIn.value ?: false
         btn_check_in_out.setOnCheckedChangeListener(checkInButtonListener)
+
+        initGraph()
     }
 
     private fun initObservers() {
@@ -87,7 +89,9 @@ class HomeFragment : PremiumFeaturesFragment() {
 
         userVm.shifts.observe(viewLifecycleOwner, Observer {
             Timber.d("Shifts: $it")
-            initGraph()
+            if (userVm.isCheckedIn.value != true) {
+                updateGraph()
+            }
         })
 
         userVm.isCheckedIn.observe(viewLifecycleOwner, Observer {
@@ -111,11 +115,16 @@ class HomeFragment : PremiumFeaturesFragment() {
     }
 
     private fun initGraph() {
+        initBarChart(chart, getBarChartDataset(arrayListOf(), requireContext()))
+    }
 
+    private fun updateGraph() {
         val range = getCurrentWeek()
-        val workingHours = filterActivity(userVm.shifts.value!!, range.firstDate, range.lastDate)
+        val workingHours =
+            filterActivity(userVm.shifts.value!!, range.firstDate, range.lastDate)
 
-        initBarChart(chart, getBarChartDataset(workingHours, requireContext()))
+        chart.data = getBarChartDataset(workingHours, requireContext())
+        chart.notifyDataSetChanged()
     }
 
     private fun filterActivity(shifts: List<Shift>, from: Date, to: Date): ArrayList<Shift> {
@@ -131,5 +140,8 @@ class HomeFragment : PremiumFeaturesFragment() {
     override fun onResume() {
         super.onResume()
         userVm.getShifts()
+        userVm.shifts.value?.let {
+            updateGraph()
+        }
     }
 }
