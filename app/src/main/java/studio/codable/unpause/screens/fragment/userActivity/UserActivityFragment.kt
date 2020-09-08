@@ -69,6 +69,10 @@ class UserActivityFragment : PremiumFeaturesFragment() {
         userVm.shifts.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             updateUI()
         })
+        userVm.filter.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            timeManager.arrivalTime = it.firstDate
+            timeManager.exitTime = it.lastDate
+        })
     }
 
     private fun initUI() {
@@ -94,19 +98,13 @@ class UserActivityFragment : PremiumFeaturesFragment() {
                     calendar1.timeInMillis = selection.first!!
                     val calendar2 = Calendar.getInstance()
                     calendar2.timeInMillis = selection.second!!
-                    timeManager.changeArrivalDate(
-                        calendar1.time.year(),
-                        calendar1.time.month(),
-                        calendar1.time.day()
-                    )
-                    timeManager.changeExitDate(
-                        calendar2.time.year(),
-                        calendar2.time.month(),
-                        calendar2.time.day()
-                    )
+
+                    userVm.setFilterStartDate(calendar1.time)
+                    userVm.setFilterEndDate(calendar2.time)
+                    
                     //update UI
-                    updateFromDate(formatFilterDate(timeManager.arrivalTime))
-                    updateToDate(formatFilterDate(timeManager.exitTime))
+                    updateFromDate(formatFilterDate(userVm.filter.value!!.firstDate))
+                    updateToDate(formatFilterDate(userVm.filter.value!!.lastDate))
                     updateUI()
                 }
             }
@@ -297,23 +295,7 @@ class UserActivityFragment : PremiumFeaturesFragment() {
 
 
     private fun initTimeManager() {
-        val cal1 = Calendar.getInstance()
-        cal1.apply {
-            add(Calendar.MONTH, -1)
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-        }
-
-        val cal2 = Calendar.getInstance()
-        cal2.apply {
-            time = Date()
-            set(Calendar.HOUR_OF_DAY, 23)
-            set(Calendar.MINUTE, 59)
-            set(Calendar.SECOND, 59)
-        }
-
-        timeManager = TimeManager(cal1.time, cal2.time)
+        timeManager = TimeManager(userVm.filter.value!!.firstDate, userVm.filter.value!!.lastDate)
     }
 
     private fun updateFromDate(activeDate: String) {

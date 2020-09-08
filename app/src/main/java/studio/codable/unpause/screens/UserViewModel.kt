@@ -11,9 +11,9 @@ import studio.codable.unpause.model.Location
 import studio.codable.unpause.model.Shift
 import studio.codable.unpause.model.User
 import studio.codable.unpause.repository.*
-import studio.codable.unpause.utilities.Event
 import studio.codable.unpause.utilities.extensions.active
 import studio.codable.unpause.utilities.geofencing.GeofenceModel
+import studio.codable.unpause.utilities.helperFunctions.DateRange
 import studio.codable.unpause.utilities.manager.SessionManager
 import timber.log.Timber
 import java.util.*
@@ -52,7 +52,11 @@ class UserViewModel @Inject constructor(
     private val _isCheckedIn = MediatorLiveData<Boolean>()
     val isCheckedIn: LiveData<Boolean> = _isCheckedIn
 
+    private val _filter = MutableLiveData<DateRange>()
+    val filter: LiveData<DateRange> = _filter
+
     init {
+        initFilter()
 
         _isCheckedIn.addSource(_shifts) {
             _isCheckedIn.value = existsShiftWithNoExitTime(it)
@@ -78,6 +82,34 @@ class UserViewModel @Inject constructor(
             _geofences.removeSource(_company)
         }
 
+    }
+
+    fun setFilterStartDate(startDate: Date) {
+        _filter.value?.firstDate = startDate
+    }
+
+    fun setFilterEndDate(endDate: Date) {
+        _filter.value?.lastDate = endDate
+    }
+
+    private fun initFilter() {
+
+        val cal1 = Calendar.getInstance()
+        cal1.apply {
+            add(Calendar.MONTH, -1)
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+        }
+
+        val cal2 = Calendar.getInstance()
+        cal2.apply {
+            time = Date()
+            set(Calendar.HOUR_OF_DAY, 23)
+            set(Calendar.MINUTE, 59)
+            set(Calendar.SECOND, 59)
+        }
+        _filter.value = DateRange(cal1.time, cal2.time)
     }
 
     fun checkIn() {
