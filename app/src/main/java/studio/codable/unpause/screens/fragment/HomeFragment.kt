@@ -10,11 +10,14 @@ import kotlinx.android.synthetic.main.fragment_home.*
 import studio.codable.unpause.R
 import studio.codable.unpause.model.Shift
 import studio.codable.unpause.screens.fragment.premium.PremiumFeaturesFragment
+import studio.codable.unpause.utilities.extensions.active
 import studio.codable.unpause.utilities.helperFunctions.getCurrentWeek
+import studio.codable.unpause.utilities.helperFunctions.toPattern
 import studio.codable.unpause.utilities.manager.ChartManager.Companion.getBarChartDataset
 import studio.codable.unpause.utilities.manager.ChartManager.Companion.initBarChart
 import studio.codable.unpause.utilities.manager.GeofencingManager
 import studio.codable.unpause.utilities.manager.PermissionManager
+import studio.codable.unpause.utilities.manager.TimeManager
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
@@ -56,6 +59,7 @@ class HomeFragment : PremiumFeaturesFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        showLoading()
         initUI()
         initObservers()
     }
@@ -89,9 +93,11 @@ class HomeFragment : PremiumFeaturesFragment() {
 
         userVm.shifts.observe(viewLifecycleOwner, Observer {
             Timber.d("Shifts: $it")
+            hideLoading()
             if (userVm.isCheckedIn.value != true) {
                 updateGraph()
             }
+            handleCheckInDetailsGroup(userVm.isCheckedIn.value ?: false)
         })
 
         userVm.isCheckedIn.observe(viewLifecycleOwner, Observer {
@@ -137,11 +143,28 @@ class HomeFragment : PremiumFeaturesFragment() {
         return returnList
     }
 
+    private fun handleCheckInDetailsGroup(isGroupVisible : Boolean) {
+        if (isGroupVisible) {
+            val timeManager = TimeManager(userVm.shifts.value.active()!!.arrivalTime!!, Calendar.getInstance().time)
+            text_last_check_in.text = userVm.shifts.value.active()?.arrivalTime.toPattern("dd.MM.yyyy HH:mm")
+            text_working_time.text = getString(R.string.n_h_m_min,timeManager.getWorkingHours().hours,
+                timeManager.getWorkingHours().minutes)
+            check_in_details_group.visibility = View.VISIBLE
+        } else {
+            check_in_details_group.visibility = View.GONE
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         userVm.getShifts()
         userVm.shifts.value?.let {
             updateGraph()
         }
+        userVm.user.value?.let {
+            if (it.companyId != null)
+                userVm.getCompany(it.companyId)
+        }
+
     }
 }

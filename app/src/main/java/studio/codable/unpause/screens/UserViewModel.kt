@@ -112,7 +112,7 @@ class UserViewModel @Inject constructor(
         }
     }
 
-    private fun getCompany(companyId : String) {
+    fun getCompany(companyId : String) {
         viewModelScope.launch {
             process(companyRepository.getCompany(companyId)) {
                 _company.value = it

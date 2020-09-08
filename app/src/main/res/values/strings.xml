@@ -138,4 +138,7 @@
     <string name="unnamed_location">Unnamed location</string>
     <string name="you_need_to_check_in_before_you_can_check_out">You need to check in before you can check out.</string>
     <string name="you_are_already_checked_in">You are already checked in.</string>
+    <string name="last_check_in_time">Last check in time:</string>
+    <string name="working_time">Working time:</string>
+    <string name="n_h_m_min">%d h %d min</string>
 </resources>
