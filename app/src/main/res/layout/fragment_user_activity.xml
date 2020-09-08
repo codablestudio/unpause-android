@@ -55,9 +55,11 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/selected_date"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="6dp"
+            android:layout_marginHorizontal="16dp"
+            android:padding="10dp"
+            android:background="@drawable/marker_view_background"
             app:layout_constraintBottom_toTopOf="@+id/recycler_view_separator"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -65,33 +67,34 @@
 
             <ImageView
                 android:id="@+id/ic_calendar_1"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
                 android:layout_marginEnd="5dp"
                 android:src="@drawable/calendar_75x75_black"
+                android:tint="#B1BCBE"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/from_date_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="6dp"
                 android:textSize="16sp"
                 android:textStyle="normal"
+                android:layout_marginStart="10dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/ic_calendar_1"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="Mon, 01.08." />
+                tools:text="16 Jun 2020" />
 
             <TextView
                 android:id="@+id/until"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
                 android:text="@string/dash"
                 android:textSize="16sp"
+                android:layout_marginStart="5dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/to_date_text_view"
                 app:layout_constraintStart_toEndOf="@id/from_date_text_view"
@@ -101,14 +104,13 @@
                 android:id="@+id/to_date_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="2dp"
+                android:paddingStart="5dp"
                 android:textSize="16sp"
                 android:textStyle="normal"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/until"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="Fri, 15.08." />
+                tools:text="31 Jun 2020" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <View

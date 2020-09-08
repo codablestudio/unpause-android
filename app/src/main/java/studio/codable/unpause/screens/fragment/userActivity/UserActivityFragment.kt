@@ -101,7 +101,7 @@ class UserActivityFragment : PremiumFeaturesFragment() {
 
                     userVm.setFilterStartDate(calendar1.time)
                     userVm.setFilterEndDate(calendar2.time)
-                    
+
                     //update UI
                     updateFromDate(formatFilterDate(userVm.filter.value!!.firstDate))
                     updateToDate(formatFilterDate(userVm.filter.value!!.lastDate))
@@ -387,9 +387,7 @@ class UserActivityFragment : PremiumFeaturesFragment() {
     )
 
     private fun formatFilterDate(date : Date) : String {
-        return getString(R.string.user_activity_filter_date_format,
-            Constants.Chart.dayLabels[date.dayOfWeek()!!],
-            date.date().toPattern("dd.MM."))
+        return date.toPattern("dd MMM yyyy")
     }
 
     override fun onResume() {
