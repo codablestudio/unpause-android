@@ -10,7 +10,7 @@ import studio.codable.unpause.utilities.manager.SubscriptionManager
 open class PremiumFeaturesFragment : BaseFragment(false) {
 
     protected val userVm: UserViewModel by activityViewModels()
-    protected val subscriptionManager by lazy { SubscriptionManager.getInstance(requireContext()) }
+    private val subscriptionManager by lazy { SubscriptionManager.getInstance(requireContext()) }
     protected val dialogManager: DialogManager by lazy { DialogManager(activity as BaseActivity) }
 
     protected var userIsPremium: Boolean = false

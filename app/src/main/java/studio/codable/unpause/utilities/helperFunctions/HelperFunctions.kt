@@ -32,12 +32,12 @@ fun getCurrentWeek() : DateRange {
             Calendar.DATE, -1 * (dayOfWeek -
                     Calendar.MONDAY)
         );
-        firstDayOfWeek = calendar.time;
-        calendar.add(Calendar.DATE, 6);
-        lastDayOfWeek = calendar.time;
+        firstDayOfWeek = calendar.time
+        calendar.add(Calendar.DATE, 6)
+        lastDayOfWeek = calendar.time
     }
 
-    return DateRange(firstDayOfWeek,lastDayOfWeek)
+    return DateRange(firstDayOfWeek.dawn(),lastDayOfWeek.dusk())
 }
 
 /**

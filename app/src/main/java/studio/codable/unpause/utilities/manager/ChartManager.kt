@@ -12,7 +12,7 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 import studio.codable.unpause.R
 import studio.codable.unpause.model.Shift
 import studio.codable.unpause.utilities.Constants
-import studio.codable.unpause.utilities.helperFunctions.date
+import studio.codable.unpause.utilities.helperFunctions.dawn
 import studio.codable.unpause.utilities.helperFunctions.dayOfWeek
 import java.util.*
 
@@ -52,7 +52,7 @@ class ChartManager() {
         ): MutableList<Entry> {
             val returnList: MutableList<Entry> = mutableListOf()
             val workingTimes = shifts
-                .groupBy { shift -> shift.arrivalTime!!.date() }
+                .groupBy { shift -> shift.arrivalTime!!.dawn() }
                 .toSortedMap()
                 .mapValues {
                     var sum = 0.000
@@ -112,7 +112,7 @@ class ChartManager() {
 
         private fun getBarChartData(shifts: List<Shift>): MutableList<BarEntry> {
             val workingHours = shifts
-                .groupBy({ shift -> shift.arrivalTime!!.date() },
+                .groupBy({ shift -> shift.arrivalTime!!.dawn() },
                     {
                         if (it.exitTime == null) {
                             0.000

@@ -93,11 +93,11 @@ class HomeFragment : PremiumFeaturesFragment() {
 
         userVm.shifts.observe(viewLifecycleOwner, Observer {
             Timber.d("Shifts: $it")
-            hideLoading()
             if (userVm.isCheckedIn.value != true) {
                 updateGraph()
             }
             handleCheckInDetailsGroup(userVm.isCheckedIn.value ?: false)
+            hideLoading()
         })
 
         userVm.isCheckedIn.observe(viewLifecycleOwner, Observer {
@@ -136,7 +136,7 @@ class HomeFragment : PremiumFeaturesFragment() {
     private fun filterActivity(shifts: List<Shift>, from: Date, to: Date): ArrayList<Shift> {
         val returnList: ArrayList<Shift> = arrayListOf()
         for (shift in shifts) {
-            if (shift.exitTime != null && shift.arrivalTime!! >= from && shift.exitTime!! <= to) {
+            if (shift.arrivalTime != null && shift.exitTime != null && shift.arrivalTime!! >= from && shift.exitTime!! <= to) {
                 returnList.add(shift)
             }
         }

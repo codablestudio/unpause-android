@@ -99,8 +99,10 @@ class UserActivityFragment : PremiumFeaturesFragment() {
                     val calendar2 = Calendar.getInstance()
                     calendar2.timeInMillis = selection.second!!
 
-                    userVm.setFilterStartDate(calendar1.time)
-                    userVm.setFilterEndDate(calendar2.time)
+
+                    Timber.i("Dates: ${calendar1.time.dawn()} ${calendar2.time.dusk()}")
+                    userVm.setFilterStartDate(calendar1.time.dawn())
+                    userVm.setFilterEndDate(calendar2.time.dusk())
 
                     //update UI
                     updateFromDate(formatFilterDate(userVm.filter.value!!.firstDate))
@@ -149,8 +151,8 @@ class UserActivityFragment : PremiumFeaturesFragment() {
 
         val lineData = getLineChartDataset(
             arrayListOf(),
-            timeManager.arrivalTime.date(),
-            timeManager.exitTime.date(),
+            timeManager.arrivalTime.dawn(),
+            timeManager.exitTime.dawn(),
             requireContext()
         )
 
@@ -363,8 +365,8 @@ class UserActivityFragment : PremiumFeaturesFragment() {
             var sum = 0f
             getLineChartData(
                 filterActivity(),
-                timeManager.arrivalTime.date(),
-                timeManager.exitTime.date()
+                timeManager.arrivalTime.dawn(),
+                timeManager.exitTime.dawn()
             ).forEach { sum += it.y }
             text_total_working_hours.text = TimeManager.formatTime(sum)
         } else {
@@ -372,8 +374,8 @@ class UserActivityFragment : PremiumFeaturesFragment() {
             total_hours_group.visibility = View.GONE
             line_chart.data = getLineChartDataset(
                 filterActivity(),
-                timeManager.arrivalTime.date(),
-                timeManager.exitTime.date(),
+                timeManager.arrivalTime.dawn(),
+                timeManager.exitTime.dawn(),
                 requireContext()
             )
             line_chart.notifyDataSetChanged()
@@ -392,9 +394,7 @@ class UserActivityFragment : PremiumFeaturesFragment() {
 
     override fun onResume() {
         super.onResume()
-        user.shifts?.let {
-            updateUI()
-        }
+        userVm.getShifts()
     }
 
     private fun shiftIsOverlapping(shift: Shift) : Boolean {
