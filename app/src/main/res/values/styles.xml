@@ -17,10 +17,6 @@
         <item name="popupTheme">@style/ThemeOverlay.MaterialComponents.Light</item>
     </style>
 
-    <style name="Button.Round" parent="Widget.MaterialComponents.Button">
-        <item name="android:background">@drawable/selector_btn_round</item>
-    </style>
-
     <style name="full_screen_dialog" parent="@android:style/Theme.Dialog">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">false</item>

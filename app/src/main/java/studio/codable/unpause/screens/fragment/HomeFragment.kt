@@ -31,22 +31,6 @@ class HomeFragment : PremiumFeaturesFragment() {
     @Inject
     lateinit var permissionManager : PermissionManager
 
-    /**
-     * isChecked -> user is checked in = state ON
-     */
-    private val checkInButtonListener: (CompoundButton, Boolean) -> Unit = { button, isChecked ->
-       if (button.isPressed) {
-           if (isChecked) {
-               userVm.checkIn()
-               Timber.d("checked in")
-           } else {
-               dialogManager.openDescriptionDialog(R.string.what_did_you_work_on, null, true, {
-                   userVm.checkOut(it)
-                   Timber.d("checked out")
-               }, null)
-           }
-       }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -65,8 +49,19 @@ class HomeFragment : PremiumFeaturesFragment() {
     }
 
     private fun initUI() {
-        btn_check_in_out.isChecked = userVm.isCheckedIn.value ?: false
-        btn_check_in_out.setOnCheckedChangeListener(checkInButtonListener)
+        btn_check_in_out.setOnClickListener{
+            userVm.isCheckedIn.value?.let { isCheckedIn ->
+                if (!isCheckedIn) {
+                    userVm.checkIn()
+                    Timber.d("checked in")
+                } else {
+                    dialogManager.openDescriptionDialog(R.string.what_did_you_work_on, null, true, {
+                        userVm.checkOut(it)
+                        Timber.d("checked out")
+                    }, null)
+                }
+            }
+        }
 
         initGraph()
     }
@@ -96,12 +91,12 @@ class HomeFragment : PremiumFeaturesFragment() {
             if (userVm.isCheckedIn.value != true) {
                 updateGraph()
             }
-            handleCheckInDetailsGroup(userVm.isCheckedIn.value ?: false)
             hideLoading()
         })
 
         userVm.isCheckedIn.observe(viewLifecycleOwner, Observer {
-            btn_check_in_out.isChecked = it
+            text_check_in_check_out.text = getCheckInCheckOutText(it)
+            handleCheckInDetailsGroup(it)
         })
 
         userVm.geofences.observe(viewLifecycleOwner, Observer { geofences ->
@@ -118,6 +113,10 @@ class HomeFragment : PremiumFeaturesFragment() {
         if (!userIsPremium) {
             geofenceManager.disableAllGeofences()
         }
+    }
+
+    private fun getCheckInCheckOutText(isCheckedIn: Boolean): String {
+        return if (isCheckedIn) getString(R.string.check_out) else getString(R.string.check_in)
     }
 
     private fun initGraph() {
@@ -144,14 +143,16 @@ class HomeFragment : PremiumFeaturesFragment() {
     }
 
     private fun handleCheckInDetailsGroup(isGroupVisible : Boolean) {
-        if (isGroupVisible) {
-            val timeManager = TimeManager(userVm.shifts.value.active()!!.arrivalTime!!, Calendar.getInstance().time)
-            text_last_check_in.text = userVm.shifts.value.active()?.arrivalTime.toPattern("dd.MM.yyyy HH:mm")
-            text_working_time.text = getString(R.string.n_h_m_min,timeManager.getWorkingHours().hours,
-                timeManager.getWorkingHours().minutes)
-            check_in_details_group.visibility = View.VISIBLE
-        } else {
-            check_in_details_group.visibility = View.GONE
+        with(userVm.shifts.value.active()) {
+            if (isGroupVisible && this!=null) {
+                val timeManager = TimeManager(this.arrivalTime!!, Calendar.getInstance().time)
+                text_last_check_in.text = this.arrivalTime.toPattern("dd.MM.yyyy HH:mm")
+                text_working_time.text = getString(R.string.n_h_m_min,timeManager.getWorkingHours().hours,
+                    timeManager.getWorkingHours().minutes)
+                check_in_details_group.visibility = View.VISIBLE
+            } else {
+                check_in_details_group.visibility = View.GONE
+            }
         }
     }
 
