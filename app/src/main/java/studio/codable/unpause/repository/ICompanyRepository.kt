@@ -12,4 +12,6 @@ interface ICompanyRepository {
 
     suspend fun getCompanyId(passcode : String) : Result<String>
 
+    suspend fun checkIfCompanyExists(passcode : String): Result<Boolean>
+
 }

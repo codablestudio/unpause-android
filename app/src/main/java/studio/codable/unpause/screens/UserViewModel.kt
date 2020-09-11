@@ -11,6 +11,7 @@ import studio.codable.unpause.model.Location
 import studio.codable.unpause.model.Shift
 import studio.codable.unpause.model.User
 import studio.codable.unpause.repository.*
+import studio.codable.unpause.utilities.Event
 import studio.codable.unpause.utilities.extensions.active
 import studio.codable.unpause.utilities.geofencing.GeofenceModel
 import studio.codable.unpause.utilities.helperFunctions.DateRange
@@ -51,6 +52,9 @@ class UserViewModel @Inject constructor(
 
     private val _isCheckedIn = MediatorLiveData<Boolean>()
     val isCheckedIn: LiveData<Boolean> = _isCheckedIn
+
+    private val _companyExists = MutableLiveData<Event<Boolean>>()
+    val companyExists: LiveData<Event<Boolean>> = _companyExists
 
     private val _filter = MutableLiveData<DateRange>()
     val filter: LiveData<DateRange> = _filter
@@ -282,5 +286,13 @@ class UserViewModel @Inject constructor(
                 return true
         }
         return false
+    }
+
+    fun handleCompanyUpdate(passcode: String) {
+        viewModelScope.launch {
+            process(companyRepository.checkIfCompanyExists(passcode)) {
+                _companyExists.value = Event(it)
+            }
+        }
     }
 }

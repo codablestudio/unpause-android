@@ -41,4 +41,10 @@ class FirebaseCompanyRepository @Inject constructor(
                 extractFirestoreCompany(it.documents[0]).documentId
         }
     }
+
+    override suspend fun checkIfCompanyExists(passcode : String): Result<Boolean> {
+        return callFirebase(companiesCol.whereEqualTo(PASSCODE_FIELD, passcode).get()) {
+            it.documents.isNotEmpty()
+        }
+    }
 }

@@ -3,6 +3,8 @@ package studio.codable.unpause.screens.fragment.connectCompany
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
+import kotlinx.android.synthetic.main.fragment_change_personal_info.*
 import kotlinx.android.synthetic.main.fragment_connect_company.*
 import studio.codable.unpause.R
 import studio.codable.unpause.screens.UserViewModel
@@ -24,11 +26,24 @@ class ChangeCompanyFragment : BaseCompanyFragment() {
     }
 
     private fun initListeners() {
+
+        userVm.companyExists.observe(viewLifecycleOwner, Observer { companyExists ->
+            companyExists.getContentIfNotHandled()?.let {
+                if (it) {
+                    userVm.updateCompany(edit_text_passcode.text.toString())
+                    showMessage(getString(R.string.company_updated))
+                    svm.navigateUp()
+                } else {
+                    showMessage("Company with provided passcode does not exist.")
+                }
+            }
+
+        })
+
         connect_company_button.setOnClickListener {
             showSoftwareKeyboard(false)
-            userVm.updateCompany(edit_text_passcode.text.toString())
-            showMessage(getString(R.string.company_updated))
-            svm.navigateUp()
+            userVm.handleCompanyUpdate(edit_text_passcode.text.toString())
+
         }
     }
 }
