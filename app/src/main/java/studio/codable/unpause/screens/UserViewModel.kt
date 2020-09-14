@@ -11,8 +11,9 @@ import studio.codable.unpause.model.Location
 import studio.codable.unpause.model.Shift
 import studio.codable.unpause.model.User
 import studio.codable.unpause.repository.*
+import studio.codable.unpause.utilities.Constants.CheckInCheckOutMessages.CheckInErrorMessage
+import studio.codable.unpause.utilities.Constants.CheckInCheckOutMessages.CheckOutErrorMessage
 import studio.codable.unpause.utilities.Event
-import studio.codable.unpause.utilities.extensions.active
 import studio.codable.unpause.utilities.geofencing.GeofenceModel
 import studio.codable.unpause.utilities.helperFunctions.DateRange
 import studio.codable.unpause.utilities.manager.SessionManager
@@ -58,6 +59,11 @@ class UserViewModel @Inject constructor(
 
     private val _filter = MutableLiveData<DateRange>()
     val filter: LiveData<DateRange> = _filter
+
+    private val _checkInCheckOutMessages = MutableLiveData<Int>()
+    val checkInCheckOutMessages: LiveData<Int> = _checkInCheckOutMessages
+
+
 
     init {
         initFilter()
@@ -117,14 +123,32 @@ class UserViewModel @Inject constructor(
     }
 
     fun checkIn() {
-        val newShift = Shift(arrivalTime = Date())
-        addShift(newShift)
-        _isCheckedIn.value = true
+        viewModelScope.launch {
+            process(shiftRepository.getCurrent()) { shift ->
+                if (shift == null) {
+                    val newShift = Shift(arrivalTime = Date())
+                    addShift(newShift)
+                } else {
+//                    (_shifts.value as ArrayList).add(shift)
+                    _checkInCheckOutMessages.value = CheckInErrorMessage
+                }
+                _isCheckedIn.value = true
+            }
+        }
     }
 
     fun checkOut(description: String) {
-        addExit(Date(), description)
-        _isCheckedIn.value = false
+        viewModelScope.launch {
+            process(shiftRepository.getCurrent()) { shift ->
+                if (shift != null) {
+                    val updatedShift = shift.copy().addExit(Date(), description)
+                    updateShift(shift,updatedShift)
+                } else {
+                    _checkInCheckOutMessages.value = CheckOutErrorMessage
+                }
+                _isCheckedIn.value = false
+            }
+        }
     }
 
     private fun getUser() {
@@ -178,15 +202,10 @@ class UserViewModel @Inject constructor(
         }
     }
 
-    private fun addExit(exitTime: Date, description: String) {
+    private fun updateShift(oldShift: Shift, newShift: Shift) {
         viewModelScope.launch {
-            shifts.value.active().let { active ->
-                active?.let {
-                    val updated = active.copy().addExit(exitTime, description)
-                    process(shiftRepository.update(active, updated)) {
-                        getShifts()
-                    }
-                }
+            process(shiftRepository.update(oldShift, newShift)) {
+                getShifts()
             }
         }
     }

@@ -1,5 +1,7 @@
 package studio.codable.unpause.utilities
 
+import studio.codable.unpause.R
+
 object Constants {
 
     object RequestCode {
@@ -45,5 +47,10 @@ object Constants {
     object Subscriptions {
         const val SUBSCRIPTION_1 = "subscription_montly"
         const val SUBSCRIPTION_2 = "subscription_yearly"
+    }
+
+    object CheckInCheckOutMessages {
+        const val CheckInErrorMessage = R.string.you_are_already_checked_in
+        const val CheckOutErrorMessage = R.string.you_need_to_check_in_before_you_can_check_out
     }
 }

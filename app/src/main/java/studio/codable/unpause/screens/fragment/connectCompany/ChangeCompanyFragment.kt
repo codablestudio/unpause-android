@@ -46,4 +46,9 @@ class ChangeCompanyFragment : BaseCompanyFragment() {
 
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        edit_text_passcode.text.clear()
+    }
 }

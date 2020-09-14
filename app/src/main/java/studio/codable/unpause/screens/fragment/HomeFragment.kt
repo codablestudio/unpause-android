@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CompoundButton
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.fragment_home.*
 import studio.codable.unpause.R
@@ -55,10 +54,16 @@ class HomeFragment : PremiumFeaturesFragment() {
                     userVm.checkIn()
                     Timber.d("checked in")
                 } else {
-                    dialogManager.openDescriptionDialog(R.string.what_did_you_work_on, null, true, {
-                        userVm.checkOut(it)
-                        Timber.d("checked out")
-                    }, null)
+                    dialogManager.openDescriptionDialog(
+                        R.string.what_did_you_work_on,
+                        null,
+                        true,
+                        { description ->
+                            userVm.checkOut(description)
+                            Timber.d("checked out")
+                        },
+                        null
+                    )
                 }
             }
         }
@@ -67,6 +72,10 @@ class HomeFragment : PremiumFeaturesFragment() {
     }
 
     private fun initObservers() {
+        userVm.loading.observe(viewLifecycleOwner, Observer {
+            defaultHandleLoading(it)
+        })
+
         userVm.errors.observe(viewLifecycleOwner, Observer {
             showError(it.getContentIfNotHandled())
         })
@@ -95,8 +104,11 @@ class HomeFragment : PremiumFeaturesFragment() {
         })
 
         userVm.isCheckedIn.observe(viewLifecycleOwner, Observer {
-            text_check_in_check_out.text = getCheckInCheckOutText(it)
-            handleCheckInDetailsGroup(it)
+            refreshCheckInCheckOut(it)
+        })
+
+        userVm.checkInCheckOutMessages.observe(viewLifecycleOwner, Observer {
+            showMessage(getString(it))
         })
 
         userVm.geofences.observe(viewLifecycleOwner, Observer { geofences ->
@@ -104,8 +116,7 @@ class HomeFragment : PremiumFeaturesFragment() {
                 geofences.forEach {
                     geofenceManager.addGeofence(it, true)
                 }
-            }
-            else {
+            } else {
                 permissionManager.requestLocationPermission(this)
             }
         })
@@ -113,6 +124,11 @@ class HomeFragment : PremiumFeaturesFragment() {
         if (!userIsPremium) {
             geofenceManager.disableAllGeofences()
         }
+    }
+
+    private fun refreshCheckInCheckOut(it: Boolean) {
+        text_check_in_check_out.text = getCheckInCheckOutText(it)
+        handleCheckInDetailsGroup(it)
     }
 
     private fun getCheckInCheckOutText(isCheckedIn: Boolean): String {
