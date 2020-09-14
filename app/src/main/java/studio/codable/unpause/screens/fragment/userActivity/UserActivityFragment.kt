@@ -34,6 +34,7 @@ class UserActivityFragment : PremiumFeaturesFragment() {
 
     private lateinit var timeManager: TimeManager
     private lateinit var user : User
+    private lateinit var recyclerViewAdapter : UserActivityRecyclerViewAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -72,6 +73,8 @@ class UserActivityFragment : PremiumFeaturesFragment() {
         userVm.filter.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             timeManager.arrivalTime = it.firstDate
             timeManager.exitTime = it.lastDate
+            updateFilterUI()
+            updateUI()
         })
     }
 
@@ -85,7 +88,7 @@ class UserActivityFragment : PremiumFeaturesFragment() {
 
             from_date_text_view.text = formatFilterDate(timeManager.arrivalTime)
             to_date_text_view.text = formatFilterDate(timeManager.exitTime)
-
+            
             selected_date.setOnClickListener {
                 dialogManager.openDateRangePickerDialog(
                     Calendar.getInstance().apply {
@@ -101,14 +104,12 @@ class UserActivityFragment : PremiumFeaturesFragment() {
 
 
                     Timber.i("Dates: ${calendar1.time.dawn()} ${calendar2.time.dusk()}")
-                    userVm.setFilterStartDate(calendar1.time.dawn())
-                    userVm.setFilterEndDate(calendar2.time.dusk())
-
-                    //update UI
-                    updateFromDate(formatFilterDate(userVm.filter.value!!.firstDate))
-                    updateToDate(formatFilterDate(userVm.filter.value!!.lastDate))
-                    updateUI()
+                    userVm.setFilterDates(calendar1.time.dawn(), calendar2.time.dusk())
                 }
+            }
+
+            btn_clear_filter.setOnClickListener {
+                userVm.resetFilter()
             }
 
             swipe_to_refresh_recycler_view.setOnRefreshListener {
@@ -123,8 +124,15 @@ class UserActivityFragment : PremiumFeaturesFragment() {
 
     }
 
+    private fun updateFilterUI() {
+        updateFromDate(formatFilterDate(userVm.filter.value!!.firstDate))
+        updateToDate(formatFilterDate(userVm.filter.value!!.lastDate))
+        btn_clear_filter.visibility =
+            if (!userVm.checkIfDateRangeIsDefault()) View.VISIBLE else View.GONE
+    }
+
     private fun initRecyclerView(activity: FragmentActivity) {
-        val recyclerViewAdapter = UserActivityRecyclerViewAdapter(
+        recyclerViewAdapter = UserActivityRecyclerViewAdapter(
             requireContext(),
             { shift, _ -> userVm.deleteShift(shift) },
             { shift, _ -> editShift(shift) }
@@ -341,6 +349,7 @@ class UserActivityFragment : PremiumFeaturesFragment() {
     }
 
     private fun updateUI() {
+        Timber.i("UpdateUI called.")
         stopSwipeRefreshAnimation()
         updateChart()
         updateRecyclerView()
@@ -352,9 +361,8 @@ class UserActivityFragment : PremiumFeaturesFragment() {
     }
 
     private fun updateRecyclerView() {
-        (user_activity_recycler_view?.adapter as UserActivityRecyclerViewAdapter)
-            .updateContent(filterActivity())
-        user_activity_recycler_view?.adapter?.notifyDataSetChanged()
+        recyclerViewAdapter.updateContent(filterActivity())
+        recyclerViewAdapter.notifyDataSetChanged()
     }
 
     private fun updateChart() {
@@ -395,6 +403,7 @@ class UserActivityFragment : PremiumFeaturesFragment() {
     override fun onResume() {
         super.onResume()
         userVm.getShifts()
+        updateFilterUI()
     }
 
     private fun shiftIsOverlapping(shift: Shift) : Boolean {

@@ -63,6 +63,8 @@ class UserViewModel @Inject constructor(
     private val _checkInCheckOutMessages = MutableLiveData<Int>()
     val checkInCheckOutMessages: LiveData<Int> = _checkInCheckOutMessages
 
+    private lateinit var defaultFilterStartDate : Date
+    private lateinit var defaultFilterEndDate : Date
 
 
     init {
@@ -94,12 +96,8 @@ class UserViewModel @Inject constructor(
 
     }
 
-    fun setFilterStartDate(startDate: Date) {
-        _filter.value?.firstDate = startDate
-    }
-
-    fun setFilterEndDate(endDate: Date) {
-        _filter.value?.lastDate = endDate
+    fun setFilterDates(startDate: Date, endDate: Date) {
+        _filter.value = DateRange(startDate, endDate)
     }
 
     private fun initFilter() {
@@ -119,7 +117,10 @@ class UserViewModel @Inject constructor(
             set(Calendar.MINUTE, 59)
             set(Calendar.SECOND, 59)
         }
-        _filter.value = DateRange(cal1.time, cal2.time)
+
+        defaultFilterStartDate = cal1.time
+        defaultFilterEndDate = cal2.time
+        _filter.value = DateRange(defaultFilterStartDate, defaultFilterEndDate)
     }
 
     fun checkIn() {
@@ -313,5 +314,13 @@ class UserViewModel @Inject constructor(
                 _companyExists.value = Event(it)
             }
         }
+    }
+
+    fun checkIfDateRangeIsDefault() : Boolean {
+        return _filter.value?.firstDate==defaultFilterStartDate && _filter.value?.lastDate==defaultFilterEndDate
+    }
+
+    fun resetFilter() {
+        _filter.value = DateRange(defaultFilterStartDate,defaultFilterEndDate)
     }
 }

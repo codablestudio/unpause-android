@@ -142,7 +142,7 @@ class UserActivityRecyclerViewAdapter constructor(
         val snackbar =
             Snackbar.make(rv, context.getString(R.string.shift_removed), Snackbar.LENGTH_LONG)
                 .apply {
-                    anchorView = rv.findViewById(R.id.nav_host_home_activity)
+                    anchorView = rv.findViewById(R.id.bottom_nav_main)
                     setAction(context.getString(R.string.undo)) { undoDelete() }
 
                     addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>() {
