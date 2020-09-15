@@ -1,11 +1,11 @@
 package studio.codable.unpause.model.firestore
 
+import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.GeoPoint
 import studio.codable.unpause.model.Company
 import studio.codable.unpause.utilities.Constants
 import studio.codable.unpause.utilities.geofencing.GeofenceModel
-import studio.codable.unpause.utilities.latlng.LatLng
 
 data class FirestoreCompany(
     @DocumentId

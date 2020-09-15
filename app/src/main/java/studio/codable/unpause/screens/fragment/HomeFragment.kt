@@ -48,6 +48,11 @@ class HomeFragment : PremiumFeaturesFragment() {
     }
 
     private fun initUI() {
+
+        home_swipe_refresh.setOnRefreshListener {
+            userVm.getUser()
+        }
+
         btn_check_in_out.setOnClickListener{
             userVm.isCheckedIn.value?.let { isCheckedIn ->
                 if (!isCheckedIn) {
@@ -68,6 +73,14 @@ class HomeFragment : PremiumFeaturesFragment() {
             }
         }
 
+        text_company.setOnClickListener {
+            if (userVm.company.value!=null) {
+                svm.navigate(HomeFragmentDirections.actionHomeFragmentToDisplayCompanyLocationsFragment())
+            } else {
+                showMessage(getString(R.string.please_wait_while_the_company_is_loading))
+            }
+        }
+
         initGraph()
     }
 
@@ -85,6 +98,7 @@ class HomeFragment : PremiumFeaturesFragment() {
                 text_name.text = getString(R.string.firstName_lastName, firstName.orEmpty(), lastName.orEmpty())
                 text_company.text = getString(R.string.loading_dots)
             }
+            stopSwipeRefreshAnimation()
         })
 
         userVm.company.observe(viewLifecycleOwner, Observer {
@@ -156,6 +170,11 @@ class HomeFragment : PremiumFeaturesFragment() {
             }
         }
         return returnList
+    }
+
+    private fun stopSwipeRefreshAnimation() {
+        if (home_swipe_refresh.isRefreshing)
+            home_swipe_refresh.isRefreshing = false
     }
 
     private fun handleCheckInDetailsGroup(isGroupVisible : Boolean) {

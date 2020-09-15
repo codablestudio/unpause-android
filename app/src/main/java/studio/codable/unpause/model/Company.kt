@@ -1,6 +1,6 @@
 package studio.codable.unpause.model
 
-import studio.codable.unpause.utilities.latlng.LatLng
+import com.google.android.gms.maps.model.LatLng
 
 
 data class Company(
@@ -8,4 +8,10 @@ data class Company(
     var email: String,
     var name: String,
     var locations: List<LatLng>? = null
-)
+) {
+    fun extractLocations() : List<Location> {
+        return locations?.map {
+            Location(it, name)
+        } ?: arrayListOf()
+    }
+}

@@ -9,6 +9,14 @@
         android:id="@+id/homeFragment"
         android:name="studio.codable.unpause.screens.fragment.HomeFragment"
         android:label="@string/home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_displayCompanyLocationsFragment"
+            app:destination="@id/displayCompanyLocationsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/displayCompanyLocationsFragment"
+        android:name="studio.codable.unpause.screens.fragment.locations.DisplayCompanyLocationsFragment"
+        android:label="DisplayCompanyLocationsFragment" />
 
 </navigation>

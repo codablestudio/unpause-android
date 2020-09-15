@@ -1,175 +1,181 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/home_swipe_refresh"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <include
-        android:id="@+id/include_toolbar"
-        layout="@layout/layout_toolbar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/user_img"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:layout_marginStart="45dp"
-        android:layout_marginTop="20dp"
-        android:src="@drawable/user_60x60_black"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/include_toolbar" />
-
-    <TextView
-        android:id="@+id/text_name"
-        style="@style/TextLight"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="5dp"
-        app:layout_constraintBottom_toBottomOf="@+id/user_img"
-        app:layout_constraintStart_toEndOf="@id/user_img"
-        app:layout_constraintTop_toBottomOf="@id/include_toolbar"
-        tools:text="Dinko Marinac" />
-
-    <View
-        android:id="@+id/view"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="30dp"
-        android:background="@color/primary_dark"
-        app:layout_constraintBottom_toBottomOf="@+id/user_img"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@id/text_name"
-        app:layout_constraintTop_toBottomOf="@id/user_img" />
-
-    <ImageView
-        android:id="@+id/company_img"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:layout_marginStart="45dp"
-        android:layout_marginTop="20dp"
-        android:src="@drawable/company_60x60_black"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/user_img" />
-
-    <TextView
-        android:id="@+id/text_company"
-        style="@style/TextLight"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="15dp"
-        app:layout_constraintBottom_toBottomOf="@id/company_img"
-        app:layout_constraintStart_toEndOf="@id/company_img"
-        app:layout_constraintTop_toBottomOf="@+id/user_img"
-        tools:text="Codable Studio" />
-
-    <View
-        android:id="@+id/view2"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginEnd="30dp"
-        android:background="@color/primary_dark"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/text_company"
-        app:layout_constraintTop_toBottomOf="@id/company_img" />
-
-    <ImageButton
-        android:id="@+id/btn_check_in_out"
-        android:layout_width="130dp"
-        android:layout_height="130dp"
-        android:layout_marginTop="40dp"
-        android:background="@drawable/background_btn_round_checked"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view2" />
-
-    <TextView
-        android:id="@+id/text_check_in_check_out"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/white"
-        android:textSize="18sp"
-        android:textAllCaps="true"
-        android:textStyle="bold"
-        android:letterSpacing=".07"
-        android:clickable="false"
-        app:layout_constraintBottom_toBottomOf="@+id/btn_check_in_out"
-        app:layout_constraintEnd_toEndOf="@+id/btn_check_in_out"
-        app:layout_constraintStart_toStartOf="@+id/btn_check_in_out"
-        app:layout_constraintTop_toTopOf="@+id/btn_check_in_out"
-        tools:text="Check out" />
-
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/check_in_details_group"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:constraint_referenced_ids="text_label_last_check_in, text_last_check_in, text_label_working_time, text_working_time"
-        android:visibility="gone"
-        tools:visibility="visible"/>
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline1"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.5" />
+        android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/text_label_last_check_in"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:layout_marginEnd="4dp"
-        android:text="@string/last_check_in_time"
-        app:layout_constraintEnd_toStartOf="@+id/guideline1"
-        app:layout_constraintTop_toBottomOf="@+id/btn_check_in_out" />
+        <include
+            android:id="@+id/include_toolbar"
+            layout="@layout/layout_toolbar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/text_last_check_in"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        app:layout_constraintStart_toStartOf="@+id/guideline1"
-        app:layout_constraintTop_toTopOf="@+id/text_label_last_check_in"
-        tools:text="07.09.2020 15:07" />
+        <ImageView
+            android:id="@+id/user_img"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginStart="45dp"
+            android:layout_marginTop="20dp"
+            android:src="@drawable/user_60x60_black"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/include_toolbar" />
 
-    <TextView
-        android:id="@+id/text_label_working_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
-        android:text="@string/working_time"
-        app:layout_constraintEnd_toStartOf="@+id/guideline1"
-        app:layout_constraintTop_toBottomOf="@+id/text_label_last_check_in" />
+        <TextView
+            android:id="@+id/text_name"
+            style="@style/TextLight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="5dp"
+            app:layout_constraintBottom_toBottomOf="@+id/user_img"
+            app:layout_constraintStart_toEndOf="@id/user_img"
+            app:layout_constraintTop_toBottomOf="@id/include_toolbar"
+            tools:text="Dinko Marinac" />
 
-    <TextView
-        android:id="@+id/text_working_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:textColor="@color/primary"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/guideline1"
-        app:layout_constraintTop_toBottomOf="@+id/text_label_last_check_in"
-        tools:text="0 h 0 min" />
+        <View
+            android:id="@+id/view"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="30dp"
+            android:background="@color/primary_dark"
+            app:layout_constraintBottom_toBottomOf="@+id/user_img"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/text_name"
+            app:layout_constraintTop_toBottomOf="@id/user_img" />
 
-    <com.github.mikephil.charting.charts.BarChart
-        android:id="@+id/chart"
-        android:layout_width="match_parent"
-        android:layout_height="180dp"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginBottom="15dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_label_working_time"
-        app:layout_constraintVertical_bias="1"/>
+        <ImageView
+            android:id="@+id/company_img"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginStart="45dp"
+            android:layout_marginTop="20dp"
+            android:src="@drawable/company_60x60_black"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/user_img" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/text_company"
+            style="@style/TextLight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="15dp"
+            app:layout_constraintBottom_toBottomOf="@id/company_img"
+            app:layout_constraintStart_toEndOf="@id/company_img"
+            app:layout_constraintTop_toBottomOf="@+id/user_img"
+            tools:text="Codable Studio" />
+
+        <View
+            android:id="@+id/view2"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginEnd="30dp"
+            android:background="@color/primary_dark"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/text_company"
+            app:layout_constraintTop_toBottomOf="@id/company_img" />
+
+        <ImageButton
+            android:id="@+id/btn_check_in_out"
+            android:layout_width="130dp"
+            android:layout_height="130dp"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/background_btn_round_checked"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view2" />
+
+        <TextView
+            android:id="@+id/text_check_in_check_out"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:letterSpacing=".07"
+            android:textAllCaps="true"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_check_in_out"
+            app:layout_constraintEnd_toEndOf="@+id/btn_check_in_out"
+            app:layout_constraintStart_toStartOf="@+id/btn_check_in_out"
+            app:layout_constraintTop_toTopOf="@+id/btn_check_in_out"
+            tools:text="Check out" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/check_in_details_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="text_label_last_check_in, text_last_check_in, text_label_working_time, text_working_time"
+            tools:visibility="visible" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+
+        <TextView
+            android:id="@+id/text_label_last_check_in"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="4dp"
+            android:text="@string/last_check_in_time"
+            app:layout_constraintEnd_toStartOf="@+id/guideline1"
+            app:layout_constraintTop_toBottomOf="@+id/btn_check_in_out" />
+
+        <TextView
+            android:id="@+id/text_last_check_in"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            app:layout_constraintStart_toStartOf="@+id/guideline1"
+            app:layout_constraintTop_toTopOf="@+id/text_label_last_check_in"
+            tools:text="07.09.2020 15:07" />
+
+        <TextView
+            android:id="@+id/text_label_working_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:text="@string/working_time"
+            app:layout_constraintEnd_toStartOf="@+id/guideline1"
+            app:layout_constraintTop_toBottomOf="@+id/text_label_last_check_in" />
+
+        <TextView
+            android:id="@+id/text_working_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:textColor="@color/primary"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/guideline1"
+            app:layout_constraintTop_toBottomOf="@+id/text_label_last_check_in"
+            tools:text="0 h 0 min" />
+
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/chart"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginBottom="15dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_label_working_time"
+            app:layout_constraintVertical_bias="1" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

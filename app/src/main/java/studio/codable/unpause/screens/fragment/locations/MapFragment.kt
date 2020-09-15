@@ -1,9 +1,7 @@
 package studio.codable.unpause.screens.fragment.locations
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -12,42 +10,31 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.fragment_map.*
 import studio.codable.unpause.R
+import studio.codable.unpause.base.activity.BaseActivity
 import studio.codable.unpause.base.fragment.BaseFragment
 import studio.codable.unpause.model.Location
-import studio.codable.unpause.screens.fragment.premium.PremiumFeaturesFragment
+import studio.codable.unpause.utilities.manager.DialogManager
 import studio.codable.unpause.utilities.manager.PermissionManager
 import javax.inject.Inject
 
-class MapFragment : PremiumFeaturesFragment(), OnMapReadyCallback, GoogleMap.OnMarkerDragListener {
+class MapFragment : BaseMapFragment(), GoogleMap.OnMarkerDragListener {
 
     @Inject
     lateinit var permissionManager : PermissionManager
 
-    private lateinit var googleMap: GoogleMap
+    private val dialogManager: DialogManager by lazy { DialogManager(activity as BaseActivity) }
+
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-    private lateinit var markers: MutableList<Marker>
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_map, container, false)
-    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        val mapFragment = childFragmentManager.findFragmentById(R.id.location_chooser) as SupportMapFragment
-        mapFragment.getMapAsync(this)
         fusedLocationProviderClient = FusedLocationProviderClient(requireActivity())
     }
 
@@ -59,36 +46,56 @@ class MapFragment : PremiumFeaturesFragment(), OnMapReadyCallback, GoogleMap.OnM
             googleMap.uiSettings.isZoomControlsEnabled = true
             getCurrentLocation()
             userVm.getLocations()
-            googleMap.setOnMapClickListener { position ->
-                dialogManager.openDescriptionDialog(
-                    R.string.enter_location_name,
-                    null,
-                    false,
-                    {
-                        userVm.addLocation(Location(position, it))
-                    },
-                    {})
-            }
-            googleMap.setOnInfoWindowClickListener { marker ->
-                dialogManager.openDescriptionDialog(
-                    getString(R.string.edit_location_name),
-                    marker.title,
-                    false,
-                    {
-                        updateLocation(Location(marker), Location(marker.position,it))
-                    },
-                    {})
-            }
-            googleMap.setOnInfoWindowLongClickListener {
-                dialogManager.openConfirmDialog(R.string.are_you_sure_you_want_to_delete_location) {
-                    userVm.deleteLocation(Location(it))
-                }
-            }
+            defineMapActions()
         } else {
-            permissionManager.requestFineLocationPermission(location_chooser as BaseFragment)
+            permissionManager.requestFineLocationPermission(layout_map_fragment as BaseFragment)
         }
         googleMap.setOnMarkerDragListener(this)
 
+        initObservers()
+    }
+
+    private fun defineMapActions() {
+        defineAddLocation()
+        defineEditLocation()
+        defineDeleteLocation()
+    }
+
+    private fun defineDeleteLocation() {
+        googleMap.setOnInfoWindowLongClickListener {
+            dialogManager.openConfirmDialog(R.string.are_you_sure_you_want_to_delete_location) {
+                userVm.deleteLocation(Location(it))
+            }
+        }
+    }
+
+    private fun defineEditLocation() {
+        googleMap.setOnInfoWindowClickListener { marker ->
+            dialogManager.openDescriptionDialog(
+                getString(R.string.edit_location_name),
+                marker.title,
+                false,
+                {
+                    updateLocation(Location(marker), Location(marker.position, it))
+                },
+                {})
+        }
+    }
+
+    private fun defineAddLocation() {
+        googleMap.setOnMapClickListener { position ->
+            dialogManager.openDescriptionDialog(
+                R.string.enter_location_name,
+                null,
+                false,
+                {
+                    userVm.addLocation(Location(position, it))
+                },
+                {})
+        }
+    }
+
+    private fun initObservers() {
         userVm.locations.observe(viewLifecycleOwner, Observer {
             //refresh markers
             googleMap.clear()
@@ -135,17 +142,6 @@ class MapFragment : PremiumFeaturesFragment(), OnMapReadyCallback, GoogleMap.OnM
             }
     }
 
-    /**
-     * Sets camera to the location
-     */
-    private fun setStartLocation(lat: Double, lng: Double){
-        val cameraPosition = CameraPosition.Builder()
-            .target(LatLng(lat, lng))
-            .zoom(17f)
-            .build()
-        googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
-    }
-
     override fun onMarkerDragEnd(p0: Marker?) {
         //after marker is dragged, update location
         p0?.let {marker ->
@@ -163,9 +159,9 @@ class MapFragment : PremiumFeaturesFragment(), OnMapReadyCallback, GoogleMap.OnM
     override fun onMarkerDrag(p0: Marker?) {
     }
 
-    private fun createMarkersFromLocations(locations: List<Location>) : List<Marker> {
+    override fun createMarkersFromLocations(locations: List<Location>): List<Marker> {
         return locations.map {
-            googleMap.addMarker(MarkerOptions().position(it.position!!).title(it.name).draggable(true))
+            googleMap.addMarker(MarkerOptions().position(it.position).title(it.name).draggable(true))
         }
     }
 

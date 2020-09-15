@@ -141,4 +141,5 @@
     <string name="last_check_in_time">Last check in time:</string>
     <string name="working_time">Working time:</string>
     <string name="n_h_m_min">%d h %d min</string>
+    <string name="please_wait_while_the_company_is_loading">Please wait while the company is loading.</string>
 </resources>

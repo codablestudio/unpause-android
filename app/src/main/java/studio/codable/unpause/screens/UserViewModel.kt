@@ -152,7 +152,7 @@ class UserViewModel @Inject constructor(
         }
     }
 
-    private fun getUser() {
+    fun getUser() {
         viewModelScope.launch {
             process(userRepository.getUser()) {
                 _user.value = it
