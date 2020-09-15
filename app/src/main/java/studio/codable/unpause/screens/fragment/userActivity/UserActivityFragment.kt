@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_user_activity.*
 import studio.codable.unpause.R
 import studio.codable.unpause.model.Shift
@@ -35,6 +36,14 @@ class UserActivityFragment : PremiumFeaturesFragment() {
     private lateinit var timeManager: TimeManager
     private lateinit var user : User
     private lateinit var recyclerViewAdapter : UserActivityRecyclerViewAdapter
+
+    private val recyclerViewOnScrollListener = object : RecyclerView.OnScrollListener() {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            super.onScrolled(recyclerView, dx, dy)
+            user_activity_swipe_refresh_layout.isEnabled =
+                (user_activity_recycler_view.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition() == 0
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -112,7 +121,8 @@ class UserActivityFragment : PremiumFeaturesFragment() {
                 userVm.resetFilter()
             }
 
-            swipe_to_refresh_recycler_view.setOnRefreshListener {
+            user_activity_swipe_refresh_layout.isNestedScrollingEnabled = false
+            user_activity_swipe_refresh_layout.setOnRefreshListener {
                 Timber.i("onRefresh called from SwipeRefreshLayout")
                 userVm.getShifts()
             }
@@ -143,6 +153,7 @@ class UserActivityFragment : PremiumFeaturesFragment() {
             isNestedScrollingEnabled = false
             layoutManager = LinearLayoutManager(context)
             adapter = recyclerViewAdapter
+            addOnScrollListener(recyclerViewOnScrollListener)
         }
 
         val itemTouchHelper =
@@ -356,8 +367,8 @@ class UserActivityFragment : PremiumFeaturesFragment() {
     }
 
     private fun stopSwipeRefreshAnimation() {
-        if (swipe_to_refresh_recycler_view.isRefreshing)
-            swipe_to_refresh_recycler_view.isRefreshing = false
+        if (user_activity_swipe_refresh_layout.isRefreshing)
+            user_activity_swipe_refresh_layout.isRefreshing = false
     }
 
     private fun updateRecyclerView() {

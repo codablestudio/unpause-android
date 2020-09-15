@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/user_activity_swipe_refresh_layout"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -58,8 +59,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
-            android:padding="10dp"
             android:background="@drawable/marker_view_background"
+            android:padding="10dp"
             app:layout_constraintBottom_toTopOf="@+id/recycler_view_separator"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -93,9 +94,9 @@
                 android:id="@+id/from_date_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
                 android:textSize="16sp"
                 android:textStyle="normal"
-                android:layout_marginStart="10dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -105,9 +106,9 @@
                 android:id="@+id/until"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
                 android:text="@string/dash"
                 android:textSize="16sp"
-                android:layout_marginStart="5dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/to_date_text_view"
                 app:layout_constraintStart_toEndOf="@id/from_date_text_view"
@@ -132,43 +133,36 @@
             android:layout_height="1dp"
             android:layout_marginTop="10dp"
             android:background="@android:color/black"
-            app:layout_constraintBottom_toTopOf="@id/swipe_to_refresh_recycler_view"
+            app:layout_constraintBottom_toTopOf="@id/user_activity_recycler_view"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/selected_date" />
 
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/swipe_to_refresh_recycler_view"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/user_activity_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:clipToPadding="false"
+            android:paddingBottom="20dp"
+            android:scrollbars="vertical"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/recycler_view_separator">
+            app:layout_constraintTop_toBottomOf="@id/recycler_view_separator" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/user_activity_recycler_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:clipToPadding="false"
-                android:paddingBottom="20dp"
-                android:scrollbars="vertical"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        <com.leinardi.android.speeddial.SpeedDialView
+            android:id="@+id/speed_dial_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/user_activity_recycler_view"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:sdMainFabAnimationRotateAngle="180"
+            app:sdMainFabClosedBackgroundColor="@color/accent"
+            app:sdMainFabClosedSrc="@drawable/ic_keyboard_arrow_up_black_24dp"
+            app:sdMainFabOpenedBackgroundColor="@color/accent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <com.leinardi.android.speeddial.SpeedDialView
-        android:id="@+id/speed_dial_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="5dp"
-        app:sdMainFabAnimationRotateAngle="180"
-        app:sdMainFabClosedBackgroundColor="@color/accent"
-        app:sdMainFabClosedSrc="@drawable/ic_keyboard_arrow_up_black_24dp"
-        app:sdMainFabOpenedBackgroundColor="@color/accent" />
 
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
