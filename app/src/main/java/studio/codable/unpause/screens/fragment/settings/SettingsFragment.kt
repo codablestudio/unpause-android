@@ -10,9 +10,15 @@ import studio.codable.unpause.R
 import studio.codable.unpause.screens.activity.login.LoginActivity
 import studio.codable.unpause.screens.fragment.premium.PremiumFeaturesFragment
 import studio.codable.unpause.utilities.manager.GeofencingManager
+import studio.codable.unpause.utilities.manager.PermissionManager
 import studio.codable.unpause.utilities.manager.SessionManager
+import javax.inject.Inject
 
 class SettingsFragment : PremiumFeaturesFragment() {
+
+
+    @Inject
+    lateinit var permissionManager : PermissionManager
 
     private val sessionManager: SessionManager by lazy { SessionManager(requireContext()) }
 
@@ -71,10 +77,14 @@ class SettingsFragment : PremiumFeaturesFragment() {
             location_based_notifications.visibility = if (userIsPremium) View.VISIBLE else View.GONE
             location_switch.isChecked = sessionManager.locationServiceStatus
             location_switch.setOnCheckedChangeListener { _, isChecked ->
-                if (isChecked) {
-                    enableLocationService()
+                if (permissionManager.checkFineLocationPermission()) {
+                    if (isChecked) {
+                        enableLocationService()
+                    } else {
+                        disableLocationService()
+                    }
                 } else {
-                    disableLocationService()
+                    permissionManager.requestLocationPermission(this)
                 }
             }
         }

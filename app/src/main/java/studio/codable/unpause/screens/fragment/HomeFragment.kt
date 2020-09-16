@@ -15,7 +15,7 @@ import studio.codable.unpause.utilities.helperFunctions.toPattern
 import studio.codable.unpause.utilities.manager.ChartManager.Companion.getBarChartDataset
 import studio.codable.unpause.utilities.manager.ChartManager.Companion.initBarChart
 import studio.codable.unpause.utilities.manager.GeofencingManager
-import studio.codable.unpause.utilities.manager.PermissionManager
+import studio.codable.unpause.utilities.manager.SessionManager
 import studio.codable.unpause.utilities.manager.TimeManager
 import timber.log.Timber
 import java.util.*
@@ -27,9 +27,7 @@ class HomeFragment : PremiumFeaturesFragment() {
     @Inject
     lateinit var geofenceManager: GeofencingManager
 
-    @Inject
-    lateinit var permissionManager : PermissionManager
-
+    private val sessionManager: SessionManager by lazy { SessionManager(requireContext()) }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -126,12 +124,10 @@ class HomeFragment : PremiumFeaturesFragment() {
         })
 
         userVm.geofences.observe(viewLifecycleOwner, Observer { geofences ->
-            if (permissionManager.checkFineLocationPermission()) {
+            if (userIsPremium && sessionManager.locationServiceStatus) {
                 geofences.forEach {
                     geofenceManager.addGeofence(it, true)
                 }
-            } else {
-                permissionManager.requestLocationPermission(this)
             }
         })
 

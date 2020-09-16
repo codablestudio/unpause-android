@@ -17,7 +17,9 @@ import studio.codable.unpause.R
 import studio.codable.unpause.app.App
 import studio.codable.unpause.screens.SharedViewModel
 import studio.codable.unpause.screens.fragment.HomeFragment
+import studio.codable.unpause.screens.fragment.locations.LocationsListFragment
 import studio.codable.unpause.screens.fragment.locations.MapFragment
+import studio.codable.unpause.screens.fragment.settings.SettingsFragment
 import studio.codable.unpause.utilities.Event
 import studio.codable.unpause.utilities.navigation.NavCommand
 import timber.log.Timber
@@ -79,6 +81,8 @@ abstract class BaseFragment(private val hasDefaultToolbar: Boolean) : Fragment()
             when (this) {
             is HomeFragment -> it.plusFragment().inject(this)
             is MapFragment -> it.plusFragment().inject(this)
+            is SettingsFragment -> it.plusFragment().inject(this)
+            is LocationsListFragment -> it.plusFragment().inject(this)
         }
      }
     }

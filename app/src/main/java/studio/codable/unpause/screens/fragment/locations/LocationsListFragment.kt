@@ -1,5 +1,6 @@
 package studio.codable.unpause.screens.fragment.locations
 
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -13,11 +14,17 @@ import studio.codable.unpause.R
 import studio.codable.unpause.base.fragment.BaseFragment
 import studio.codable.unpause.model.Location
 import studio.codable.unpause.screens.UserViewModel
+import studio.codable.unpause.utilities.Constants
 import studio.codable.unpause.utilities.adapter.locationsRecyclerViewAdapter.LocationsRecyclerViewAdapter
+import studio.codable.unpause.utilities.manager.PermissionManager
+import javax.inject.Inject
 
 class LocationsListFragment : BaseFragment(false) {
 
     private val userVm: UserViewModel by activityViewModels()
+
+    @Inject
+    lateinit var permissionManager : PermissionManager
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,6 +62,21 @@ class LocationsListFragment : BaseFragment(false) {
         }
 
         btn_add_new_location.setOnClickListener {
+            if (permissionManager.checkFineLocationPermission()) {
+                svm.navigate(LocationsListFragmentDirections.actionLocationsListFragmentToMapFragment())
+            } else {
+                permissionManager.requestLocationPermission(this)
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == Constants.RequestCode.FINE_LOCATION_PERMISSION && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             svm.navigate(LocationsListFragmentDirections.actionLocationsListFragmentToMapFragment())
         }
     }
