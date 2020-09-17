@@ -8,18 +8,37 @@ import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofenceStatusCodes
 import com.google.android.gms.location.GeofencingEvent
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.*
 import studio.codable.unpause.R
+import studio.codable.unpause.repository.FirebaseShiftRepository
 import studio.codable.unpause.screens.activity.start.StartActivity
 import studio.codable.unpause.utilities.Constants.Notifications.LOCATION_NOTIFICATION_CHANNEL_ID
+import studio.codable.unpause.utilities.LambdaNoArgumentsUnit
+import studio.codable.unpause.utilities.LambdaShiftToBool
 import studio.codable.unpause.utilities.manager.NotificationManagerUnpause
+import studio.codable.unpause.utilities.manager.SessionManager
+import studio.codable.unpause.utilities.networking.Result
 import timber.log.Timber
+import kotlin.coroutines.CoroutineContext
 
-class GeofenceProcessingService : IntentService("Geofence processing service") {
+class GeofenceProcessingService : IntentService("Geofence processing service"), CoroutineScope {
 
     companion object {
         private const val NOTIF_ID = 23456
+
+        private val userIsCheckedIn : LambdaShiftToBool = { it!=null }
+        private val userIsNotCheckedIn : LambdaShiftToBool = { it==null }
     }
 
+    private val errorHandler = CoroutineExceptionHandler { _, throwable -> Timber.w(throwable) }
+    private val job = Job()
+    override val coroutineContext: CoroutineContext = Dispatchers.IO + job + errorHandler
+
+    private val sessionManager by lazy { SessionManager(this.applicationContext) }
+    private val shiftRepository by lazy { FirebaseShiftRepository(
+        FirebaseFirestore.getInstance(),
+        sessionManager) }
     private val notificationManager: NotificationManagerUnpause by lazy {
         NotificationManagerUnpause.getInstance(
             applicationContext,
@@ -83,10 +102,14 @@ class GeofenceProcessingService : IntentService("Geofence processing service") {
                     sb.append(it.requestId + ", ")
                 }
                 sb.deleteCharAt(sb.indexOf(","))
-                title =
-                        applicationContext.getString(R.string.arrived_at_location, sb.toString().trim())
-                notificationManager.sendCheckInNotification(title,
+
+                handleNotificationDisplay(userIsNotCheckedIn, {
+                    notificationManager.sendCheckInNotification(
+                        applicationContext.getString(R.string.arrived_at_location, sb.toString().trim()),
                         applicationContext.getString(R.string.your_location_has_changed))
+                },{
+                    //no action
+                })
 
                 Timber.i("You entered geofence perimeter!")
 
@@ -95,15 +118,46 @@ class GeofenceProcessingService : IntentService("Geofence processing service") {
                     sb.append(it.requestId + ", ")
                 }
                 sb.deleteCharAt(sb.indexOf(","))
-                title = applicationContext.getString(R.string.left_location, sb.toString().trim())
-                notificationManager.sendCheckOutNotification(title,
-                        applicationContext.getString(R.string.your_location_has_changed))
 
+                handleNotificationDisplay(userIsCheckedIn, {
+                    notificationManager.sendCheckOutNotification(
+                        applicationContext.getString(R.string.left_location, sb.toString().trim()),
+                        applicationContext.getString(R.string.your_location_has_changed))
+                },{
+                    //no action
+                })
                 Timber.i("You exited geofence perimeter!")
             }
             Timber.d(triggeringGeofences.toString())
         } else {
             Timber.e("Geofence detection error")
+        }
+    }
+
+    private fun handleNotificationDisplay(
+        condition: LambdaShiftToBool,
+        onConditionTrueAction: LambdaNoArgumentsUnit,
+        onConditionFalseAction: LambdaNoArgumentsUnit
+    ) {
+        launch {
+            process(shiftRepository.getCurrent()) { shift ->
+                if (condition(shift)) onConditionTrueAction() else onConditionFalseAction()
+            }
+        }
+    }
+
+    private inline fun <T> process(result: Result<T>, onSuccess: (value: T) -> Unit) {
+        when (result) {
+            is Result.Success -> {
+                Timber.i("Network call successful: ${result.value}")
+                onSuccess(result.value)
+            }
+            is Result.GenericError -> {
+                Timber.e("Network call failed: $result")
+            }
+            is Result.IOError -> {
+                Timber.e("Network call failed: network error")
+            }
         }
     }
 }
