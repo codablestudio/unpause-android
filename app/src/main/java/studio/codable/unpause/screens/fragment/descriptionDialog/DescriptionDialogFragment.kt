@@ -32,9 +32,16 @@ class DescriptionDialogFragment(isFullScreen: Boolean) : BaseDialogFragment(isFu
         descriptionEditText.setText(description)
 
         saveDescriptionButton.setOnClickListener {
-            dialogListenerOnSave?.invoke(descriptionEditText.text.toString())
-            hideKeyboard()
-            dismiss()
+            descriptionEditText.text.toString().let {
+                if (it.isEmpty()) {
+                    showMessage(getString(R.string.description_cannot_be_empty))
+                    hideKeyboard()
+                } else {
+                    dialogListenerOnSave?.invoke(descriptionEditText.text.toString())
+                    hideKeyboard()
+                    dismiss()
+                }
+            }
         }
 
         if (dialogListenerOnCancel == null) {
