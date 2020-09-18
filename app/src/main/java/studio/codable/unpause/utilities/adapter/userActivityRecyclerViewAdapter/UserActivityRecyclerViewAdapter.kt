@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
@@ -17,19 +18,22 @@ import studio.codable.unpause.utilities.manager.TimeManager
 import studio.codable.unpause.utils.adapters.userActivityRecyclerViewAdapter.ShiftsDiffCallback
 import java.util.*
 
+
 typealias UserActivityListener = LambdaShiftIntToUnit
 
 
 class UserActivityRecyclerViewAdapter constructor(
     private var context: Context,
     private val listenerOnDelete: UserActivityListener,
-    private val listenerOnEdit : UserActivityListener
+    private val listenerOnEdit: UserActivityListener
 ) : RecyclerView.Adapter<UserActivityRecyclerViewAdapter.ViewHolder>(), SwipeActions {
 
     private val shifts = arrayListOf<Shift>()
 
     private var recentlyDeleted: Queue<Shift> = ArrayDeque()
     private var recentlyDeletedPosition: Queue<Int> = ArrayDeque()
+
+    private lateinit var recyclerView : RecyclerView
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
@@ -56,9 +60,9 @@ class UserActivityRecyclerViewAdapter constructor(
             text_left_at_date.text = timeManager.exitToArray()[1]
 
             text_working_hours.text = context.getString(
-                    R.string.n_hours_m_minutes,
-                    timeManager.getWorkingHours().hours,
-                    timeManager.getWorkingHours().minutes
+                R.string.n_hours_m_minutes,
+                timeManager.getWorkingHours().hours,
+                timeManager.getWorkingHours().minutes
             )
 
             text_job_description.text = shifts[position].description
@@ -80,49 +84,62 @@ class UserActivityRecyclerViewAdapter constructor(
                     when (it) {
                         is ShiftsDiffCallback.ArrivalTimeChanged -> {
                             holder.itemView.text_arrived_at_time.crossFadeText(
-                                    timeManager.arrivalToArray()[0])
-                            holder.itemView.text_working_hours.crossFadeText(context.getString(
+                                timeManager.arrivalToArray()[0]
+                            )
+                            holder.itemView.text_working_hours.crossFadeText(
+                                context.getString(
                                     R.string.n_hours_m_minutes,
                                     timeManager.getWorkingHours().hours,
                                     timeManager.getWorkingHours().minutes
-                            ))
+                                )
+                            )
                         }
 
                         is ShiftsDiffCallback.ArrivalDateChanged -> {
 
                             holder.itemView.text_arrived_at_date.crossFadeText(
-                                    timeManager.arrivalToArray()[1])
-                            holder.itemView.text_working_hours.crossFadeText(context.getString(
+                                timeManager.arrivalToArray()[1]
+                            )
+                            holder.itemView.text_working_hours.crossFadeText(
+                                context.getString(
                                     R.string.n_hours_m_minutes,
                                     timeManager.getWorkingHours().hours,
                                     timeManager.getWorkingHours().minutes
-                            ))
+                                )
+                            )
                         }
 
                         is ShiftsDiffCallback.ExitTimeChanged -> {
 
                             holder.itemView.text_left_at_time.crossFadeText(
-                                    timeManager.exitToArray()[0])
-                            holder.itemView.text_working_hours.crossFadeText(context.getString(
+                                timeManager.exitToArray()[0]
+                            )
+                            holder.itemView.text_working_hours.crossFadeText(
+                                context.getString(
                                     R.string.n_hours_m_minutes,
                                     timeManager.getWorkingHours().hours,
                                     timeManager.getWorkingHours().minutes
-                            ))
+                                )
+                            )
                         }
 
                         is ShiftsDiffCallback.ExitDateChanged -> {
                             holder.itemView.text_left_at_date.crossFadeText(
-                                    timeManager.exitToArray()[1])
-                            holder.itemView.text_working_hours.crossFadeText(context.getString(
+                                timeManager.exitToArray()[1]
+                            )
+                            holder.itemView.text_working_hours.crossFadeText(
+                                context.getString(
                                     R.string.n_hours_m_minutes,
                                     timeManager.getWorkingHours().hours,
                                     timeManager.getWorkingHours().minutes
-                            ))
+                                )
+                            )
                         }
 
                         is ShiftsDiffCallback.DescriptionChanged -> {
                             holder.itemView.text_job_description.crossFadeText(
-                                    shifts[position].description)
+                                shifts[position].description
+                            )
                         }
                     }
                 }
@@ -165,6 +182,7 @@ class UserActivityRecyclerViewAdapter constructor(
         val recDelPos = recentlyDeletedPosition.remove()
         shifts.add(recDelPos, recentlyDeleted.remove())
         notifyItemInserted(recDelPos)
+        restoreScrollPositionAfterAdAdded()
     }
 
     override fun editItem(position: Int) {
@@ -179,6 +197,27 @@ class UserActivityRecyclerViewAdapter constructor(
         shifts.addAll(sorted)
         notifyDataSetChanged()
     }
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        /**reference to recycler view is need for [restoreScrollPositionAfterAdAdded] method*/
+        this.recyclerView = recyclerView
+        super.onAttachedToRecyclerView(recyclerView)
+    }
+
+    /**
+     * Used for scrolling up when undo delete is done on item with position 0,
+     * apparently google didn't handle that case
+     */
+    private fun restoreScrollPositionAfterAdAdded() {
+        val layoutManager = recyclerView.layoutManager as LinearLayoutManager?
+        if (layoutManager != null) {
+            val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+            if (firstVisibleItemPosition == 0) {
+                layoutManager.scrollToPosition(0)
+            }
+        }
+    }
+
 
     class ViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView)
