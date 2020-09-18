@@ -9,11 +9,12 @@ import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.DialogFragment
 import kotlinx.android.synthetic.main.save_dialog.*
 import studio.codable.unpause.R
+import studio.codable.unpause.base.fragment.BaseDialogFragment
 import studio.codable.unpause.utilities.LambdaNoArgumentsUnit
 import studio.codable.unpause.utilities.LambdaStringToUnit
 
 
-class DescriptionDialogFragment : DialogFragment() {
+class DescriptionDialogFragment(isFullScreen: Boolean) : BaseDialogFragment(isFullScreen) {
 
     private var dialogListenerOnSave: LambdaStringToUnit? = null
     private var dialogListenerOnCancel: LambdaNoArgumentsUnit? = null
@@ -70,5 +71,12 @@ class DescriptionDialogFragment : DialogFragment() {
             requireActivity().currentFocus?.windowToken,
             InputMethodManager.HIDE_NOT_ALWAYS
         )
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        //hack to fix dialog being too narrow
+        dialog?.window?.attributes?.width = ViewGroup.LayoutParams.MATCH_PARENT
     }
 }

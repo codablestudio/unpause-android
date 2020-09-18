@@ -9,16 +9,18 @@ import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import kotlinx.android.synthetic.main.working_time_warning_dialog.*
 import studio.codable.unpause.R
+import studio.codable.unpause.base.fragment.BaseDialogFragment
 import studio.codable.unpause.utilities.manager.DialogManager
 import studio.codable.unpause.utilities.manager.TimeManager
 import java.util.*
 
 class WorkingTimeWarningFragment(
-        private var arrivalTime: Date,
-        private var exitTime: Date,
-        private var isArrivalDateEditable: Boolean,
-        private var dialogManager: DialogManager
-) : DialogFragment() {
+    private var arrivalTime: Date,
+    private var exitTime: Date,
+    private var isArrivalDateEditable: Boolean,
+    private var dialogManager: DialogManager,
+    isFullScreen: Boolean
+) : BaseDialogFragment(isFullScreen) {
 
     companion object {
         const val WORKING_TIME_THRESHOLD = 8
@@ -33,6 +35,10 @@ class WorkingTimeWarningFragment(
         savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.working_time_warning_dialog, container, false)
+    }
+
+    override fun getTheme(): Int {
+        return R.style.full_screen_dialog
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

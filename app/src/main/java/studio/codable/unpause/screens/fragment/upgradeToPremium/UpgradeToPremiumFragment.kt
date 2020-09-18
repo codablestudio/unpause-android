@@ -8,10 +8,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import kotlinx.android.synthetic.main.fragment_upgrade_to_premium.*
 import studio.codable.unpause.R
+import studio.codable.unpause.base.fragment.BaseDialogFragment
 import studio.codable.unpause.base.fragment.BaseFragment
 import studio.codable.unpause.utilities.LambdaNoArgumentsUnit
 
-class UpgradeToPremiumFragment : DialogFragment() {
+class UpgradeToPremiumFragment(isFullScreen: Boolean) : BaseDialogFragment(isFullScreen) {
 
     private var dialogListenerOnBuySubscription1: LambdaNoArgumentsUnit? = null
     private var dialogListenerOnBuySubscription2: LambdaNoArgumentsUnit? = null

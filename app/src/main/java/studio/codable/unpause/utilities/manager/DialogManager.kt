@@ -20,12 +20,17 @@ import studio.codable.unpause.screens.fragment.upgradeToPremium.UpgradeToPremium
 import java.util.*
 
 class DialogManager(private val context: BaseActivity) {
+
     private lateinit var descriptionDialogFragment: DescriptionDialogFragment
     private lateinit var workingTimeWarningFragment: WorkingTimeWarningFragment
     private val datePickerFragment: DatePickerFragment by lazy { DatePickerFragment() }
     private lateinit var timePickerFragment: TimePickerFragment
     private lateinit var confirmDialogFragment: ConfirmDialogFragment
-    private val upgradeToPremiumFragment: UpgradeToPremiumFragment by lazy { UpgradeToPremiumFragment() }
+    private val upgradeToPremiumFragment: UpgradeToPremiumFragment by lazy {
+        UpgradeToPremiumFragment(
+            isFullScreen = true
+        )
+    }
 
     fun openDescriptionDialog(
         @StringRes title: Int,
@@ -48,20 +53,15 @@ class DialogManager(private val context: BaseActivity) {
         dialogListenerOnSave: LambdaStringToUnit,
         dialogListenerOnCancel: LambdaNoArgumentsUnit?
     ) {
-        descriptionDialogFragment = DescriptionDialogFragment().apply {
+        descriptionDialogFragment = DescriptionDialogFragment(isFullscreen).apply {
             setTitle(title)
             description?.let { setDescription(description) }
             setOnSaveListener(dialogListenerOnSave)
             if (dialogListenerOnCancel != null) {
                 setOnCancelListener(dialogListenerOnCancel)
             }
-            setStyle(DialogFragment.STYLE_NO_TITLE, R.style.full_screen_dialog)
         }
-        if (isFullscreen) {
-            showFullscreenDialog(descriptionDialogFragment)
-        } else {
             descriptionDialogFragment.show(context.supportFragmentManager, "Edit dialog fragment")
-        }
     }
 
     fun openWorkingTimeDialog(
@@ -72,9 +72,9 @@ class DialogManager(private val context: BaseActivity) {
             dialogListener: WorkingTimeWarningFragment.DialogListener
     ) {
         workingTimeWarningFragment =
-            WorkingTimeWarningFragment(arrivalTime, exitTime, isArrivalDateEditable, dialogManager)
+            WorkingTimeWarningFragment(arrivalTime, exitTime, isArrivalDateEditable, dialogManager, isFullScreen = true)
         workingTimeWarningFragment.addListener(dialogListener)
-        showFullscreenDialog(workingTimeWarningFragment)
+        workingTimeWarningFragment.show(context.supportFragmentManager, "Working time warning fragment")
     }
 
     fun openDatePickerDialog(datePickerListener: DatePickerListener) {
@@ -111,19 +111,7 @@ class DialogManager(private val context: BaseActivity) {
     fun openUpgradeToPremiumDialog(onBuySubscription1Listener : LambdaNoArgumentsUnit, onBuySubscription2Listener : LambdaNoArgumentsUnit) {
         upgradeToPremiumFragment.setOnBuySubscription1Listener(onBuySubscription1Listener)
         upgradeToPremiumFragment.setOnBuySubscription2Listener(onBuySubscription2Listener)
-        showFullscreenDialog(upgradeToPremiumFragment)
-    }
-
-    private fun showFullscreenDialog(dialogFragment: DialogFragment) {
-        val transaction = context.supportFragmentManager.beginTransaction()
-        // For a little polish, specify a transition animation
-        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-        // To make it fullscreen, use the 'content' root view as the container
-        // for the fragment, which is always the root view for the activity
-        transaction
-                .add(android.R.id.content, dialogFragment)
-                .addToBackStack(null)
-                .commit()
+        upgradeToPremiumFragment.show(context.supportFragmentManager, "Upgrade to premium fragment")
     }
 
 }
