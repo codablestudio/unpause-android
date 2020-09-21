@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.fragment_settings.*
 import studio.codable.unpause.R
 import studio.codable.unpause.screens.activity.login.LoginActivity
@@ -12,6 +13,7 @@ import studio.codable.unpause.screens.fragment.premium.PremiumFeaturesFragment
 import studio.codable.unpause.utilities.manager.GeofencingManager
 import studio.codable.unpause.utilities.manager.PermissionManager
 import studio.codable.unpause.utilities.manager.SessionManager
+import timber.log.Timber
 import javax.inject.Inject
 
 class SettingsFragment : PremiumFeaturesFragment() {
@@ -26,6 +28,15 @@ class SettingsFragment : PremiumFeaturesFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initUI()
+        initObservers()
+    }
+
+    private fun initObservers() {
+        userVm.user.observe(viewLifecycleOwner, Observer {
+            showLoading()
+            refreshUI()
+            hideLoading()
+        })
     }
 
     override fun onCreateView(
@@ -107,4 +118,13 @@ class SettingsFragment : PremiumFeaturesFragment() {
     } else {
         getString(R.string.connect_company)
     }
+
+    private fun refreshUI() {
+        change_company_button.text = getTitleForCompanyButton()
+        add_location_button.visibility =
+            if (userVm.userHasConnectedCompany()) View.GONE else View.VISIBLE
+        location_based_notifications.visibility = if (userIsPremium) View.VISIBLE else View.GONE
+    }
+
+
 }

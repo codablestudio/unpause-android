@@ -21,8 +21,8 @@ class ChangeCompanyFragment : BaseCompanyFragment() {
     }
 
     private fun initUI() {
-        text_connect_company.text = getString(R.string.change_company)
-        connect_company_button.text = getString(R.string.change_company)
+        text_connect_company.text = getCompanyStringForView()
+        connect_company_button.text = getCompanyStringForView()
     }
 
     private fun initListeners() {
@@ -45,6 +45,12 @@ class ChangeCompanyFragment : BaseCompanyFragment() {
             userVm.handleCompanyUpdate(edit_text_passcode.text.toString())
 
         }
+    }
+
+    private fun getCompanyStringForView(): String = if (userVm.userHasConnectedCompany()) {
+        getString(R.string.change_company)
+    } else {
+        getString(R.string.connect_company)
     }
 
     override fun onResume() {

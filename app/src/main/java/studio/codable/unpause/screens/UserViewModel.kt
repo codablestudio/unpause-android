@@ -130,7 +130,6 @@ class UserViewModel @Inject constructor(
                     val newShift = Shift(arrivalTime = Date())
                     addShift(newShift)
                 } else {
-//                    (_shifts.value as ArrayList).add(shift)
                     _checkInCheckOutMessages.value = CheckInErrorMessage
                 }
                 _isCheckedIn.value = true
@@ -297,7 +296,7 @@ class UserViewModel @Inject constructor(
     }
 
     fun userHasConnectedCompany() : Boolean {
-        return _company.value!=null
+        return _user.value?.companyId !=null
     }
 
     private fun existsShiftWithNoExitTime(shifts : List<Shift>) : Boolean {
