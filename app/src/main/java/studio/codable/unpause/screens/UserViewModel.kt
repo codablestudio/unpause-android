@@ -57,6 +57,9 @@ class UserViewModel @Inject constructor(
     private val _companyExists = MutableLiveData<Event<Boolean>>()
     val companyExists: LiveData<Event<Boolean>> = _companyExists
 
+    private val _companyUpdated = MutableLiveData<Event<Boolean>>()
+    val companyUpdated: LiveData<Event<Boolean>> = _companyUpdated
+
     private val _filter = MutableLiveData<DateRange>()
     val filter: LiveData<DateRange> = _filter
 
@@ -264,6 +267,7 @@ class UserViewModel @Inject constructor(
             process(companyRepository.getCompanyId(passcode)) {
                 process(userRepository.updateCompany(_user.value!!.id, it)) {
                     getUser()
+                    _companyUpdated.value = Event(true)
                 }
             }
         }

@@ -31,13 +31,21 @@ class ChangeCompanyFragment : BaseCompanyFragment() {
             companyExists.getContentIfNotHandled()?.let {
                 if (it) {
                     userVm.updateCompany(edit_text_passcode.text.toString())
-                    showMessage(getString(R.string.company_updated))
-                    svm.navigateUp()
+                    showLoading()
                 } else {
                     showMessage("Company with provided passcode does not exist.")
                 }
             }
+        })
 
+        userVm.companyUpdated.observe(viewLifecycleOwner, Observer {
+            it.getContentIfNotHandled()?.let {companyUpdated ->
+                if (companyUpdated) {
+                    hideLoading()
+                    showMessage(getString(R.string.company_updated))
+                    svm.navigateUp()
+                }
+            }
         })
 
         connect_company_button.setOnClickListener {

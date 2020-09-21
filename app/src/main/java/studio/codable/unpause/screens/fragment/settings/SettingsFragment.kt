@@ -33,9 +33,7 @@ class SettingsFragment : PremiumFeaturesFragment() {
 
     private fun initObservers() {
         userVm.user.observe(viewLifecycleOwner, Observer {
-            showLoading()
             refreshUI()
-            hideLoading()
         })
     }
 
