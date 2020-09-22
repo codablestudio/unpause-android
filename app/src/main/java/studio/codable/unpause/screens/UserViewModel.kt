@@ -14,6 +14,7 @@ import studio.codable.unpause.repository.*
 import studio.codable.unpause.utilities.Constants.CheckInCheckOutMessages.CheckInErrorMessage
 import studio.codable.unpause.utilities.Constants.CheckInCheckOutMessages.CheckOutErrorMessage
 import studio.codable.unpause.utilities.Event
+import studio.codable.unpause.utilities.LambdaNoArgumentsUnit
 import studio.codable.unpause.utilities.geofencing.GeofenceModel
 import studio.codable.unpause.utilities.helperFunctions.DateRange
 import studio.codable.unpause.utilities.manager.SessionManager
@@ -135,7 +136,6 @@ class UserViewModel @Inject constructor(
                 } else {
                     _checkInCheckOutMessages.value = CheckInErrorMessage
                 }
-                _isCheckedIn.value = true
             }
         }
     }
@@ -149,7 +149,6 @@ class UserViewModel @Inject constructor(
                 } else {
                     _checkInCheckOutMessages.value = CheckOutErrorMessage
                 }
-                _isCheckedIn.value = false
             }
         }
     }
@@ -167,10 +166,11 @@ class UserViewModel @Inject constructor(
         }
     }
 
-    fun getShifts() {
+    fun getShifts(onFinished : LambdaNoArgumentsUnit = {}) {
         viewModelScope.launch {
             process(shiftRepository.getAll()) {
                 _shifts.value = it
+                onFinished()
             }
         }
     }
@@ -200,7 +200,9 @@ class UserViewModel @Inject constructor(
     private fun addShift(shift: Shift) {
         viewModelScope.launch {
             process(shiftRepository.addNew(shift)) {
-                getShifts()
+                getShifts(onFinished = {
+                    _isCheckedIn.value = true
+                })
             }
         }
     }
@@ -208,7 +210,9 @@ class UserViewModel @Inject constructor(
     private fun updateShift(oldShift: Shift, newShift: Shift) {
         viewModelScope.launch {
             process(shiftRepository.update(oldShift, newShift)) {
-                getShifts()
+                getShifts(onFinished = {
+                    _isCheckedIn.value = false
+                })
             }
         }
     }

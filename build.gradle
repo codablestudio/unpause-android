@@ -59,6 +59,9 @@ buildscript {
         classpath "com.google.firebase:firebase-crashlytics-gradle:$firebaseCrashlytics_gradle_version"
         classpath "com.google.firebase:perf-plugin:$firebasePerformanceMonitoring_gradle_version"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
+//
+//        classpath 'com.quinn.hunter:hunter-debug-plugin:1.0.0'
+//        classpath 'com.quinn.hunter:hunter-transform:1.0.0'
 
     }
 }

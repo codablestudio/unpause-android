@@ -7,6 +7,7 @@
     android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:animateLayoutChanges="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -114,7 +115,7 @@
             android:id="@+id/check_in_details_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"
+            android:visibility="invisible"
             app:constraint_referenced_ids="text_label_last_check_in, text_last_check_in, text_label_working_time, text_working_time"
             tools:visibility="visible" />
 

@@ -53,6 +53,7 @@ class HomeFragment : PremiumFeaturesFragment() {
 
         btn_check_in_out.setOnClickListener{
             userVm.isCheckedIn.value?.let { isCheckedIn ->
+                showLoading()
                 if (!isCheckedIn) {
                     userVm.checkIn()
                     Timber.d("checked in")
@@ -112,11 +113,11 @@ class HomeFragment : PremiumFeaturesFragment() {
             if (userVm.isCheckedIn.value != true) {
                 updateGraph()
             }
-            hideLoading()
         })
 
         userVm.isCheckedIn.observe(viewLifecycleOwner, Observer {
             refreshCheckInCheckOut(it)
+            hideLoading()
         })
 
         userVm.checkInCheckOutMessages.observe(viewLifecycleOwner, Observer {
@@ -137,8 +138,8 @@ class HomeFragment : PremiumFeaturesFragment() {
     }
 
     private fun refreshCheckInCheckOut(it: Boolean) {
-        text_check_in_check_out.text = getCheckInCheckOutText(it)
         handleCheckInDetailsGroup(it)
+        text_check_in_check_out.text = getCheckInCheckOutText(it)
     }
 
     private fun getCheckInCheckOutText(isCheckedIn: Boolean): String {
@@ -182,7 +183,7 @@ class HomeFragment : PremiumFeaturesFragment() {
                     timeManager.getWorkingHours().minutes)
                 check_in_details_group.visibility = View.VISIBLE
             } else {
-                check_in_details_group.visibility = View.GONE
+                check_in_details_group.visibility = View.INVISIBLE
             }
         }
     }

@@ -7,6 +7,8 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
+//apply plugin: 'hunter-debug'
+
 //def keystorePropertiesFile = rootProject.file("keystore.properties")
 //def keystoreProperties = new Properties()
 //keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
@@ -20,7 +22,7 @@ android {
         applicationId "studio.codable.unpause"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 7
+        versionCode 8
         versionName "0.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -150,4 +152,7 @@ dependencies {
 
     //Billing
     implementation "com.android.billingclient:billing:$billing_version"
+
+    //Hunter debug
+//    implementation 'com.quinn.hunter:hunter-debug-library:0.9.6'
 }
