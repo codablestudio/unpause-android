@@ -39,18 +39,14 @@ class TimeManager(var arrivalTime: Date, var exitTime: Date) {
     }
 
     /**
-     * used for display, it is assumed that the values are valid
-     * (exit time greater than arrival time)
-     *
      * @return difference between exit time and arrival time in
      * the following format: [hours: Int, minutes: Int]
      */
     fun getWorkingHours(): HoursAndMinutes {
         val diff = TimeUnit.SECONDS.convert(exitTime.time - arrivalTime.time, TimeUnit.MILLISECONDS)
         val hours = diff / (60 * 60)
-        var minutes = exitTime.minute() - arrivalTime.minute()
-        if (minutes < 0) minutes += 60
-        return HoursAndMinutes(hours.toInt(), minutes)
+        val minutes = diff / 60 % 60
+        return HoursAndMinutes(hours.toInt(), minutes.toInt())
     }
 
     /**
