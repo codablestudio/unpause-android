@@ -10,6 +10,7 @@ import kotlinx.android.synthetic.main.fragment_settings.*
 import studio.codable.unpause.R
 import studio.codable.unpause.screens.activity.login.LoginActivity
 import studio.codable.unpause.screens.fragment.premium.PremiumFeaturesFragment
+import studio.codable.unpause.utilities.extensions.setCheckedWithoutAnimation
 import studio.codable.unpause.utilities.manager.GeofencingManager
 import studio.codable.unpause.utilities.manager.PermissionManager
 import studio.codable.unpause.utilities.manager.SessionManager
@@ -84,7 +85,7 @@ class SettingsFragment : PremiumFeaturesFragment() {
 
             //don't enable geolocation for non-premium users
             location_based_notifications.visibility = if (userIsPremium) View.VISIBLE else View.GONE
-            location_switch.isChecked = sessionManager.locationServiceStatus
+            location_switch.setCheckedWithoutAnimation(sessionManager.locationServiceStatus)
             location_switch.setOnCheckedChangeListener { _, isChecked ->
                 if (permissionManager.checkFineLocationPermission()) {
                     if (isChecked) {

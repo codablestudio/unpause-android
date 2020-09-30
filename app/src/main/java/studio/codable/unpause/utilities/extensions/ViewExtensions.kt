@@ -2,6 +2,7 @@ package studio.codable.unpause.utilities.extensions
 
 import android.animation.ObjectAnimator
 import android.view.View
+import android.widget.Switch
 import android.widget.TextView
 
 fun TextView.crossFadeText(newText: String?, duration: Long = 1000) {
@@ -20,4 +21,9 @@ fun TextView.crossFadeText(newText: String?, duration: Long = 1000) {
             start()
         }
 
+}
+
+fun Switch.setCheckedWithoutAnimation(checked: Boolean) {
+    isChecked = checked
+    jumpDrawablesToCurrentState()
 }
