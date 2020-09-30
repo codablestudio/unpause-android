@@ -73,14 +73,26 @@ class HomeFragment : PremiumFeaturesFragment() {
         }
 
         text_company.setOnClickListener {
-            if (userVm.company.value!=null) {
-                svm.navigate(HomeFragmentDirections.actionHomeFragmentToDisplayCompanyLocationsFragment())
-            } else {
-                showMessage(getString(R.string.please_wait_while_the_company_is_loading))
-            }
+            navigateToDisplayLocationsFragment()
+        }
+
+        company_img.setOnClickListener {
+            navigateToDisplayLocationsFragment()
         }
 
         initGraph()
+    }
+
+    private fun navigateToDisplayLocationsFragment() {
+        if (userVm.company.value != null) {
+            if (userVm.company.value!!.locations.isNullOrEmpty()) {
+                showMessage(getString(R.string.your_company_has_no_locations))
+            } else {
+                svm.navigate(HomeFragmentDirections.actionHomeFragmentToDisplayCompanyLocationsFragment())
+            }
+        } else {
+            showMessage(getString(R.string.you_dont_have_a_company_connected))
+        }
     }
 
     private fun initObservers() {
